@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-14 -47.704999999999984 275.40999999999997 275.40999999999997">
+  <rect x="-14" y="-47.704999999999984" width="275.40999999999997" height="275.40999999999997" rx="60.590199999999996" fill="#141414"/>
+  <defs>
+    <clipPath id="lente"><ellipse cx="50.55" cy="60.6" rx="43.6" ry="44.4"/></clipPath>
+    <clipPath id="palpebra"><path d="M10.08,57 C22,69 36,76 51.7,76 C67,76 81,70 92.54,58.66 L104.15,130 L-3.05,130 Z"/></clipPath>
+  </defs>
+  <g fill="none" stroke="#c9c5c0" stroke-width="13.6">
+    
+    <g clip-path="url(#lente)">
+      <g clip-path="url(#palpebra)"><ellipse cx="50.55" cy="47.85" rx="19.38" ry="24.24"/></g>
+      <path d="M10.08,57 C22,69 36,76 51.7,76 C67,76 81,70 92.54,58.66"/>
+    </g>
+    <ellipse cx="50.55" cy="60.6" rx="43.6" ry="44.4"/>
+    <g transform="translate(247.41 0) scale(-1 1)">
+    <g clip-path="url(#lente)">
+      <g clip-path="url(#palpebra)"><ellipse cx="50.55" cy="47.85" rx="19.38" ry="24.24"/></g>
+      <path d="M10.08,57 C22,69 36,76 51.7,76 C67,76 81,70 92.54,58.66"/>
+    </g>
+    <ellipse cx="50.55" cy="60.6" rx="43.6" ry="44.4"/></g>
+    <path d="M96.57,60.67 H150.85" stroke-width="15.3"/>
+    <path d="M122.65,0 V112.87 H142.13" stroke-width="15.3"/>
+    <path d="M95.44,157.96 C104,167 116,170.8 128.53,170.8 C141,170.8 153,167 161.7,157.96" stroke-width="12.1"/>
+  </g>
+</svg>
