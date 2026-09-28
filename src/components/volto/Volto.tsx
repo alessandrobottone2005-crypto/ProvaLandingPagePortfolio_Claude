@@ -2,7 +2,7 @@
 // un solo componente svg riusato ovunque. gsap comanda tutto ciò che succede dentro l’svg
 // (palpebre, pupille, disegno dei tratti, sorriso); chi lo usa può animare solo il contenitore esterno.
 import { useImperativeHandle, useId, useLayoutEffect, useRef, type Ref, type RefObject } from 'react'
-import { media, movimento } from '@/config/movimento'
+import { movimento } from '@/config/movimento'
 import { gsap, useGSAP } from '@/lib/gsap'
 import {
   APERTURA,
@@ -56,7 +56,7 @@ type Props = {
 type Occhio = { apertura: number; chiusura: number }
 
 export function Volto({ stato, guarda, disegno, dimensione, etichetta, interattivo = true, filtro, className, ref }: Props) {
-  const { umore, ascoltaAzioni } = useVolto()
+  const { umore, ridotto, ascoltaAzioni } = useVolto()
   const id = useId().replace(/:/g, '')
   const svgRef = useRef<SVGSVGElement>(null)
   const palpebre = useRef<(SVGPathElement | null)[]>([])
@@ -68,6 +68,7 @@ export function Volto({ stato, guarda, disegno, dimensione, etichetta, interatti
     { apertura: APERTURA.naturale, chiusura: 0 },
   ])
   const disegnoTl = useRef<gsap.core.Timeline | null>(null)
+  const progressoDisegno = useRef(1)
   const azioni = useRef<Record<Azione, () => void> | null>(null)
   const riallinea = useRef<() => void>(() => {})
 
@@ -89,8 +90,7 @@ export function Volto({ stato, guarda, disegno, dimensione, etichetta, interatti
   }
 
   const { contextSafe } = useGSAP(
-    () => {
-      const ridotto = matchMedia(media.ridotto).matches
+    (_contesto, sicuro) => {
       const svg = svgRef.current!
       disegnaOcchi()
 
@@ -142,24 +142,24 @@ export function Volto({ stato, guarda, disegno, dimensione, etichetta, interatti
 
       // --- azioni ---
       const tutti = occhi.current
-      const battito = () => {
+      const battito = sicuro!(() => {
         if (ridotto || effettivoRef.current === 'dorme' || effettivoRef.current === 'occhiolino') return
         gsap.to(tutti, { chiusura: 1, duration: 0.07, ease: 'power2.in', yoyo: true, repeat: 1, repeatDelay: 0.03, onUpdate: disegnaOcchi, overwrite: 'auto' })
-      }
-      const occhiolino = () => {
+      })
+      const occhiolino = sicuro!(() => {
         if (effettivoRef.current === 'dorme') return
         gsap
           .timeline({ onUpdate: disegnaOcchi })
           .to(tutti[1], { chiusura: 1, duration: ridotto ? 0 : 0.1, ease: 'power2.in' })
           .to(tutti[1], { chiusura: 0, duration: ridotto ? 0 : 0.22, ease: 'power2.out' }, '+=0.35')
-      }
-      const sorridi = () => {
+      })
+      const sorridi = sicuro!(() => {
         const d = ridotto ? 0 : movimento.durata.micro
         gsap
           .timeline()
           .to(sorriso.current, { morphSVG: SORRISO_AMPIO, duration: d, ease: 'power2.out' })
           .to(sorriso.current, { morphSVG: SORRISO, duration: d * 2, ease: 'power2.inOut' }, '+=1.1')
-      }
+      })
       azioni.current = { battito, occhiolino, sorriso: sorridi }
       const smettiAzioni = ascoltaAzioni((a) => azioni.current?.[a]())
 
@@ -181,13 +181,12 @@ export function Volto({ stato, guarda, disegno, dimensione, etichetta, interatti
         disegnoTl.current = null
       }
     },
-    { scope: svgRef },
+    { scope: svgRef, dependencies: [ridotto], revertOnUpdate: true },
   )
 
   // --- cambio di stato: palpebre e sorriso ---
   useGSAP(
     () => {
-      const ridotto = matchMedia(media.ridotto).matches
       const [sx, dx] = occhi.current
       const addormenta = effettivo === 'dorme'
       const durata = ridotto ? 0 : addormenta ? 1.2 : 0.35
@@ -198,7 +197,7 @@ export function Volto({ stato, guarda, disegno, dimensione, etichetta, interatti
       gsap.to(sorriso.current, { morphSVG: effettivo === 'sorride' ? SORRISO_AMPIO : SORRISO, duration: ridotto ? 0 : movimento.durata.micro, ease: 'power2.out' })
       riallinea.current()
     },
-    { dependencies: [effettivo], scope: svgRef },
+    { dependencies: [effettivo, ridotto], scope: svgRef, revertOnUpdate: true },
   )
 
   // --- disegno controllato dalla prop ---
@@ -206,6 +205,7 @@ export function Volto({ stato, guarda, disegno, dimensione, etichetta, interatti
   // (la funzione legge i ref solo quando viene chiamata, mai durante il disegno del componente)
   // oxlint-disable-next-line react/refs
   const disegna = contextSafe((p: number) => {
+    progressoDisegno.current = Math.min(1, Math.max(0, p))
     if (!disegnoTl.current) {
       // ordine: lenti, ponte, naso, palpebre, pupille, sorriso
       const tratti = gsap.utils.toArray<SVGGeometryElement>('[data-tratto]', svgRef.current)
@@ -214,13 +214,14 @@ export function Volto({ stato, guarda, disegno, dimensione, etichetta, interatti
       disegnoTl.current = tl
     }
     const tl = disegnoTl.current
-    tl.progress(Math.min(1, Math.max(0, p)))
+    tl.progress(progressoDisegno.current)
     // a disegno completo si tolgono i trattini, così le palpebre possono cambiare forma liberamente
     if (p >= 1) gsap.set(gsap.utils.toArray('[data-tratto]', svgRef.current), { clearProps: 'strokeDasharray,strokeDashoffset' })
   })
   useGSAP(() => {
-    if (disegno !== undefined) disegna(disegno)
-  }, { dependencies: [disegno], scope: svgRef })
+    // Il cambio della preferenza ricrea il contesto: conserva anche un disegno guidato via ref.
+    if (disegno !== undefined || progressoDisegno.current < 1) disegna(disegno ?? progressoDisegno.current)
+  }, { dependencies: [disegno, ridotto], scope: svgRef })
 
   useImperativeHandle(ref, () => ({
     disegna,

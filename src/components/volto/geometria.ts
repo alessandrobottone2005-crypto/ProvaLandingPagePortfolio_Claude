@@ -48,7 +48,7 @@ export const APERTURA = {
   sveglio: 1,
 } as const
 
-function punti(apertura: number): Punti {
+export function puntiPalpebra(apertura: number): Punti {
   const a = Math.min(1, Math.max(0, apertura))
   const [da, verso, t] = a < 0.5 ? [CHIUSA, NATURALE, a / 0.5] : [NATURALE, APERTA, (a - 0.5) / 0.5]
   return da.map((v, i) => v + (verso[i] - v) * t) as Punti
@@ -57,7 +57,7 @@ function punti(apertura: number): Punti {
 const n = (v: number) => Math.round(v * 100) / 100
 
 export function palpebra(apertura: number) {
-  const p = punti(apertura).map(n)
+  const p = puntiPalpebra(apertura).map(n)
   return `M${p[0]},${p[1]} C${p[2]},${p[3]} ${p[4]},${p[5]} ${p[6]},${p[7]} C${p[8]},${p[9]} ${p[10]},${p[11]} ${p[12]},${p[13]}`
 }
 

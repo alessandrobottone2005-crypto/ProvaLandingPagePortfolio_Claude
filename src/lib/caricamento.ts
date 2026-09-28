@@ -1,25 +1,8 @@
 // avanzamento reale del caricamento, per il contatore del preloader (claude.md §6.1):
-// font, codice di three, modello 3d e immagini che servono all’header.
+// font, codice di three e immagini che servono all’header.
 import { progetti } from './progetti'
 
 type Compito = { peso: number; avanzamento: number }
-
-async function scaricaConAvanzamento(url: string, compito: Compito) {
-  const risposta = await fetch(url, { cache: 'force-cache' })
-  const totale = Number(risposta.headers.get('content-length')) || 0
-  if (!risposta.body || !totale) {
-    await risposta.arrayBuffer()
-    return
-  }
-  const lettore = risposta.body.getReader()
-  let ricevuti = 0
-  for (;;) {
-    const { done, value } = await lettore.read()
-    if (done) break
-    ricevuti += value.length
-    compito.avanzamento = Math.min(0.99, ricevuti / totale)
-  }
-}
 
 function caricaImmagine(src: string) {
   return new Promise<void>((fine) => {
@@ -42,12 +25,13 @@ export function avviaCaricamento() {
 
   aggiungi(1, () => document.fonts.ready)
   // il codice di three.js (il pezzo più pesante)
-  aggiungi(3, () => import('@/components/volto/Volto3D'))
-  aggiungi(3, async (c) => {
-    const { URL_MODELLO, precaricaModello } = await import('@/components/volto/Volto3D')
-    await scaricaConAvanzamento(URL_MODELLO, c)
-    precaricaModello()
-  })
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    aggiungi(3, () => import('@/components/volto/Volto3D'))
+    aggiungi(4, async (c) => {
+      const { caricaLogo } = await import('@/components/volto/modelloLogo')
+      await caricaLogo((p) => (c.avanzamento = p))
+    })
+  }
   const primo = progetti[0]
   if (primo) aggiungi(1, () => caricaImmagine(primo.copertinaCard ?? primo.copertina))
 

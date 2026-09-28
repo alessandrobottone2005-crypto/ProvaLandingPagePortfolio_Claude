@@ -91,7 +91,7 @@ function CursoreAttivo() {
       y(e.clientY)
       ultimo = { x: e.clientX, y: e.clientY }
       setVisibile(true)
-      cambiaForma(e.target as Element)
+      cambiaForma(e.target instanceof Element ? e.target : null)
     }
     // dopo uno scroll (o l’apertura del pannello) l’elemento sotto il cursore cambia anche senza muovere il mouse
     let ultimo = { x: 0, y: 0 }
@@ -103,10 +103,16 @@ function CursoreAttivo() {
     const giu = () => setPremuto(true)
     const su = () => setPremuto(false)
     const esci = () => setVisibile(false)
+    const perdeFocus = () => {
+      su()
+      esci()
+    }
 
     addEventListener('pointermove', muovi, { passive: true })
     addEventListener('pointerdown', giu)
     addEventListener('pointerup', su)
+    addEventListener('pointercancel', su)
+    addEventListener('blur', perdeFocus)
     // in cattura: così arrivano anche gli scroll interni (il pannello scorre per conto suo)
     addEventListener('scroll', dopoScroll, { passive: true, capture: true })
     addEventListener('focusin', dopoScroll)
@@ -116,10 +122,14 @@ function CursoreAttivo() {
       removeEventListener('pointermove', muovi)
       removeEventListener('pointerdown', giu)
       removeEventListener('pointerup', su)
+      removeEventListener('pointercancel', su)
+      removeEventListener('blur', perdeFocus)
       removeEventListener('scroll', dopoScroll, { capture: true })
       removeEventListener('focusin', dopoScroll)
       ricalcola.current = () => {}
       document.documentElement.removeEventListener('mouseleave', esci)
+      x.tween.kill()
+      y.tween.kill()
     }
   }, [])
 

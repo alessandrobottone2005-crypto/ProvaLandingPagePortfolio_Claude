@@ -81,16 +81,17 @@ se qualcosa non va, leggi il messaggio: dice esattamente quale progetto e quale 
 npm run dev
 ```
 
-apri http://localhost:5173 e controlla il progetto nell’anello.
+Apri [localhost:5173](http://localhost:5173): controlla copertina nella spirale, disposizione nella griglia e clic sulla card. Verifica titolo, discipline, anno e descrizione; «esplora» apre il pannello con i blocchi. Prova anche il link diretto `http://localhost:5173/progetti/<nome-progetto>` con lo slug effettivo, e i formati desktop/telefono.
 
 ## 7. pubblica il sito
 
-quando sei contento, salva le modifiche su github (commit “aggiunto progetto: <titolo>” e push): vercel pubblica il sito da solo in un paio di minuti.
+Quando il progetto è pronto, esegui `npm run lint` e `npm run build`, poi controlla la build con `npm run preview`. Salva le modifiche nel branch di lavoro su GitHub. Il push può creare un’anteprima se l’integrazione Git è configurata; per aggiornare il sito in produzione segui la [procedura di pubblicazione](pubblicazione.md). Non confondere una preview con il dominio pubblico.
 
 ---
 
 ### consigli sui file
 
+- **contenuti**: il sito è pubblico; `pubblicato: false` nasconde la card ma non protegge file riservati.
 - **immagini**: jpg o png grandi vanno bene, il comando del punto 5 le ottimizza
 - **pdf**: esporta per lo schermo (non per la stampa) per restare sotto i 15mb
 - **video**: mp4 (h.264). se hai un .mov, esportalo in mp4

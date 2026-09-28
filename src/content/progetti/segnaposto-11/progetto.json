@@ -1,0 +1,25 @@
+{
+  "titolo": "progetto 11",
+  "descrizione": "testo provvisorio: qui andrà una breve descrizione del progetto, di due o tre righe al massimo.",
+  "discipline": [
+    "branding"
+  ],
+  "anno": 2026,
+  "cliente": "cliente provvisorio",
+  "ordine": 11,
+  "pubblicato": true,
+  "copertina": "copertina.webp",
+  "blocchi": [
+    {
+      "tipo": "testo",
+      "testo": "paragrafo provvisorio sul processo."
+    },
+    {
+      "tipo": "immagini",
+      "file": [
+        "copertina.webp"
+      ],
+      "layout": "piena"
+    }
+  ]
+}

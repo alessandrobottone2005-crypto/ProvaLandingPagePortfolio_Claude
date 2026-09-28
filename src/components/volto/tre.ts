@@ -14,11 +14,6 @@ export function useModello(url: string, alProgresso?: (p: number) => void) {
   return useLoader(GLTFLoader, url, conMeshopt, alProgresso && ((e) => e.total && alProgresso(e.loaded / e.total)))
 }
 
-/** scarica il modello in anticipo, senza mostrarlo */
-export function precarica(url: string) {
-  useLoader.preload(GLTFLoader, url, conMeshopt)
-}
-
 // pannelli luminosi attorno al modello (come i lightformer di drei), tutti rivolti verso il centro
 const PANNELLI = [
   { forma: 'rect', intensita: 2.2, posizione: [0, 4, 6], scala: [10, 4, 1] },

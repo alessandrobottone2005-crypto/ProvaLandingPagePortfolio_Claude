@@ -1,84 +1,75 @@
 # portfolio di alessandro bottone
 
-sito portfolio one-page, nero, raccontato dallo scroll. il protagonista è il volto (il logo), che guarda, sbatte le palpebre, si addormenta e si sveglia.
-
-il percorso è uno solo, dall’alto in basso:
+Portfolio one-page in italiano, raccontato dallo scroll. Il volto parte come segno e diventa un logo metallico 3d animato nell’ambiente della scena Blender V2.
 
 **preloader → header → portfolio → chi sono → contatti**
 
-- **preloader**: il volto si disegna mentre il sito si carica, con un contatore `000 → 100`; poi si sveglia e vola nell’header
-- **header**: il nome e il volto; scorrendo si attraversano quattro fasi (illustrazione, branding, 3d, web design) e alla fine resta una card
-- **portfolio**: i progetti su un anello 3d (desktop e tablet) o in una pila di card (telefono); clic su una card → si apre il pannello del progetto
-- **chi sono**: la foto e il testo, che si “accende” parola per parola
-- **contatti**: il volto e tre pulsanti (instagram, behance, email)
+- Header con quattro discipline; il nome grande si raccoglie in alto a destra e resta cliccabile per tornare all’inizio.
+- Venti card a colori in una spirale profonda: spessore, smussi, camera orbitale, fari e nebbia. Il finale mostra l’elica in campo lungo e la distende in una griglia a 3 colonne su desktop, 2 su tablet, 1 su telefono.
+- Una card aperta alla volta: titolo, discipline, anno, descrizione, «esplora» e «chiudi». L’espansione sposta le righe successive; esplora apre il pannello opaco del progetto.
+- Biografia invariata, rivelata parola per parola con il logo a sinistra; contatti con logo grande, Instagram, Behance, email e copyright.
 
-niente navbar, niente footer. brief completo e decisioni prese: `CLAUDE.md`.
+La stessa esperienza 3d è presente su mobile. Con movimento ridotto: SVG statici, scroll nativo e griglia subito disponibile. In caso di errore WebGL restano il volto SVG e le card HTML di riserva. I venti progetti attuali sono segnaposto.
 
----
+## avvio
 
-## cosa serve
+Serve Node.js compatibile con Vite 8; la pubblicazione usa Node 24. Dal terminale nella cartella del progetto:
 
-- **node.js lts** (da nodejs.org). per controllare: `node -v` nel terminale
-- per `npm run genera-og`: il font outfit installato sul computer (`Outfit-VariableFont_wght.ttf`)
-
-## come si avvia
-
-nel terminale, dentro la cartella del sito:
-
-```
-npm install
+```sh
+npm ci
 npm run dev
 ```
 
-poi apri http://localhost:5173 nel browser. `npm install` serve solo la prima volta (o quando cambiano le dipendenze).
-per fermare il sito: `ctrl + c` nel terminale.
+Apri [localhost:5173](http://localhost:5173). Per fermare il server: `ctrl + c`. `npm ci` installa le versioni del lockfile; dopo modifiche intenzionali alle dipendenze usare `npm install` e aggiornare anche `package-lock.json`.
 
-in sviluppo esiste anche la pagina http://localhost:5173/laboratorio, per provare stati e animazioni del volto e del cursore. nel sito pubblicato non c’è.
+In sviluppo [laboratorio](http://localhost:5173/laboratorio) permette di provare volto e cursore; non è incluso nella build pubblicata.
 
-## i comandi
+## comandi
 
-| comando | cosa fa |
+| comando | risultato |
 |---|---|
-| `npm run dev` | avvia il sito in locale (http://localhost:5173) e si aggiorna da solo quando salvi un file. controlla anche i progetti e scrive nel terminale se qualcosa non va |
-| `npm run build` | prepara il sito da pubblicare nella cartella `dist/`. prima controlla il codice e tutti i progetti: se manca un file o un campo si ferma con un messaggio in italiano |
-| `npm run preview` | mostra in locale il sito preparato da `npm run build`, così com’è pubblicato |
-| `npm run lint` | controlla il codice in cerca di errori comuni (oxlint) |
-| `npm run nuovo-progetto` | fa qualche domanda (titolo, indirizzo, descrizione, discipline, anno, cliente) e crea la cartella del progetto con un `progetto.json` di partenza |
-| `npm run prepara-progetti` | ottimizza i file dei progetti (immagini in webp, copertina piccola per le card, modelli 3d compressi), avvisa se pdf o video sono troppo pesanti e controlla che non manchi niente |
-| `npm run foto-palette -- <file>` | converte una foto in bianco e nero con i colori del sito (nero → `#141414`, bianco → `#c9c5c0`). l’originale non viene toccato |
-| `npm run genera-favicon` | ricrea le favicon del volto (sveglio e addormentato) e l’icona per iphone in `public/volto/` |
-| `npm run genera-og` | ricrea `public/og.png`, l’immagine che compare quando il sito viene condiviso |
+| `npm run dev` | server locale, aggiornamento automatico e controllo dei progetti |
+| `npm run build` | controllo TypeScript, validazione dei progetti e sito pronto in `dist/` |
+| `npm run preview` | anteprima locale della build, normalmente su porta 4173 |
+| `npm run lint` | controllo del codice con Oxlint |
+| `npm run nuovo-progetto` | crea una cartella e un JSON iniziale non pubblicato |
+| `npm run prepara-progetti` | ottimizza immagini/copertine/GLB e controlla i file dei progetti |
+| `npm run genera-favicon` | rigenera favicon sveglia, addormentata e icona iOS |
+| `npm run genera-og` | rigenera l’immagine social; richiede Outfit TTF installato sul computer |
+| `npm run foto-palette -- <file>` | helper opzionale per convertire una foto nella palette; la home non usa foto |
 
-## dove cambio cosa
+## dove modificare
 
-| voglio cambiare… | dove |
+| contenuto | file |
 |---|---|
-| testi fissi, link di instagram e behance, email, testo del chi sono, titolo della scheda, etichette | `src/config/sito.ts` |
-| durate delle animazioni, lunghezze di scroll (header, anello, chi sono), velocità di lenis, tempi del volto (battiti, sonno) | `src/config/movimento.ts` |
-| posizione, scala, colore e durata della “firma” sopra la foto, o disattivarla | `src/config/foto.ts` |
-| la foto del chi sono | nuova foto in `src/assets/foto/`, poi `npm run foto-palette -- src/assets/foto/<file>`, poi cambia l’import in cima a `src/sections/ChiSono/ChiSono.tsx` e regola `src/config/foto.ts` |
-| i progetti | una cartella per progetto in `src/content/progetti/` → guida [come aggiungere un progetto](docs/come-aggiungere-un-progetto.md) |
-| descrizione e anteprima per i social | `index.html` (stesso testo di `sito.descrizione`) e `npm run genera-og` |
+| testi, biografia, contatti, email, copyright ed etichette | `src/config/sito.ts` |
+| tempi, scroll, profondità/orbita della spirale e campo lungo | `src/config/movimento.ts` |
+| ancoraggi e percorso continuo del logo | `src/components/volto/percorso.ts` |
+| modello, espressioni e composizione della scena | `src/components/volto/Volto3D.tsx` |
+| camera, fari, volume e card solide | `src/components/volto/CameraImmersiva.tsx`, `LuciTeatro.tsx`, `NebbiaVolumetrica.tsx`, `CardNelloSpazio.tsx` |
+| progetti | `src/content/progetti/<slug>/`; [guida pratica](docs/come-aggiungere-un-progetto.md) |
+| meta e indirizzi social del sito | `index.html` |
 
-i testi vanno scritti sempre in minuscolo, con l’apostrofo tipografico (’).
+Scrivere i testi in minuscolo con apostrofi tipografici (’). Gli originali creativi si conservano in `sorgenti/`; soltanto le versioni runtime necessarie stanno in `public/`.
 
-## come si pubblica
+## pubblicazione
 
-- il codice sta su github: https://github.com/alessandrobottone2005-crypto/ProvaLandingPagePortfolio_Claude
-- il repository è collegato a vercel: ogni push sul ramo `main` pubblica il sito da solo su https://provalandingpageportfolio-claude.vercel.app (collegamento in fase di configurazione)
-- `vercel.json` rimanda ogni indirizzo a `index.html`, così anche `/progetti/<nome>` funziona dopo un refresh
+Repository: [ProvaLandingPagePortfolio_Claude](https://github.com/alessandrobottone2005-crypto/ProvaLandingPagePortfolio_Claude). Progetto Vercel: `provalandingpageportfolio-claude`, ambiente Node 24/Vite. Dominio: [provalandingpageportfolio-claude.vercel.app](https://provalandingpageportfolio-claude.vercel.app).
 
-dettagli e checklist: [pubblicazione](docs/pubblicazione.md).
+La manutenzione corrente usa il branch `codex/manutenzione-portfolio-3d`; lo stato del deploy, la versione e i controlli online si trovano in [pubblicazione](docs/pubblicazione.md). Il push di un branch e il deploy in produzione sono operazioni distinte. La configurazione mantiene il refresh delle rotte `/progetti/<slug>`.
 
 ## documentazione
 
-| file | di cosa parla |
+| guida | contenuto |
 |---|---|
-| [docs/come-aggiungere-un-progetto.md](docs/come-aggiungere-un-progetto.md) | guida passo passo, senza codice, per aggiungere un progetto |
-| [docs/architettura.md](docs/architettura.md) | librerie, cartelle, come parte il sito, preloader, scroll |
-| [docs/volto.md](docs/volto.md) | il volto: geometria, stati, comportamenti, 3d, favicon |
-| [docs/animazioni.md](docs/animazioni.md) | header, anello, chi sono, contatti, cursore, micro-interazioni, `movimento.ts` |
-| [docs/progetti.md](docs/progetti.md) | come sono fatti i progetti, `progetto.json`, controlli e script |
-| [docs/pannello.md](docs/pannello.md) | il pannello del progetto e i cinque tipi di blocco |
-| [docs/accessibilita-prestazioni.md](docs/accessibilita-prestazioni.md) | movimento ridotto, tastiera, contrasto, peso e velocità |
-| [docs/pubblicazione.md](docs/pubblicazione.md) | github, vercel, anteprima social, cosa non va su github, checklist |
+| [come aggiungere un progetto](docs/come-aggiungere-un-progetto.md) | authoring, file e controlli |
+| [architettura](docs/architettura.md) | responsabilità, cartelle, avvio, scroll e rotte |
+| [volto](docs/volto.md) | SVG, modello V2, espressioni e cache |
+| [ambiente 3d](docs/ambiente-3d.md) | spirale solida, camera, luci, volume ed esportazione |
+| [animazioni](docs/animazioni.md) | comportamento e parametri delle sezioni |
+| [progetti](docs/progetti.md) | schema JSON, caricamento e script |
+| [pannello](docs/pannello.md) | rotta modale e cinque tipi di blocco |
+| [accessibilità e prestazioni](docs/accessibilita-prestazioni.md) | tastiera, movimento ridotto, fallback e limiti delle misure |
+| [pubblicazione](docs/pubblicazione.md) | GitHub, Vercel, asset pubblici e verifiche |
+| [sorgenti Blender](sorgenti/logo-3d/README.md) | scene, controlli, rigenerazione e licenze |
+| [CLAUDE.md](CLAUDE.md) | brief operativo e storico delle decisioni |

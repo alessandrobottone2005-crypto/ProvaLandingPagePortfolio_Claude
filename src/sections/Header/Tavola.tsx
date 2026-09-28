@@ -2,7 +2,7 @@
 // stesse coordinate del volto (vedi geometria.ts), così ogni linea cade al posto giusto.
 // è decorativa: nessun testo, solo segni.
 import { ASSE, LENTE, PUPILLA, SPESSORE, VIEWBOX } from '@/components/volto/geometria'
-import { CARTA, FINESTRA, ID_MATITA } from './misure'
+import { FINESTRA, ID_MATITA } from './misure'
 
 const L = VIEWBOX.larghezza
 const H_LOGO = 176.88
@@ -34,9 +34,9 @@ const SCHIZZI_CERCHI = [
 ]
 const TRATTEGGIO = Array.from({ length: 7 }, (_, i) => `M${196 + i * 7},${-30} l${-14},${16}`)
 
-type Props = { copertina?: string; className?: string }
+type Props = { className?: string }
 
-export function Tavola({ copertina, className }: Props) {
+export function Tavola({ className }: Props) {
   const linea = { vectorEffect: 'non-scaling-stroke' as const }
   return (
     <svg viewBox={`0 0 ${L} ${VIEWBOX.altezza}`} className={className} aria-hidden="true" style={{ overflow: 'visible' }}>
@@ -46,9 +46,6 @@ export function Tavola({ copertina, className }: Props) {
           <feTurbulence data-rumore type="fractalNoise" baseFrequency="0.035" numOctaves={2} seed={3} result="rumore" />
           <feDisplacementMap data-spostamento in="SourceGraphic" in2="rumore" scale={0} xChannelSelector="R" yChannelSelector="G" />
         </filter>
-        <clipPath id="tavola-carta">
-          <rect data-carta-clip x={CARTA.x} y={CARTA.y} width={CARTA.w} height={CARTA.h} rx={CARTA.r} />
-        </clipPath>
       </defs>
 
       {/* 01 illustrazione: linee di costruzione a matita */}
@@ -98,7 +95,7 @@ export function Tavola({ copertina, className }: Props) {
         ))}
       </g>
 
-      {/* 04 web design: finestra del browser che diventa una card */}
+      {/* 04 web design: finestra del browser attorno al logo */}
       <g data-finestra fill="none" stroke="var(--color-bianco)" strokeWidth={1}>
         <g data-contenuto-finestra>
           <path data-disegna d={`M${FINESTRA.x},${FINESTRA.y + 22} H${FINESTRA.x + FINESTRA.w}`} {...linea} />
@@ -120,17 +117,6 @@ export function Tavola({ copertina, className }: Props) {
             {...linea}
           />
         </g>
-        <image
-          data-copertina
-          href={copertina}
-          x={CARTA.x}
-          y={CARTA.y}
-          width={CARTA.w}
-          height={CARTA.h}
-          preserveAspectRatio="xMidYMid slice"
-          clipPath="url(#tavola-carta)"
-          opacity={0}
-        />
         <rect data-cornice x={FINESTRA.x} y={FINESTRA.y} width={FINESTRA.w} height={FINESTRA.h} rx={FINESTRA.r} {...linea} />
       </g>
     </svg>

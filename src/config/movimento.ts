@@ -37,6 +37,8 @@ export const movimento = {
   header: {
     pinDesktop: 400,
     pinMobile: 300,
+    // percentuale dell’header in cui nome e cognome iniziano a raccogliersi nella navbar
+    inizioNomeCompatto: 92,
   },
 
   portfolio: {
@@ -46,10 +48,23 @@ export const movimento = {
     disposizione: 70,
     // scroll a fine anello, prima che la sezione si sblocchi (vh)
     coda: 30,
+    // scroll in cui l’anello si appiattisce nelle posizioni della griglia (vh)
+    versoGriglia: 200,
+    // camera diagonale, elica profonda e arretramento prima di aprire la griglia
+    spirale3d: {
+      campoVisivo: 42,
+      orbitaDa: -24,
+      orbitaA: 22,
+      elevazione: 10,
+      profondita: 0.52,
+      passo: 0.82,
+      raggioRitiro: 1.3,
+      passoRitiro: 0.52,
+      fineRitiro: 0.3,
+      fineDistensione: 0.88,
+    },
     // prospettiva dell’anello in px (più basso = più profondo)
     prospettiva: 1400,
-    // spazio tra le card sull’anello, in frazione della larghezza della card
-    spazioCard: 0.35,
     // aggancio alla card più vicina quando lo scroll si ferma (secondi)
     aggancio: 0.6,
     // “tieni premuto”: dopo quanto parte (s) e quante card al secondo fa girare
@@ -59,15 +74,11 @@ export const movimento = {
     inclinazioneHover: 6,
     // inclinazione massima delle card in base alla velocità dello scroll (gradi)
     inclinazioneVelocita: 5,
-    // mobile: di quanto si rimpicciolisce la card coperta dalla successiva, e quanto si scurisce
-    pilaScala: 0.9,
-    pilaScuro: 0.6,
-    // mobile: scroll in cui la card dell’header cresce fino alla misura della pila (vh)
-    pilaIngresso: 45,
   },
 
   chiSono: {
     pin: 150,
+    versoContatti: 100,
   },
 
   volto: {
@@ -115,5 +126,5 @@ export const media = {
 // dimensioni del volto nelle varie scene
 export const volto = {
   preloader: 'max(30vmin, 12rem)',
-  header: 'max(26vmin, 11rem)',
+  header: 'min(86vw, 104svh)',
 } as const

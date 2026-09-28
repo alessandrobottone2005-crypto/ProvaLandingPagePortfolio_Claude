@@ -1,0 +1,32 @@
+# sorgenti creative, documentazione e strumenti locali: fuori dall'upload di deploy
+sorgenti/**
+docs/**
+CLAUDE.md
+README.md
+.claude/**
+.codex/**
+.impeccable/**
+.vscode/**
+.idea/**
+.mcp.json
+.git/**
+.env
+.env.*
+.DS_Store
+**/.DS_Store
+**/._*
+**/__pycache__/**
+**/*.py[cod]
+**/*.blend[0-9]*
+
+# originali non importati dal sito; conservati nel repository e sul computer
+src/assets/foto/**
+src/content/progetti/*/_originali/**
+
+# output della build: Vercel li genera dal codice e dai file runtime
+dist/**
+dist-ssr/**
+node_modules/**
+*.log
+
+# scripts/valida-progetti.ts e config restano disponibili per la build Vite

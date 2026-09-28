@@ -36,6 +36,8 @@ export const sito = {
     copiata: 'copiata',
     logo: 'logo di alessandro bottone',
     foto: 'ritratto di alessandro bottone',
+    navigazione: 'navigazione principale',
+    tornaInizio: 'alessandro bottone — torna all’inizio',
   },
 
   // etichette dei tre pulsanti dei contatti
@@ -43,6 +45,12 @@ export const sito = {
     instagram: 'instagram',
     behance: 'behance',
     email: 'email',
+    copyright: (anno: number) => `© ${anno} alessandro bottone. tutti i diritti riservati.`,
+  },
+  portfolio: {
+    info: 'info',
+    esplora: 'esplora',
+    animazione: 'animazione dei progetti; frecce sinistra e destra per ruotare la spirale',
   },
   // testi del pannello del progetto (etichette per screen reader e messaggi)
   pannello: {

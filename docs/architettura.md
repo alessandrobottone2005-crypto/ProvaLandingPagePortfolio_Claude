@@ -1,118 +1,107 @@
 # architettura
 
-come è costruito il sito, in breve. per i dettagli di ogni parte vedi gli altri file in `docs/`.
+Il sito separa racconto della home, scena immersiva e pannelli progetto. Testi e parametri hanno una fonte condivisa; le pose 3d vengono aggiornate senza render React a ogni fotogramma.
 
-## le librerie e il loro ruolo
+## librerie e responsabilità
 
-| libreria | a cosa serve qui |
+| tecnologia | ruolo |
 |---|---|
-| react 19 + typescript (strict) + vite 8 | base del progetto; `vite.config.ts` |
-| tailwind css v4 (`@tailwindcss/vite`) | stile, con i token di `src/styles/globals.css` (tre colori, outfit, scala tipografica) |
-| shadcn/ui (radix) | base del pannello: `src/components/ui/dialog.tsx` (dialog di radix) |
-| gsap + scrolltrigger, splittext, drawsvg, morphsvg, `@gsap/react` | tutto ciò che dipende dallo scroll (pin, scrub), disegno e morph del volto, testo del chi sono spezzato in parole |
-| motion (`motion/react`) | stati e micro-interazioni: hover, magnetismo, testi che rotolano, cursore, riempimento dei pulsanti, rivelazione delle immagini |
-| lenis | scroll fluido con rotella e trackpad (una sola istanza) |
-| three + react three fiber | volto 3d dell’header e blocco `modello3d`; da drei solo `OrbitControls` e `ContactShadows` |
-| react router 8 (modalità libreria, `BrowserRouter`) | `/` e `/progetti/:slug` come rotta modale |
-| lucide-react | icone dell’interfaccia (tratto 1.5) |
-| simple-icons | icone di instagram e behance nei contatti |
-| react-pdf + page-flip | blocco pdf sfogliabile (page-flip usato direttamente: `react-pageflip` non supporta react 19) |
-| `@fontsource-variable/outfit` | il font outfit variabile, in locale |
-| zod | controllo di `progetto.json`, solo in build e negli script (non si scarica nel sito) |
-| sharp, `@gltf-transform/cli` | script: ottimizzazione di immagini, foto, favicon, og e modelli 3d |
+| React 19, TypeScript strict, Vite 8 | componenti, tipi, sviluppo e build |
+| Tailwind v4 | token e stile in `src/styles/globals.css` |
+| GSAP, ScrollTrigger, SplitText, DrawSVG, MorphSVG | pin/scrub, testo biografico, SVG, preloader e transizioni del pannello |
+| Motion | stati delle card, hover/tap, magnetismo, testi e cursore |
+| Lenis | unica istanza di scroll fluido, sincronizzata con GSAP; touch nativo |
+| Three.js e React Three Fiber | Canvas globale della home e visualizzatori dei progetti |
+| drei | `OrbitControls` e `ContactShadows` nei modelli dei progetti |
+| React Router | home sempre montata e `/progetti/:slug` come rotta modale |
+| Radix/shadcn | dialog accessibile; componenti sorgente ristilizzati |
+| Lucide e SVG Figma | icone UI e social |
+| react-pdf, pdfjs-dist, page-flip | PDF sfogliabili |
+| Outfit Variable | unico font locale |
+| Zod, Sharp, glTF Transform | validazione/build e strumenti di authoring |
 
-## le cartelle
+Zod non è nel runtime di produzione; shadcn è uno strumento di sviluppo, i componenti generati sono sorgenti locali. Le versioni esatte sono nel lockfile.
 
-```
+## cartelle
+
+```text
 .
-├─ CLAUDE.md                 brief di progetto e “decisioni prese”
-├─ README.md                 punto di partenza
-├─ docs/                     questa documentazione
-├─ index.html                titolo, meta, favicon, anteprima social
-├─ vite.config.ts            plugin: controllo progetti, precarico del font; alias @ = src
-├─ vercel.json               tutte le rotte → index.html
-├─ scripts/                  nuovo-progetto, prepara-progetti, foto-palette, genera-favicon, genera-og, valida-progetti
-├─ sorgenti/                 file originali del logo (Logo.svg, Logo.glb): non finiscono nel sito
-├─ public/
-│  ├─ volto/                 volto.glb, favicon.svg, favicon-dorme.svg, apple-touch-icon.png
+├─ README.md, CLAUDE.md       guida iniziale, brief corrente e storico
+├─ docs/                     documentazione
+├─ scripts/                  authoring, validazione, immagini e icone
+├─ sorgenti/                 originali creativi; esclusi dal sito
+│  └─ logo-3d/               scene Blender, texture, export, script e anteprime
+│     └─ legacy/             vecchio volto.glb conservato
+├─ public/                   asset serviti senza trasformazione
+│  ├─ volto/                 logo-metallo-v2.glb, favicon, icona iOS, crediti
 │  ├─ og.png
 │  └─ robots.txt
+├─ index.html                meta, lingua, titolo e favicon
+├─ vite.config.ts            controllo progetti, preload font e alias @
+├─ vercel.json               fallback SPA delle rotte
+├─ .vercelignore             esclusioni dal caricamento di deploy
 └─ src/
    ├─ main.tsx, App.tsx, router.tsx
-   ├─ config/                sito.ts (testi e link), movimento.ts (tempi e scroll), foto.ts (firma)
-   ├─ styles/globals.css     token, regola delle minuscole, focus, grana, movimento ridotto
-   ├─ lib/                   gsap.ts, scroll.ts, caricamento.ts, progetti.ts, schema.ts, dati.ts, appunti.ts, utils.ts
+   ├─ config/                sito.ts e movimento.ts
+   ├─ styles/                globals.css
+   ├─ lib/                   scroll, GSAP, caricamento, dati/schema/progetti, appunti, useMediaQuery
    ├─ components/
-   │  ├─ volto/              Volto.tsx, VoltoContext.tsx, sguardo.ts, geometria.ts, Volto3D.tsx, tre.ts
-   │  ├─ preloader/          Preloader.tsx, AvvioContext.tsx
-   │  ├─ cursore/            Cursore.tsx
-   │  ├─ testo/              TestoCheRotola.tsx, RotolaAlPassaggio.tsx, NomePesoVariabile.tsx
-   │  ├─ interazioni/        Magnetico.tsx
-   │  ├─ effetti/            Grana.tsx
-   │  └─ ui/                 componenti shadcn (dialog, button)
+   │  ├─ volto/              SVG, context, sguardo, logo V2 e ambiente 3d
+   │  ├─ preloader/, cursore/, testo/, interazioni/, effetti/
+   │  ├─ bottoni/, icone/     componenti Figma
+   │  └─ ui/                 dialog e button di base
    ├─ sections/
-   │  ├─ Header/             Header.tsx, Tavola.tsx, misure.ts
-   │  ├─ Portfolio/          Portfolio.tsx, Anello.tsx, Pila.tsx, Griglia.tsx, Copertina.tsx, carta.ts
-   │  ├─ ChiSono/            ChiSono.tsx
-   │  └─ Contatti/           Contatti.tsx
-   ├─ pannello/              Pannello.tsx, transizioni.ts, Blocchi.tsx, blocchi/ (Pdf, Modello3D, Video, Immagini, Testo)
-   ├─ laboratorio/           Laboratorio.tsx (solo in sviluppo)
-   ├─ types/                 tipi per page-flip
-   ├─ assets/foto/           foto originale e versione “palette”
+   │  ├─ Header/             racconto iniziale, tavola e nome fisso
+   │  ├─ Portfolio/          Spirale, Griglia, CardProgetto e copertine
+   │  ├─ ChiSono/, Contatti/
+   ├─ pannello/              dialog, transizioni e blocchi lazy
+   ├─ laboratorio/           solo sviluppo
+   ├─ assets/                icone e fotografie conservate fuori dalla home
+   ├─ types/                 tipi page-flip
    └─ content/progetti/      una cartella per progetto
 ```
 
-## come parte il sito
+`public/` viene copiata nella build: non usarla come archivio. Foto e scene originali non importate dal codice restano sul disco/repository, non nel sito. Cache di render e backup automatici Blender non vengono caricati per il deploy.
 
-1. **`src/main.tsx`** monta l’app dentro, nell’ordine: `BrowserRouter` → `VoltoProvider` (umore globale del volto) → `AvvioProvider` (stato del preloader) → `App`. importa anche `globals.css`.
-2. **`src/App.tsx`**:
-   - all’avvio chiama `avviaScroll()` (lenis) e `aggiornaDopoCaricamento()` (ricalcola scrolltrigger quando font e pagina sono caricati)
-   - disegna `<main>` con le quattro sezioni in ordine: `Header`, `Portfolio`, `ChiSono`, `Contatti` (`aria-busy` finché il preloader non ha finito)
-   - sopra: `Preloader`, `Cursore`, `Grana`
-   - le rotte del pannello (`RotteModali`) si montano solo quando il sito è `pronto`
-   - quando il sito è pronto rilancia `ScrollTrigger.refresh()`; se l’indirizzo è `/progetti/<slug>` (link diretto) porta la home sul portfolio, oltre la disposizione dell’anello, così l’anello è già formato
-3. **`src/router.tsx`**: `/` non disegna niente in più; `/progetti/:slug` carica il pannello (con `React.lazy`); qualsiasi altro indirizzo → `/`. la home resta sempre montata sotto. vedi [pannello](pannello.md).
+## avvio
 
-## preloader e caricamento
+1. `main.tsx`: `BrowserRouter` → `VoltoProvider` → `AvvioProvider` → `App` e stile globale.
+2. `App.tsx`: avvia scroll, monta le quattro sezioni, `LogoContinuo`, preloader, cursore e grana; `main` resta `aria-busy` fino a sito pronto.
+3. `caricamento.ts`: misura font, codice 3d, GLB V2 condivisa e prima copertina. Un errore non impedisce la fine del preloader. Il ramo movimento ridotto evita codice e asset 3d.
+4. `Preloader.tsx`: contatore e disegno, risveglio, passaggio all’header, riavvio scroll. Durate in `movimento.preloader`.
+5. A sito pronto: refresh delle misure e rotte modali; con link diretto a un progetto la home raggiunge la griglia finale su tutti i dispositivi.
 
-- `src/components/preloader/AvvioContext.tsx` tiene due cose: `pronto` (il preloader ha finito) e `voltoHeader`, il riferimento al contenitore del volto nell’header (la destinazione del volo).
-- `src/lib/caricamento.ts` misura il caricamento reale, con dei pesi: font (`document.fonts.ready`, peso 1), codice di three (`Volto3D`, peso 3), download di `volto.glb` letto a pezzi per avere la percentuale (peso 3), copertina del primo progetto (peso 1). se qualcosa fallisce il sito parte comunque.
-- `src/components/preloader/Preloader.tsx`:
-  - blocca lo scroll (`fermaScroll()`) e porta la pagina in cima (tranne con un link diretto a un progetto)
-  - a ogni fotogramma il contatore insegue il caricamento reale, ma non arriva a 100 prima della durata minima (1,6s) e ci arriva comunque entro la massima (6s): `movimento.preloader`
-  - il volto (occhi chiusi) si disegna con la stessa percentuale
-  - a 100: il volto passa a `naturale` e sbatte le palpebre, il contatore esce verso il basso, il volto vola sul volto dell’header (spostamento e scala verso `voltoHeader`)
-  - alla fine: `setPronto(true)`, scroll sbloccato, preloader rimosso; l’header fa salire le lettere del nome
-  - nella stessa sessione del browser (`sessionStorage`, chiave `ab-visitato`) la durata minima scende a 0,8s e il volo è più corto
-  - con movimento ridotto: nessun volo, solo una dissolvenza di 0,2s
+## scena continua
 
-## scroll: lenis e gsap insieme
+`LogoContinuo.tsx` è un host fisso, senza rimontaggi tra sezioni. Il Canvas diventa visibile insieme al logo metallico nell’header. `Volto3D.tsx` compone volto, card, camera, fari e volume.
 
-- `src/lib/gsap.ts` registra una volta sola i plugin (`ScrollTrigger`, `SplitText`, `DrawSVGPlugin`, `MorphSVGPlugin`, `useGSAP`) e imposta `ScrollTrigger.config({ ignoreMobileResize: true })`. gsap si importa sempre da qui.
-- `src/lib/scroll.ts`:
-  - `avviaScroll()` crea l’unica istanza di lenis (`lerp` da `movimento.lenis`, `smoothWheel: true`, `syncTouch: false`: su touch lo scroll resta nativo), collega `lenis.on('scroll', ScrollTrigger.update)`, la fa avanzare con `gsap.ticker` e imposta `gsap.ticker.lagSmoothing(0)`
-  - con movimento ridotto lenis non viene creato: scroll nativo
-  - `fermaScroll()` / `riprendiScroll()`: fermano e riavviano lenis e aggiungono/tolgono la classe `scroll-fermo` su `html` (`overflow: hidden`), così lo scroll è bloccato anche senza lenis. li usano il preloader e il pannello
-  - `getLenis()` serve ad anello e app per gli scroll programmati (aggancio alla card, link diretto)
-  - `history.scrollRestoration = 'manual'`: al refresh il browser non riposiziona la pagina da solo
+| modulo | responsabilità |
+|---|---|
+| `modelloLogo.ts` | unica promessa GLB V2, Meshopt e cache condivisa |
+| `percorso.ts` | pose del logo e ancoraggi DOM tra le sezioni |
+| `cardImmersive.ts` | pose delle card e `fasiSpirale`, senza import Three.js nel bundle iniziale |
+| `scenaImmersiva.ts` | posizione/scala del logo e posizioni dei fari |
+| `CameraImmersiva.tsx` | orbita diagonale, campo lungo e ritorno frontale |
+| `CardNelloSpazio.tsx` | corpi/cornici/copertine e scambio con la griglia HTML |
+| `LuciTeatro.tsx` | tre fari V2 con inerzia e due tagli per le card |
+| `NebbiaVolumetrica.tsx` | composizione di scena e volume con profondità |
 
-## chi anima cosa
+Le timeline scrivono valori condivisi; R3F li legge nel ciclo di rendering. Gli SVG rimangono disponibili come riserva. [Ambiente 3d](ambiente-3d.md).
 
-regola del brief, rispettata nel codice:
+## scroll e layout
 
-- **gsap** comanda ciò che dipende dallo scroll (pin, scrub, timeline dell’header, anello, pila, chi sono), il disegno e il morph dei tratti del volto, il preloader, le transizioni del pannello.
-- **motion** comanda stati e micro-interazioni (inclinazione della card sotto il cursore, magnetismo, testi che rotolano, cursore, pulsanti dei contatti, immagini del pannello).
-- mai tutti e due sulla stessa proprietà dello stesso elemento: quando un elemento è mosso da gsap, la micro-interazione sta su un elemento interno. esempi: nell’anello gsap ruota il `li`, motion inclina il `div` dentro; nel cursore gsap sposta il contenitore, motion cambia la forma dentro; `Magnetico` anima solo `x`/`y` del suo involucro.
-- il volto 3d non viene toccato da gsap: gsap scrive dei numeri in un oggetto (`Controllo3D`) che la scena legge a ogni fotogramma.
+`lib/gsap.ts` registra i plugin. `lib/scroll.ts` crea Lenis, lo collega a ScrollTrigger e al ticker GSAP, gestisce blocco/ripresa e scroll programmati. Movimento ridotto: scroll nativo.
 
-## come si collegano le sezioni
+- Header: 400vh desktop/tablet, 300vh telefono.
+- Portfolio: si sovrappone all’ultimo schermo dell’header; spirale su tutti i dispositivi, campo lungo/distensione finale da 200vh, poi griglia in flusso normale. `Spirale.tsx` conserva l’id ScrollTrigger `portfolio-anello`, letto dai moduli di posa e dalle rotte.
+- Griglia: espansione singola, aggiornamento Lenis/ScrollTrigger dopo il cambiamento d’altezza, controlli non disponibili `inert`.
+- Biografia: pin solo quando il testo entra nello schermo; altrimenti flusso normale. Testo sopra il volume.
+- Contatti: logo fermo in posa/dimensione, espressioni vive; pulsanti e copyright sopra l’ambiente.
 
-- **header** (`src/sections/Header/Header.tsx`): sezione bloccata per 400vh (desktop) o 300vh (telefono). finisce con una sola card al centro dello schermo. vedi [animazioni](animazioni.md).
-- **header → portfolio**: con anello e pila la sezione portfolio ha un margine `-100svh`, quindi si sovrappone all’ultima schermata dell’header. resta invisibile (opacità 0, niente clic) finché lo scroll non arriva al suo inizio; in quel momento la card frontale del portfolio ha la stessa misura e posizione della card finale dell’header, e il passaggio non si vede. le misure comuni stanno in `src/sections/Header/misure.ts` (`CARTA`) e `src/sections/Portfolio/carta.ts`.
-- **portfolio**: `anello` da 768px in su, `pila` sotto i 768px, `griglia` con movimento ridotto (in quel caso niente sovrapposizione). cambiando modo le posizioni di scroll si ricalcolano.
-- **chi sono**: bloccato per 150vh da 768px di larghezza e 560px di altezza; sotto, niente pin.
-- **contatti**: ultima sezione, altezza minima uno schermo. la pagina finisce qui.
+GSAP e Motion non animano le stesse proprietà dello stesso elemento. Per esempio GSAP muove le pose della spirale, Motion espande le informazioni nella griglia finale.
 
-## /laboratorio (solo in sviluppo)
+## pannello e laboratorio
 
-`src/laboratorio/Laboratorio.tsx` si carica solo con `npm run dev` all’indirizzo `/laboratorio` (in `App.tsx` è dietro `import.meta.env.DEV`, quindi non entra nel sito pubblicato). serve a provare: stati del volto, disegno, dimensione, sguardo verso un bersaglio, azioni (battito, occhiolino, sorriso), volto 3d sovrapposto e forme del cursore.
+`router.tsx` carica il pannello con `React.lazy`. La home resta montata; il dialog ha scroll nativo e sfondo opaco. Ogni blocco si scarica soltanto se usato. [Pannello](pannello.md).
+
+`/laboratorio` è dietro `import.meta.env.DEV`: serve a provare stati, sguardo, azioni, volto 3d e cursore; non è pubblicato.

@@ -8,6 +8,7 @@ export async function copiaNegliAppunti(testo: string): Promise<boolean> {
   } catch {
     // si prova la soluzione di riserva
   }
+  const focus = document.activeElement
   const area = document.createElement('textarea')
   area.value = testo
   area.setAttribute('readonly', '')
@@ -21,5 +22,7 @@ export async function copiaNegliAppunti(testo: string): Promise<boolean> {
     riuscito = false
   }
   area.remove()
+  // La soluzione di riserva non deve portare il focus da tastiera fuori dal pulsante email.
+  if (focus instanceof HTMLElement && focus.isConnected) focus.focus({ preventScroll: true })
   return riuscito
 }

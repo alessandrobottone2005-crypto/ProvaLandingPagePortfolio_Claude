@@ -1,6 +1,6 @@
 # il volto
 
-il logo è un pittogramma del volto di alessandro: due lenti, una linea orizzontale che fa da ponte, un naso a “l”, palpebre ad arco con pupille, un sorriso. nel sito è sempre bianco su nero e sembra vivo.
+il logo è un pittogramma del volto di alessandro: due lenti, una linea orizzontale che fa da ponte, un naso a “l”, palpebre ad arco con pupille, un sorriso. Le prime fasi usano il segno bianco su nero; dalla fase 3d il modello metallico grezzo della V2 prende il suo posto e rimane protagonista.
 
 ## la geometria (`src/components/volto/geometria.ts`)
 
@@ -25,7 +25,7 @@ spessori: occhi 13.6, naso e ponte 15.3, sorriso 12.1 (`SPESSORE`).
 
 ## il componente `<Volto />` (`src/components/volto/Volto.tsx`)
 
-un solo componente svg, inserito nella pagina (non come immagine), riusato ovunque: preloader, header, firma sopra la foto, contatti, laboratorio.
+un solo componente svg, inserito nella pagina (non come immagine), usato nel preloader, nelle prime fasi dell’header, nel laboratorio e come riserva per movimento ridotto o WebGL assente.
 
 ### props
 
@@ -39,7 +39,7 @@ un solo componente svg, inserito nella pagina (non come immagine), riusato ovunq
 | `interattivo` | clic o tap → occhiolino (predefinito: sì) |
 | `filtro` | id di un filtro svg (l’header lo usa per il tratto “a matita”) |
 
-con un `ref` si ottengono dei comandi diretti: `disegna(p)`, `battito()`, `occhiolino()`, `sorridi()` e l’elemento `svg`. il preloader, il chi sono e i contatti disegnano il volto così, senza passare da react a ogni fotogramma.
+con un `ref` si ottengono dei comandi diretti: `disegna(p)`, `battito()`, `occhiolino()`, `sorridi()` e l’elemento `svg`. il preloader disegna il volto così, senza passare da react a ogni fotogramma.
 
 ### come si anima
 
@@ -73,22 +73,21 @@ in `Volto.tsx` le pupille si spostano verso il bersaglio con inerzia (0,6s), al 
 - su touch, mentre si scorre (e senza un `guarda`): guardano in basso
 - se c’è `guarda`: guardano quel punto o quell’elemento
 - altrimenti: il cursore o l’ultimo tocco
-- con movimento ridotto le pupille restano ferme
+- con movimento ridotto le pupille restano ferme; il cambio della preferenza è seguito in tempo reale
 
 dove si usa `guarda`: nell’header il volto ogni tanto guarda in basso (invito a scorrere); nei contatti guarda il pulsante sotto il mouse o con il focus.
 
-## il volto 3d
+## il volto 3d continuo
 
-- **file**: `public/volto/volto.glb` (circa 92 kb), ottenuto dal file fornito `sorgenti/Logo.glb` compresso con meshopt. è una sola mesh.
-- **`src/components/volto/Volto3D.tsx`**: un `<Canvas>` a tutto schermo dietro l’header. camera prospettica con campo visivo di 18°. a ogni fotogramma legge la posizione e la misura in pixel del volto svg dell’header e ci sovrappone il modello, alla stessa misura. il modello nel file è ruotato di qualche grado: il codice lo raddrizza e mette il fronte sul piano dell’svg. materiale bianco opaco (`#c9c5c0`, roughness 0.55).
-- gsap non tocca la scena: scrive quattro numeri in `Controllo3D` (`rotazione`, `scala`, `luce`, `inclinazione`) e la scena li legge. la luce direzionale scorre da sinistra a destra; il modello si inclina verso il cursore con inerzia.
-- `frameloop` è `always` solo quando l’header è attivo e oltre il 45% dello scroll, altrimenti `never` (il canvas non lavora). dpr massimo 1,5 su telefono, 2 su desktop.
-- se il 3d non si carica (rete, webgl assente), l’header continua a funzionare senza (`Senza3D` in `Header.tsx`).
-- **`src/components/volto/tre.ts`**: pezzi condivisi con il blocco `modello3d` del pannello, scritti con three puro:
-  - `useModello(url)` carica un `.glb` compresso con meshopt
-  - `precarica(url)` lo scarica in anticipo (lo usa il preloader tramite `precaricaModello()`)
-  - `<Luci />`: luce “da studio” fatta di tre pannelli luminosi fotografati una volta in una mappa a cubo, senza immagini hdr scaricate da internet
-- il codice di three e `Volto3D` si scaricano a parte, durante il preloader.
+- `LogoContinuo.tsx` monta un unico Canvas fisso per tutta la home. `Volto3D.tsx` usa il modello Blender `public/volto/logo-metallo-v2.glb` (circa 872 kB), con nove mesh separate, shape key e materiale PBR metallico grezzo.
+- sorgenti, script Python e animazioni originali sono conservati in `sorgenti/logo-3d/`. Il vecchio `volto.glb` è conservato in `sorgenti/logo-3d/legacy/`, fuori dagli asset pubblicati.
+- `modelloLogo.ts` condivide una sola promessa di caricamento fra preloader, home e laboratorio: GLB Meshopt V2 con texture WebP incorporate. Il preloader misura i byte ricevuti. In caso di errore il sito parte con il volto SVG di riserva. Con movimento ridotto non scarica modello o scena 3D. La home V2 non usa HDRI.
+- ogni istanza clona la gerarchia e i pesi morph, condividendo geometrie, materiali e texture. Le risorse in cache non vengono eliminate allo smontaggio del Canvas.
+- le timeline GSAP scrivono in `percorso.ts`; posizione e scala seguono gli ancoraggi DOM: header → centro spirale → lato della griglia → sinistra della biografia → centro dei contatti. La posa neutra del modello viene centrata e misurata senza includere le deformazioni dei morph.
+- il sito pilota direttamente le shape key Blender: `chiusura` di palpebre e pupille, `sorriso_ampio` della bocca. Gli oggetti `sguardo_sx/dx` seguono puntatore, tocco e pulsanti dei contatti. Sonno e risveglio seguono `VoltoContext`; battiti casuali, occhiolino al tocco, sorriso alla copia email e leggero respiro durante il sonno. Le clip dimostrative rimangono nel file sorgente; il runtime combina le forme con gli eventi reali.
+- materiale e mappe vengono mantenuti dal GLB; tre luci d’area dalla V2, volume in movimento e camera guidata dallo scroll. Camera neutra FOV 18°, fino a 42° nella spirale; DPR massimo 1,5 su desktop e mobile. Vedi `ambiente-3d.md`.
+- Canvas su `demand`: disegna soltanto con logo visibile e scheda attiva. `ScenaProtetta` mantiene il fallback SVG; con movimento ridotto gli SVG restano statici nelle sezioni.
+- texture derivate da ambientCG Metal032 CC0; la precedente HDRI Poly Haven Studio Small 08 resta in `sorgenti/logo-3d/textures/` e non viene caricata dalla home; crediti in `public/volto/crediti.txt`.
 
 ## favicon
 

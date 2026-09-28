@@ -1,62 +1,70 @@
 # pubblicazione
 
-## come funziona
+## repository e ambiente
 
-- **github**: il codice sta nel repository https://github.com/alessandrobottone2005-crypto/ProvaLandingPagePortfolio_Claude
-- **vercel**: il repository è collegato a vercel (collegamento in fase di configurazione). ogni push sul ramo `main` fa partire da solo una nuova pubblicazione su https://provalandingpageportfolio-claude.vercel.app, di solito in un paio di minuti
-- vercel riconosce un progetto vite: esegue `npm run build` e pubblica la cartella `dist/`
+- [Repository GitHub](https://github.com/alessandrobottone2005-crypto/ProvaLandingPagePortfolio_Claude).
+- Progetto Vercel: `provalandingpageportfolio-claude`, team ABDesign (`abd-esign1`), Vite e Node 24.
+- [Dominio di produzione](https://provalandingpageportfolio-claude.vercel.app).
+- Branch della manutenzione del 29 settembre 2026: `codex/manutenzione-portfolio-3d`.
 
-in pratica: modifichi in locale → controlli con `npm run dev` → commit → push su `main` → il sito si aggiorna.
+L’utente ha autorizzato creazione/push del branch e deploy in produzione. **Questa pubblicazione viene preparata dal branch di manutenzione; non comporta un merge in `main`.** Un successivo deploy da `main` deve includere queste modifiche, altrimenti può riportare online il codice precedente.
 
-## la build
+## stato della manutenzione corrente
 
-`npm run build` = `tsc -b && vite build`:
+| voce | stato |
+|---|---|
+| branch locale | `codex/manutenzione-portfolio-3d` |
+| commit pubblicato e push GitHub | da registrare dopo conferma |
+| deploy production e URL della versione | in preparazione; non ancora confermati |
+| verifica online | da registrare dopo il deploy |
 
-1. controlla il typescript
-2. il plugin `controlla-progetti` (`vite.config.ts`) controlla tutti i progetti: se manca un file o un campo la build si ferma con un messaggio in italiano, e su vercel la pubblicazione non parte (resta online la versione precedente)
-3. vite prepara il sito in `dist/`
+Il dominio sopra è l’indirizzo stabile del progetto, non la prova che il nuovo deploy sia già online. URL immutabile della versione, commit ed esito dei controlli vanno aggiornati solo dopo la pubblicazione riuscita.
 
-per vedere in locale il sito esattamente come sarà pubblicato: `npm run build`, poi `npm run preview`.
+## build e deploy
 
-## `vercel.json`
-
-```json
-{ "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }] }
+```sh
+npm ci
+npm run lint
+npm run build
+npm run preview
 ```
 
-tutti gli indirizzi rimandano a `index.html`: senza questa regola, aprendo o ricaricando direttamente `/progetti/<slug>` vercel risponderebbe “pagina non trovata”. i file che esistono davvero (immagini, script, `og.png`…) vengono serviti normalmente.
+La build esegue TypeScript, il plugin di validazione progetti e Vite. Se un file/campo manca, si ferma con un messaggio italiano. L’output è `dist/`; il sito pubblica codice e asset runtime, non le cartelle di lavoro.
 
-## anteprima quando il sito viene condiviso
+Prima del deploy controllare header, spirale/campo lungo/griglia, card espansa, pannello, link diretto, contatti e movimento ridotto. Dopo commit e push del branch, il progetto locale già collegato può essere pubblicato in produzione con la CLI Vercel (`vercel --prod`). Controllare che il target sia il progetto corretto e annotare l’URL della versione restituita. La CLI aggiorna l’alias pubblico; non modifica né unisce il branch GitHub.
 
-- in `index.html`: `description`, meta open graph (`og:title`, `og:description`, `og:image` 1200×630 con testo alternativo) e `twitter:card`.
-- `public/og.png` si crea con `npm run genera-og` (`scripts/genera-og.mjs`): volto al centro, “alessandro” in alto a sinistra, “bottone” in basso a destra, su nero, dalla stessa geometria del volto. serve il font outfit installato sul computer (`Outfit-VariableFont_wght.ttf` in `~/Library/Fonts` o `/Library/Fonts`).
-- **da fare dopo la pubblicazione**: `og:image` oggi è `/og.png`; molti social vogliono l’indirizzo completo. va cambiato in `https://provalandingpageportfolio-claude.vercel.app/og.png` (o nel dominio definitivo).
-- se cambi `sito.descrizione` in `src/config/sito.ts`, aggiorna a mano anche le due descrizioni in `index.html`.
+Il push di un branch può generare una preview se l’integrazione Git è attiva. Una preview e un deploy production sono distinti: verificare il target di ogni pubblicazione. Per altre pubblicazioni serve l’autorizzazione prevista nel [brief operativo](../CLAUDE.md).
 
-## `robots.txt`
+## rotte e asset
 
-`public/robots.txt` permette a tutti i motori di ricerca di leggere tutto il sito.
+`vercel.json` rimanda le rotte della SPA a `index.html`, mantenendo accessibili gli asset reali. Aprire e ricaricare `/progetti/<slug>` deve caricare la home sulla griglia finale e il pannello, anche con movimento ridotto.
 
-## cosa non va su github (`.gitignore`)
+`index.html` contiene descrizione, Open Graph e Twitter Card. `og:url` e `og:image` sono già assoluti sul dominio Vercel. Se cambia dominio aggiornare entrambi; se cambia `sito.descrizione`, aggiornare anche le descrizioni HTML. `npm run genera-og` produce `public/og.png` 1200×630 e richiede Outfit TTF installato. `public/robots.txt` permette l’indicizzazione.
 
-| cosa | perché |
-|---|---|
-| `._*` | file nascosti che macos crea sui dischi esterni (exfat), come quello del progetto |
-| `node_modules` | le librerie: si reinstallano con `npm install` |
-| `dist`, `dist-ssr` | il sito preparato: lo ricrea vercel a ogni pubblicazione |
-| `.env`, `.env.*` (tranne `.env.example`) | chiavi e segreti |
-| `.mcp.json` | configurazione degli strumenti di claude code (contiene chiavi personali, es. 21st.dev) |
-| `.claude/settings.local.json` | preferenze locali di claude code |
-| `.vercel` | collegamento locale a vercel |
-| `*.local`, log, `.DS_Store`, cartelle degli editor | file del computer, non del sito |
+## file conservati e file pubblicati
 
-## checklist prima di pubblicare
+| posizione | GitHub | sito/deploy |
+|---|---|---|
+| `src/`, configurazioni, lockfile | sì | codice di build e asset importati |
+| `public/` | sì | tutti i file della cartella: solo asset necessari |
+| `sorgenti/`, scene Blender, texture, render finiti | sì | esclusi dall’upload CLI con `.vercelignore` |
+| `docs/`, README e brief | sì | esclusi dall’upload CLI |
+| foto originali e `_originali/` dei progetti | conservati | esclusi dall’upload CLI se non importati |
+| frame PNG rigenerabili | no | rimossi; rigenerabili dagli script Blender |
+| `*.blend1` e altri backup numerati | sul disco, ignorati Git | esclusi |
+| `.env*`, `.mcp.json`, impostazioni locali, `.vercel` | esclusi | chiavi/configurazioni locali non pubblicate |
+| `node_modules`, `dist`, log, `._*` | esclusi | output ricreati, cache e metadati non caricati |
 
-- [ ] i progetti veri sono in `src/content/progetti/` e i dieci `segnaposto-01` … `segnaposto-10` sono stati cancellati (o messi con `"pubblicato": false`)
-- [ ] `npm run prepara-progetti` finisce con “tutto a posto”
-- [ ] `npm run build` finisce senza errori
-- [ ] controllato con `npm run preview`: header, anello, apertura e chiusura di un progetto, link diretto a `/progetti/<slug>`, email copiata
-- [ ] testi, link ed email giusti in `src/config/sito.ts`
-- [ ] foto e posizione della firma giuste (`src/config/foto.ts`)
-- [ ] niente maiuscole nei testi nuovi
-- [ ] dopo la prima pubblicazione: `og:image` con l’indirizzo completo, prova su safari ios e chrome android veri, lighthouse (mobile) sul sito online
+`.gitignore` governa Git; `.vercelignore` governa l’upload della CLI. Un file incluso nel repository pubblico è consultabile su GitHub anche quando non fa parte del sito. `pubblicato: false` nasconde una card, non costituisce accesso riservato ai suoi file.
+
+## checklist di rilascio
+
+- [ ] branch/commit e progetto Vercel corretti, nessun merge non richiesto
+- [ ] lint e build completati, lockfile coerente e validazione dei progetti superata
+- [ ] comportamento desktop/tablet/telefono, scroll inverso, card e dialog verificati
+- [ ] link diretto e refresh della rotta verificati nella build e online
+- [ ] fallback SVG/DOM e cambio movimento ridotto verificati
+- [ ] testi, link, email, nome fisso, copyright e asset social controllati
+- [ ] pubblicazione riuscita, URL immutabile e commit annotati sopra
+- [ ] contenuti segnaposto dichiarati: i venti attuali restano pubblicati finché non vengono sostituiti
+- [ ] misure Lighthouse e prova su Safari iOS/Chrome Android fisici ripetute quando disponibili

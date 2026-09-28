@@ -1,26 +1,23 @@
-// sezione portfolio (claude.md §6.3–6.4): anello su desktop e tablet, pila su mobile,
-// griglia a due colonne con movimento ridotto.
-// con l’anello e la pila la sezione si sovrappone all’ultima schermata dell’header (margine negativo):
-// così la card finale dell’header diventa, senza stacchi, la prima card del portfolio.
+// Spirale su desktop, tablet e mobile; griglia immediata con movimento ridotto.
+// La sovrapposizione mantiene il logo al centro nel passaggio dall’header.
 import { useEffect, useRef, useState } from 'react'
 import { media } from '@/config/movimento'
 import { sito } from '@/config/sito'
 import { gsap, ScrollTrigger, useGSAP } from '@/lib/gsap'
-import { Anello } from './Anello'
+import { Spirale } from './Spirale'
 import { Griglia } from './Griglia'
-import { Pila } from './Pila'
 
-type Modo = 'anello' | 'pila' | 'griglia'
+type Modo = 'spirale' | 'griglia'
 
-const calcolaModo = (): Modo => (matchMedia(media.ridotto).matches ? 'griglia' : matchMedia(media.anello).matches ? 'anello' : 'pila')
+const calcolaModo = (): Modo => (matchMedia(media.ridotto).matches ? 'griglia' : 'spirale')
 
 function useModo() {
   const [modo, setModo] = useState<Modo>(calcolaModo)
   useEffect(() => {
-    const code = [matchMedia(media.ridotto), matchMedia(media.anello)]
+    const preferenza = matchMedia(media.ridotto)
     const cambia = () => setModo(calcolaModo())
-    code.forEach((mq) => mq.addEventListener('change', cambia))
-    return () => code.forEach((mq) => mq.removeEventListener('change', cambia))
+    preferenza.addEventListener('change', cambia)
+    return () => preferenza.removeEventListener('change', cambia)
   }, [])
   return modo
 }
@@ -55,7 +52,7 @@ export function Portfolio() {
     { dependencies: [modo], revertOnUpdate: true },
   )
 
-  // cambiando modo (rotazione del tablet, preferenze) le posizioni di scroll vanno ricalcolate
+  // Cambiando la preferenza di movimento, le posizioni di scroll vanno ricalcolate.
   useEffect(() => {
     const id = requestAnimationFrame(() => ScrollTrigger.refresh())
     return () => cancelAnimationFrame(id)
@@ -71,9 +68,8 @@ export function Portfolio() {
       <h2 id="titolo-portfolio" className="sr-only">
         {sito.sezioni.portfolio}
       </h2>
-      <div ref={contenuto} className={sovrapposto ? 'bg-nero' : ''} style={sovrapposto ? { opacity: 0, pointerEvents: 'none' } : undefined}>
-        {modo === 'anello' && <Anello />}
-        {modo === 'pila' && <Pila />}
+      <div ref={contenuto} style={sovrapposto ? { opacity: 0, pointerEvents: 'none' } : undefined}>
+        {modo === 'spirale' && <Spirale />}
         {modo === 'griglia' && <Griglia />}
       </div>
     </section>

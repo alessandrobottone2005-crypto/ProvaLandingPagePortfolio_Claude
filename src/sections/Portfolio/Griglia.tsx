@@ -1,32 +1,46 @@
-// portfolio con movimento ridotto (claude.md §12): l’anello diventa una griglia a due colonne,
-// senza pin né scrub. le card sono tutte a colori.
-import { Link } from 'react-router'
+// Griglia in flusso normale dopo la spirale; subito visibile con movimento ridotto.
+import { useEffect, useRef, useState } from 'react'
+import { ScrollTrigger } from '@/lib/gsap'
 import { progetti } from '@/lib/progetti'
-import { testoCard, useApriProgetto } from './carta'
-import { Copertina } from './Copertina'
+import { getLenis } from '@/lib/scroll'
+import { CardProgetto } from './CardProgetto'
 
-export function Griglia() {
-  const apri = useApriProgetto()
+type Props = {
+  abilitata?: boolean
+  aperta?: string | null
+  onAperta?: (slug: string | null) => void
+}
+
+export function Griglia({ abilitata = true, aperta, onAperta }: Props) {
+  const [interna, setInterna] = useState<string | null>(null)
+  const selezionata = aperta === undefined ? interna : aperta
+  const scegli = onAperta ?? setInterna
+  const frame = useRef(0)
+  const aggiornaDimensioni = () => {
+    cancelAnimationFrame(frame.current)
+    frame.current = requestAnimationFrame(() => {
+      const focus = document.activeElement instanceof HTMLElement ? document.activeElement : null
+      getLenis()?.resize()
+      ScrollTrigger.refresh()
+      // Il refresh del pin reinserisce il palco nel DOM e può perdere il focus della tastiera.
+      if (focus && focus !== document.body && focus.isConnected && !focus.closest('[inert]')) focus.focus({ preventScroll: true })
+    })
+  }
+
+  useEffect(() => () => cancelAnimationFrame(frame.current), [])
+
   return (
-    <ul className="mx-auto grid max-w-6xl grid-cols-2 gap-x-4 gap-y-8 px-4 py-24 md:gap-x-8 md:px-8">
+    <ul data-griglia-progetti inert={!abilitata} aria-hidden={!abilitata} className="portfolio-griglia">
       {progetti.map((p, i) => (
         <li key={p.slug}>
-          {/* movimento ridotto: gli stati sono solo dissolvenze (passaggio e focus: copertina più tenue; premuto: ancora di più) */}
-          <Link to={`/progetti/${p.slug}`} data-card-slug={p.slug} onClick={(e) => apri(e, p.slug, e.currentTarget)} className="group block rounded-card">
-            <span className="relative block aspect-4/5 overflow-hidden rounded-card border border-grigio bg-nero">
-              <span className="absolute inset-0 block transition-opacity duration-200 group-hover:opacity-80 group-focus-visible:opacity-80 group-active:opacity-60">
-                <Copertina progetto={p} prima={i === 0} sizes="50vw" />
-              </span>
-            </span>
-            <span aria-hidden="true" className="flex min-h-12 flex-wrap items-baseline justify-between gap-x-3 pt-3 text-etichetta cifre-tabellari">
-              <span>{p.titolo}</span>
-              <span className="flex gap-3">
-                <span>{p.discipline.join(', ')}</span>
-                <span>{p.anno}</span>
-              </span>
-            </span>
-            <span className="sr-only">{testoCard(p)}</span>
-          </Link>
+          <CardProgetto
+            progetto={p}
+            prima={i === 0}
+            aperta={abilitata && selezionata === p.slug}
+            onToggle={() => scegli(selezionata === p.slug ? null : p.slug)}
+            onChiudi={() => scegli(null)}
+            onDimensioni={aggiornaDimensioni}
+          />
         </li>
       ))}
     </ul>

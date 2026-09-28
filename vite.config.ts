@@ -63,6 +63,7 @@ export default defineConfig({
       '@react-three/drei/core/ContactShadows',
       'three/examples/jsm/loaders/GLTFLoader.js',
       'three/examples/jsm/libs/meshopt_decoder.module.js',
+      'three/examples/jsm/utils/BufferGeometryUtils.js',
     ],
   },
   build: {

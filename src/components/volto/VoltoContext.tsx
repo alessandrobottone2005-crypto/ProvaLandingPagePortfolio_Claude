@@ -1,7 +1,7 @@
 // umore globale dei volti: si addormentano dopo un po’ senza input, si svegliano al primo movimento,
 // dormono quando la scheda del browser non è attiva (con titolo e favicon “addormentati”).
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
-import { movimento } from '@/config/movimento'
+import { media, movimento } from '@/config/movimento'
 import { sito } from '@/config/sito'
 import { avviaSguardo } from './sguardo'
 
@@ -10,6 +10,7 @@ export type Azione = 'battito' | 'occhiolino' | 'sorriso'
 
 type Valore = {
   umore: Umore
+  ridotto: boolean
   setUmore: (u: Umore) => void
   /** fa compiere un’azione a tutti i volti visibili */
   azione: (a: Azione) => void
@@ -28,6 +29,7 @@ function impostaFavicon(href: string) {
 
 export function VoltoProvider({ children }: { children: ReactNode }) {
   const [umore, setUmoreState] = useState<Umore>('naturale')
+  const [ridotto, setRidotto] = useState(() => matchMedia(media.ridotto).matches)
   const umoreRef = useRef(umore)
   const ascoltatori = useRef(new Set<(a: Azione) => void>())
 
@@ -43,6 +45,12 @@ export function VoltoProvider({ children }: { children: ReactNode }) {
   }, [])
 
   useEffect(() => avviaSguardo(), [])
+  useEffect(() => {
+    const mq = matchMedia(media.ridotto)
+    const aggiorna = () => setRidotto(mq.matches)
+    mq.addEventListener('change', aggiorna)
+    return () => mq.removeEventListener('change', aggiorna)
+  }, [])
 
   // risveglio: prima si aprono gli occhi, poi il battito. il battito va chiesto quando i volti
   // hanno già ricevuto il nuovo umore (subito dopo, li troverebbe ancora addormentati e lo ignorerebbero)
@@ -57,7 +65,8 @@ export function VoltoProvider({ children }: { children: ReactNode }) {
   // sonno dopo qualche secondo senza input; al primo movimento si sveglia con un battito
   useEffect(() => {
     let timer = 0
-    let ultimo = 0
+    // Anche il primo input deve armare il timer, prima dei 250 ms di attività.
+    let ultimo = -Infinity
     const addormenta = () => setUmore('dorme')
     const input = () => {
       const ora = performance.now()
@@ -95,7 +104,7 @@ export function VoltoProvider({ children }: { children: ReactNode }) {
     return () => document.removeEventListener('visibilitychange', cambia)
   }, [sveglia, setUmore])
 
-  const valore = useMemo(() => ({ umore, setUmore, azione, ascoltaAzioni }), [umore, setUmore, azione, ascoltaAzioni])
+  const valore = useMemo(() => ({ umore, ridotto, setUmore, azione, ascoltaAzioni }), [umore, ridotto, setUmore, azione, ascoltaAzioni])
   return <Contesto.Provider value={valore}>{children}</Contesto.Provider>
 }
 

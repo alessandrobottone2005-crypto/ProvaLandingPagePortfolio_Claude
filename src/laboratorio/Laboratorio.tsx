@@ -1,6 +1,9 @@
 // pagina di prova, solo in sviluppo (/laboratorio): stati e animazioni del volto e del cursore.
 // non finisce nel sito pubblicato.
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
+import { Bottone } from '@/components/bottoni/Bottone'
+import { BottoneIcona } from '@/components/bottoni/BottoneIcona'
+import { Icona, type TipoIcona } from '@/components/icone/Icona'
 import type { Controllo3D } from '@/components/volto/Volto3D'
 import { Volto, type ManigliaVolto, type StatoVolto } from '@/components/volto/Volto'
 import { useVolto } from '@/components/volto/VoltoContext'
@@ -11,12 +14,16 @@ const Volto3D = lazy(() => import('@/components/volto/Volto3D'))
 const STATI: (StatoVolto | 'automatico')[] = ['automatico', 'dorme', 'naturale', 'sveglio', 'occhiolino', 'sorride']
 const CURSORI = ['apri', 'sfoglia', 'ruota', 'play', 'pausa', 'chiudi', 'tieni premuto']
 
+const MISURE = ['small', 'medium', 'big'] as const
+const ICONE: TipoIcona[] = ['instagram', 'behance', 'email', 'linkedin']
+
 const pulsante = 'min-h-12 rounded-pillola border border-grigio px-5 text-etichetta transition-colors hover:border-bianco'
 const attivo = 'bg-bianco text-nero border-bianco'
 
 export default function Laboratorio() {
   const { umore, azione } = useVolto()
   const volto = useRef<ManigliaVolto>(null)
+  const disegnoAnimato = useRef<gsap.core.Tween | null>(null)
   const bersaglio = useRef<HTMLDivElement>(null)
   const [stato, setStato] = useState<StatoVolto | 'automatico'>('automatico')
   const [disegno, setDisegno] = useState(1)
@@ -29,6 +36,9 @@ export default function Laboratorio() {
   useEffect(() => {
     controllo.current.rotazione = rotazione
   }, [rotazione])
+  useEffect(() => () => {
+    disegnoAnimato.current?.kill()
+  }, [])
 
   return (
     <main className="min-h-svh px-4 py-8 md:px-8">
@@ -38,7 +48,7 @@ export default function Laboratorio() {
         {vista3d !== 'no' && (
           <div className="pointer-events-none fixed inset-0 z-0">
             <Suspense fallback={null}>
-              <Volto3D riferimento={riquadro} controllo={controllo} attivo mobile={false} />
+              <Volto3D riferimento={riquadro} controllo={controllo} attivo />
             </Suspense>
           </div>
         )}
@@ -91,8 +101,9 @@ export default function Laboratorio() {
             className={pulsante}
             onClick={() => {
               // disegno animato da 0 a 1, come nel preloader
+              disegnoAnimato.current?.kill()
               const p = { v: 0 }
-              gsap.to(p, { v: 1, duration: 2.4, ease: 'power1.inOut', onUpdate: () => volto.current?.disegna(p.v), onComplete: () => setDisegno(1) })
+              disegnoAnimato.current = gsap.to(p, { v: 1, duration: 2.4, ease: 'power1.inOut', onUpdate: () => volto.current?.disegna(p.v), onComplete: () => setDisegno(1) })
             }}
           >
             ridisegna
@@ -155,6 +166,29 @@ export default function Laboratorio() {
           </p>
         </div>
       </div>
+      {/* bottoni e icone di figma: passa sopra (overlay), tieni premuto (active); l’ultima riga è disabled */}
+      <section className="relative z-10 mt-16 flex flex-col gap-8">
+        <h2 className="text-etichetta text-grigio">bottoni (figma: button_atoms, icon button_atoms, iconset_atoms)</h2>
+        {[false, true].map((disattivato) => (
+          <div key={String(disattivato)} className="flex flex-wrap items-center gap-6">
+            {MISURE.map((m) => (
+              <Bottone key={m} testo="button" dimensione={m} disattivato={disattivato} onClick={() => {}} />
+            ))}
+            {MISURE.map((m) => (
+              <BottoneIcona key={m} icona="linkedin" etichetta="linkedin" dimensione={m} disattivato={disattivato} onClick={() => {}} />
+            ))}
+          </div>
+        ))}
+        <div className="flex flex-col gap-4 text-bianco">
+          {([16, 20, 24] as const).map((misura) => (
+            <div key={misura} className="flex items-center gap-6">
+              {ICONE.map((tipo) => (
+                <Icona key={tipo} tipo={tipo} misura={misura} />
+              ))}
+            </div>
+          ))}
+        </div>
+      </section>
     </main>
   )
 }

@@ -1,136 +1,217 @@
-// il volto in 3d, sovrapposto al volto svg dell’header (claude.md §6.2).
-// questo file (e three.js) si scarica a parte, durante il preloader.
-// gsap non tocca la scena: scrive dei numeri in `controllo`, che la scena legge a ogni fotogramma.
+// Modello Blender con materiale PBR e shape key, condiviso lungo tutto il percorso.
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { useMemo, useRef, type RefObject } from 'react'
+import { Suspense, use, useEffect, useMemo, useRef, type RefObject } from 'react'
 import * as THREE from 'three'
+import { APERTURA, SGUARDO_MAX } from './geometria'
+import { leggiPosa, percorso } from './percorso'
 import { sguardo } from './sguardo'
-import { Luci, precarica, useModello } from './tre'
+import { caricaLogo } from './modelloLogo'
+import { useVolto } from './VoltoContext'
+import { gsap } from '@/lib/gsap'
+import { movimento } from '@/config/movimento'
+import { LuciTeatro } from './LuciTeatro'
+import { CameraImmersiva } from './CameraImmersiva'
+import { CardNelloSpazio } from './CardNelloSpazio'
+import { NebbiaVolumetrica } from './NebbiaVolumetrica'
+import { scenaImmersiva } from './scenaImmersiva'
 
-export const URL_MODELLO = '/volto/volto.glb'
-
-/** larghezza e altezza del contenuto del logo nell’svg (vedi geometria.ts) */
-const LOGO_SVG = { larghezza: 247.41, altezza: 176.88 }
-const FOV = 18
-const DISTANZA = 20
-
-export type Controllo3D = {
-  /** rotazione della camera attorno al volto, in gradi (fase 3d: ≈ 35) */
-  rotazione: number
-  /** 1 = stessa misura del volto svg; meno di 1 = la camera arretra */
-  scala: number
-  /** posizione della luce che scorre, da 0 a 1 */
-  luce: number
-  /** quanto il modello si inclina verso il cursore, da 0 a 1 */
-  inclinazione: number
+function morph(mesh: THREE.Mesh, nome: string, valore: number) {
+  const indice = mesh.morphTargetDictionary?.[nome]
+  if (indice !== undefined && mesh.morphTargetInfluences) mesh.morphTargetInfluences[indice] = valore
 }
 
+export type Controllo3D = { rotazione: number; scala: number; luce: number; inclinazione: number }
 type Props = {
-  /** l’elemento svg con cui il modello deve coincidere */
-  riferimento: RefObject<Element | null>
-  controllo: RefObject<Controllo3D>
-  attivo: boolean
-  mobile: boolean
+  riferimento?: RefObject<Element | null>
+  controllo?: RefObject<Controllo3D>
+  attivo?: boolean
 }
 
-export default function Volto3D({ riferimento, controllo, attivo, mobile }: Props) {
+export default function Volto3D({ riferimento, controllo, attivo = true }: Props) {
+  const risorse = use(caricaLogo())
   return (
     <Canvas
-      frameloop={attivo ? 'always' : 'never'}
-      dpr={[1, mobile ? 1.5 : 2]}
-      camera={{ fov: FOV, position: [0, 0, DISTANZA], near: 1, far: 60 }}
-      gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
+      frameloop="demand"
+      dpr={[1, 1.5]}
+      camera={{ fov: 18, position: [0, 0, 20], near: 1, far: 60 }}
+      gl={{ antialias: true, alpha: true, toneMapping: THREE.AgXToneMapping }}
       style={{ pointerEvents: 'none' }}
       aria-hidden="true"
     >
-      <Luci risoluzione={mobile ? 64 : 128} />
-      <ambientLight intensity={0.15} />
-      <Modello riferimento={riferimento} controllo={controllo} />
+      <LuciTeatro />
+      {!riferimento && <CameraImmersiva />}
+      {!riferimento && <Suspense fallback={null}><CardNelloSpazio /></Suspense>}
+      <NebbiaVolumetrica />
+      <RenderVisibile attivo={attivo} laboratorio={Boolean(riferimento)} />
+      <VoltoAnimato riferimento={riferimento} controllo={controllo} modello={risorse.modello.scene} />
     </Canvas>
   )
 }
 
-function Modello({ riferimento, controllo }: Pick<Props, 'riferimento' | 'controllo'>) {
-  const { scene } = useModello(URL_MODELLO)
-  const gruppo = useRef<THREE.Group>(null)
-  const luce = useRef<THREE.DirectionalLight>(null)
-  const inclinazione = useRef({ x: 0, y: 0 })
-  const { camera, size } = useThree()
-
-  // una sola geometria, centrata e girata esattamente verso la camera
-  const { geometria, misure } = useMemo(() => {
-    scene.updateMatrixWorld(true)
-    let mesh: THREE.Mesh | undefined
-    scene.traverse((o) => {
-      if (!mesh && (o as THREE.Mesh).isMesh) mesh = o as THREE.Mesh
-    })
-    if (!mesh) throw new Error('volto.glb: nessuna mesh trovata')
-    // il file compresso salva le coordinate come interi: le riporto a numeri decimali prima di trasformarle
-    const g = new THREE.BufferGeometry()
-    g.setIndex(mesh.geometry.index)
-    for (const nome of ['position', 'normal'] as const) {
-      const a = mesh.geometry.getAttribute(nome)
-      const valori = new Float32Array(a.count * 3)
-      for (let i = 0; i < a.count; i++) valori.set([a.getX(i), a.getY(i), a.getZ(i)], i * 3)
-      g.setAttribute(nome, new THREE.BufferAttribute(valori, 3))
+// La scena resta viva per sguardo e battiti, ma non disegna prima del passaggio al 3d o in background.
+function RenderVisibile({ attivo, laboratorio }: { attivo: boolean; laboratorio: boolean }) {
+  const invalidate = useThree((s) => s.invalidate)
+  useEffect(() => {
+    let visibile = false
+    const tick = () => {
+      const ora = attivo && !document.hidden && (laboratorio || percorso.header.opacity > 0.001)
+      if (ora || ora !== visibile) invalidate()
+      visibile = ora
     }
-    g.applyMatrix4(mesh.matrixWorld)
-    g.normalizeNormals()
-    // nel file il modello è ruotato di qualche grado: lo raddrizzo
-    const asseX = new THREE.Vector3(1, 0, 0).transformDirection(mesh.matrixWorld)
-    g.rotateY(-Math.atan2(-asseX.z, asseX.x))
-    g.computeBoundingBox()
-    const box = g.boundingBox!
-    const centro = box.getCenter(new THREE.Vector3())
-    const dim = box.getSize(new THREE.Vector3())
-    // il fronte del modello sta sul piano z = 0, come l’svg
-    g.translate(-centro.x, -centro.y, -box.max.z)
-    return { geometria: g, misure: dim }
-  }, [scene])
-
-  const materiale = useMemo(() => new THREE.MeshStandardMaterial({ color: '#c9c5c0', roughness: 0.55, metalness: 0 }), [])
-
-  useFrame((_, delta) => {
-    const g = gruppo.current
-    const el = riferimento.current
-    const c = controllo.current
-    if (!g || !el || !c) return
-
-    // misura in pixel del volto svg → unità della scena sul piano z = 0
-    const r = el.getBoundingClientRect()
-    const unitaPerPixel = (2 * DISTANZA * Math.tan(THREE.MathUtils.degToRad(FOV / 2))) / size.height
-    const scalaBase = (r.width * unitaPerPixel) / misure.x
-    const pxPerSvg = r.width / LOGO_SVG.larghezza
-    const centroX = r.left + r.width / 2
-    const centroY = r.top + ((misure.y / misure.x) * LOGO_SVG.larghezza * pxPerSvg) / 2
-    g.position.set((centroX - size.width / 2) * unitaPerPixel, -(centroY - size.height / 2) * unitaPerPixel, 0)
-    g.scale.setScalar(scalaBase * c.scala)
-
-    // si inclina verso il cursore, con inerzia
-    const p = sguardo.get().punto
-    const tx = p ? (p.y / size.height - 0.5) * 0.35 * c.inclinazione : 0
-    const ty = p ? (p.x / size.width - 0.5) * 0.5 * c.inclinazione : 0
-    inclinazione.current.x = THREE.MathUtils.damp(inclinazione.current.x, tx, 4, delta)
-    inclinazione.current.y = THREE.MathUtils.damp(inclinazione.current.y, ty, 4, delta)
-    g.rotation.set(inclinazione.current.x, THREE.MathUtils.degToRad(c.rotazione) + inclinazione.current.y, 0)
-
-    // la luce scorre da sinistra a destra sulla superficie
-    if (luce.current) luce.current.position.set(THREE.MathUtils.lerp(-8, 8, c.luce), 3, 6)
-    camera.lookAt(0, 0, 0)
-  })
-
-  return (
-    <>
-      <directionalLight ref={luce} intensity={1.6} position={[-8, 3, 6]} />
-      <group ref={gruppo}>
-        <mesh geometry={geometria} material={materiale} />
-      </group>
-    </>
-  )
+    gsap.ticker.add(tick)
+    return () => gsap.ticker.remove(tick)
+  }, [attivo, laboratorio, invalidate])
+  return null
 }
 
-// scarica il modello in anticipo (chiamato dal preloader)
-// eslint-disable-next-line react-refresh/only-export-components
-export function precaricaModello() {
-  precarica(URL_MODELLO)
+function VoltoAnimato({
+  riferimento,
+  controllo,
+  modello,
+}: Pick<Props, 'riferimento' | 'controllo'> & { modello: THREE.Group }) {
+  const { umore, ascoltaAzioni } = useVolto()
+  const gruppo = useRef<THREE.Group>(null)
+  const { camera, size } = useThree()
+  const azioni = useRef({ battito: -10, occhiolino: -10, sorriso: -10 })
+  const stato = useRef({
+    aperture: [0.5, 0.5],
+    x: 0,
+    y: 0,
+    sorriso: 0,
+    inclinazioneX: 0,
+    inclinazioneY: 0,
+    prossimo: 0,
+  })
+  const parti = useMemo(() => {
+    // Mesh.clone separa i pesi morph; geometrie, texture e materiali restano in cache.
+    const scena = modello.clone(true)
+    scena.updateMatrixWorld(true)
+    const box = new THREE.Box3()
+    const punto = new THREE.Vector3()
+    scena.traverse((o) => {
+      if (!(o instanceof THREE.Mesh)) return
+      o.frustumCulled = false
+      // I bounding box dei morph includono tutte le pose: misuriamo solo quella neutra.
+      const posizioni = o.geometry.getAttribute('position')
+      for (let i = 0; i < posizioni.count; i++)
+        box.expandByPoint(punto.fromBufferAttribute(posizioni, i).applyMatrix4(o.matrixWorld))
+    })
+    const oggetto = (nome: string) => {
+      const o = scena.getObjectByName(nome)
+      if (!o) throw new Error(`parte del logo mancante: ${nome}`)
+      return o
+    }
+    const centro = box.getCenter(new THREE.Vector3())
+    scena.position.sub(centro)
+    const occhi = ['sx', 'dx'].map((lato) => {
+      const sguardo = oggetto(`sguardo_${lato}`)
+      return {
+        sguardo,
+        riposo: sguardo.position.clone(),
+        pupilla: oggetto(`pupilla_${lato}`) as THREE.Mesh,
+        palpebra: oggetto(`palpebra_${lato}`) as THREE.Mesh,
+      }
+    })
+    return {
+      scena,
+      occhi,
+      testa: oggetto('testa'),
+      sorriso: oggetto('sorriso') as THREE.Mesh,
+      larghezza: box.max.x - box.min.x,
+    }
+  }, [modello])
+  useEffect(
+    () =>
+      ascoltaAzioni((a) => {
+        azioni.current[a] = performance.now() / 1000
+      }),
+    [ascoltaAzioni],
+  )
+  useFrame((_, delta) => {
+    const g = gruppo.current
+    if (!g) return
+    const r = riferimento?.current?.getBoundingClientRect(),
+      c = controllo?.current
+    const posa =
+      r && c
+        ? {
+            x: r.left + r.width / 2,
+            y: r.top + r.height / 2,
+            larghezza: r.width * c.scala,
+            rotazione: c.rotazione,
+            opacity: 1,
+            fase: 'laboratorio',
+          }
+        : leggiPosa()
+    const ora = performance.now() / 1000,
+      s = stato.current,
+      a = azioni.current
+    const host = document.querySelector<HTMLElement>('[data-logo-continuo]')
+    if (host) {
+      host.dataset.fase = posa.fase
+      host.dataset.umore = umore
+      host.dataset.modello = 'metallo-blender-v2'
+      host.dataset.ambiente = 'volume-teatro'
+      host.dataset.apertura = String(s.aperture[0])
+      host.style.opacity = String(posa.opacity)
+      host.style.zIndex = '10'
+    }
+    g.visible = posa.opacity > 0.001 && !document.hidden
+    if (!g.visible) return
+    const unita = (40 * Math.tan(THREE.MathUtils.degToRad(9))) / size.height
+    g.position.set((posa.x - size.width / 2) * unita, -(posa.y - size.height / 2) * unita, 0)
+    g.scale.setScalar((posa.larghezza * unita) / parti.larghezza)
+    const { punto, scorre, tocco } = sguardo.get()
+    const target = percorso.guarda ?? punto
+    const dorme = umore === 'dorme'
+    const vx = target ? target.x - posa.x : 0,
+      vy = target ? target.y - posa.y : 0,
+      distanza = Math.hypot(vx, vy) || 1
+    const forza = SGUARDO_MAX * Math.min(1, distanza / Math.max(posa.larghezza, 240))
+    const dx = dorme ? 0 : (vx / distanza) * forza,
+      dy = dorme ? 0 : tocco && scorre && !percorso.guarda ? SGUARDO_MAX : (vy / distanza) * forza
+    s.x = THREE.MathUtils.damp(s.x, dx, 7, delta)
+    s.y = THREE.MathUtils.damp(s.y, dy, 7, delta)
+    s.inclinazioneX = THREE.MathUtils.damp(s.inclinazioneX, dorme ? 0 : (vy / size.height) * 0.16, 4, delta)
+    s.inclinazioneY = THREE.MathUtils.damp(s.inclinazioneY, dorme ? 0 : (vx / size.width) * 0.22, 4, delta)
+    g.rotation.set(s.inclinazioneX, THREE.MathUtils.degToRad(posa.rotazione) + s.inclinazioneY, 0)
+    if (!s.prossimo) s.prossimo = ora + 4
+    if (ora > s.prossimo) {
+      if (!dorme) a.battito = ora
+      s.prossimo =
+        ora + movimento.volto.battitoMin + Math.random() * (movimento.volto.battitoMax - movimento.volto.battitoMin)
+    }
+    const battito = ora - a.battito,
+      occhiolino = ora - a.occhiolino
+    for (let i = 0; i < 2; i++) {
+      const chiuso = (battito >= 0 && battito < 0.22) || (i === 1 && occhiolino >= 0 && occhiolino < 0.48)
+      s.aperture[i] = THREE.MathUtils.damp(
+        s.aperture[i],
+        dorme || chiuso ? 0 : APERTURA.naturale,
+        dorme ? 3 : chiuso ? 45 : 20,
+        delta,
+      )
+      const occhio = parti.occhi[i]
+      const chiusura = 1 - s.aperture[i] / APERTURA.naturale
+      morph(occhio.palpebra, 'chiusura', chiusura)
+      morph(occhio.pupilla, 'chiusura', chiusura)
+      occhio.sguardo.position.set(
+        occhio.riposo.x + (s.x / SGUARDO_MAX) * 0.09,
+        occhio.riposo.y - (s.y / SGUARDO_MAX) * 0.05,
+        occhio.riposo.z,
+      )
+    }
+    s.sorriso = THREE.MathUtils.damp(s.sorriso, ora - a.sorriso < 1.4 ? 1 : 0, 6, delta)
+    morph(parti.sorriso, 'sorriso_ampio', s.sorriso)
+    const sonno = 1 - s.aperture[0] / APERTURA.naturale
+    parti.testa.rotation.set(dorme ? sonno * (0.1 + Math.sin(ora * 2) * 0.012) : 0, 0, dorme ? sonno * 0.055 : 0)
+    scenaImmersiva.logo.copy(g.position)
+    scenaImmersiva.scala = g.scale.x
+    if (riferimento) camera.lookAt(0, 0, 0)
+  }, -1)
+  return (
+    <group ref={gruppo} dispose={null}>
+      <primitive object={parti.scena} dispose={null} />
+    </group>
+  )
 }

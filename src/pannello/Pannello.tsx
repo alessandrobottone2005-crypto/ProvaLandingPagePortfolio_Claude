@@ -6,7 +6,7 @@
 // gsap anima pannello, velo e pagina; motion solo le micro-interazioni dei pulsanti.
 import { ArrowUpRight, X } from 'lucide-react'
 import { Dialog as DialogPrimitive } from 'radix-ui'
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Link, Navigate, useLocation, useNavigate, useParams, type Location } from 'react-router'
 import { Magnetico } from '@/components/interazioni/Magnetico'
 import { RotolaAlPassaggio } from '@/components/testo/RotolaAlPassaggio'
@@ -16,6 +16,7 @@ import { sito } from '@/config/sito'
 import { gsap } from '@/lib/gsap'
 import { progettoSuccessivo, trovaProgetto } from '@/lib/progetti'
 import { fermaScroll, riprendiScroll } from '@/lib/scroll'
+import { useMediaQuery } from '@/lib/useMediaQuery'
 import { Blocchi } from './Blocchi'
 import { arretraPagina, ripristinaPagina, volaCopertina, type Rettangolo } from './transizioni'
 
@@ -49,29 +50,38 @@ function PannelloAperto({ slug, stato }: { slug: string; stato: StatoNavigazione
   const testata = useRef<HTMLDivElement>(null)
   const articolo = useRef<HTMLElement>(null)
   const uscendo = useRef(false)
+  const chiusura = useRef<gsap.core.Timeline | null>(null)
   const primoSlug = useRef(slug)
   const ultimoSlug = useRef(slug)
 
-  const ridotto = useMemo(() => matchMedia(media.ridotto).matches, [])
-  const mobile = useMemo(() => matchMedia(media.mobile).matches, [])
+  const ridotto = useMediaQuery(media.ridotto)
+  const mobile = useMediaQuery(media.mobile)
+  const preferenza = useRef(ridotto)
+  useEffect(() => { preferenza.current = ridotto }, [ridotto])
 
   // scroll della pagina fermo mentre il pannello è aperto; la pagina torna al suo posto alla chiusura
   // (anche con il tasto indietro del browser, che smonta il pannello di colpo)
   useEffect(() => {
     fermaScroll()
     return () => {
-      ripristinaPagina(!ridotto)
+      // Indietro o cambio rotta annulla anche la navigazione differita della chiusura.
+      chiusura.current?.kill()
+      ripristinaPagina(!preferenza.current)
       riprendiScroll()
     }
-  }, [ridotto])
+  }, [])
 
   // entrata
   useLayoutEffect(() => {
-    if (!montato) return
+    if (!montato || uscendo.current) return
     const origine = stato?.origine
     const destinazione = testata.current!.getBoundingClientRect()
+    // Se la preferenza cambia durante il volo, la copertina torna subito visibile.
+    const immagine = testata.current!.querySelector('img')!
+    immagine.style.opacity = ''
     const ctx = gsap.context(() => {
       if (ridotto) {
+        ripristinaPagina(false)
         gsap.fromTo([velo.current, foglio.current], { opacity: 0 }, { opacity: 1, duration: movimento.durata.ridotta, ease: 'none' })
         return
       }
@@ -109,9 +119,9 @@ function PannelloAperto({ slug, stato }: { slug: string; stato: StatoNavigazione
       annullaVolo?.()
       ctx.revert()
     }
-    // solo all’apertura
+    // Apertura e cambio della preferenza di movimento; il resize aggiorna soltanto interazioni e chiusura.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [montato])
+  }, [montato, ridotto])
 
   // passando al progetto successivo: torno in cima e il nuovo contenuto entra in dissolvenza
   useLayoutEffect(() => {
@@ -135,18 +145,19 @@ function PannelloAperto({ slug, stato }: { slug: string; stato: StatoNavigazione
     if (uscendo.current) return
     uscendo.current = true
     const vai = () => (sfondo ? navigate(-1) : navigate('/', { replace: true }))
-    if (ridotto) {
-      gsap.to([velo.current, foglio.current], { opacity: 0, duration: movimento.durata.ridotta, ease: 'none', onComplete: vai })
-      return
-    }
-    ripristinaPagina(true)
-    const d = movimento.pannello.uscita
-    gsap.to(velo.current, { opacity: 0, duration: d, ease: 'power2.in' })
-    gsap.to(
+    const d = ridotto ? movimento.durata.ridotta : movimento.pannello.uscita
+    if (!ridotto) ripristinaPagina(true)
+    const tl = gsap.timeline({ onComplete: vai })
+    chiusura.current = tl
+    tl.to(velo.current, { opacity: 0, duration: d, ease: ridotto ? 'none' : 'power2.in' }, 0)
+    tl.to(
       foglio.current,
-      mobile
-        ? { yPercent: 100, duration: d, ease: 'power3.in', onComplete: vai }
-        : { opacity: 0, y: 32, duration: d, ease: 'power3.in', onComplete: vai },
+      ridotto
+        ? { opacity: 0, duration: d, ease: 'none' }
+        : mobile
+          ? { yPercent: 100, duration: d, ease: 'power3.in' }
+          : { opacity: 0, y: 32, duration: d, ease: 'power3.in' },
+      0,
     )
   }, [navigate, sfondo, ridotto, mobile])
 

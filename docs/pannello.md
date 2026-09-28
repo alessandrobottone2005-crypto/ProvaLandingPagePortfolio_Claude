@@ -1,17 +1,17 @@
 # il pannello del progetto
 
-si apre sopra la pagina quando si clicca una card. file: `src/pannello/`.
+Si apre sopra la home con «esplora», dopo aver espanso una card nella griglia. Durante la spirale non si aprono progetti. File: `src/pannello/`. Il foglio ha sfondo nero opaco: nebbia e luci della home non alterano immagini, testo o colori dei contenuti.
 
 ## la rotta modale
 
 - indirizzo: `/progetti/<slug>` (`src/router.tsx`). il pannello si scarica solo alla prima apertura (`React.lazy`).
 - la home **resta sempre montata sotto**: aprendo e chiudendo non si ricarica niente e si torna esattamente dove si era.
-- cliccando una card (`useApriProgetto()` in `src/sections/Portfolio/carta.ts`) il sito naviga a `/progetti/<slug>` passando nello stato:
+- cliccando «esplora» (`useApriProgetto()` in `src/sections/Portfolio/carta.ts`) il sito naviga a `/progetti/<slug>` passando nello stato:
   - `sfondo`: l’indirizzo della pagina sotto (la “background location”)
   - `origine`: il rettangolo della copertina cliccata sullo schermo, per il volo
 - chiusura: se c’è `sfondo` (aperto dal sito) si torna indietro nella cronologia; se manca (link diretto o refresh) si va a `/`.
 - **slug inesistente** → redirect a `/`.
-- **link diretto**: le rotte si montano solo a preloader finito; poi la home scorre fino al portfolio con l’anello già formato e il pannello si apre (senza volo della copertina).
+- **link diretto**: le rotte si montano solo a preloader finito; poi la home scorre fino al portfolio alla griglia finale su desktop, tablet e telefono, anche con movimento ridotto e il pannello si apre (senza volo della copertina).
 
 ## apertura
 
@@ -24,7 +24,7 @@ in `Pannello.tsx` e `transizioni.ts` (tutto con gsap):
 5. la **copertina vola** (`volaCopertina()`, solo se si arriva da una card): un clone dell’immagine va dal rettangolo della card a quello della testata del pannello in 0,9s. il clone ha già la misura finale e si animano solo `transform` e `clip-path` (niente immagini deformate). all’arrivo il clone sparisce e appare l’immagine vera.
 6. titolo, descrizione, meta e blocchi entrano sfalsati.
 
-con movimento ridotto: velo e foglio compaiono con una dissolvenza di 0,2s, niente arretramento né volo.
+Con movimento ridotto: velo e foglio compaiono con una dissolvenza di 0,2s, niente arretramento né volo. Preferenza e breakpoint si aggiornano anche mentre il pannello è aperto, senza riavviare il blocco dello scroll; un volo interrotto ripristina la copertina.
 
 ## struttura del pannello
 
@@ -78,7 +78,7 @@ animazione: il velo svanisce, la pagina torna a scala 1, il foglio esce (in giù
 
 - **file mp4** (con `poster` facoltativo): controlli personalizzati play/pausa, barra di avanzamento (trascinabile; da tastiera frecce ±5s, `home`, `end`; `role="slider"`), audio sì/no, schermo intero (su safari ios passa al lettore di sistema). clic sul video = play/pausa. cursore “play” / “pausa”.
 - **`autoplay: true`**: parte muto e in loop solo quando è in vista, si ferma quando esce. l’audio non parte mai da solo.
-- **link vimeo o youtube** (`url`): all’inizio c’è solo il poster (se c’è) e un pulsante play; il lettore esterno (youtube-nocookie, vimeo con `dnt=1`) si carica solo al clic. un link non riconosciuto non mostra niente (avviso nella console).
+- **link vimeo o youtube** (`url`): all’inizio c’è solo il poster (se c’è) e un pulsante play; il lettore esterno (youtube-nocookie, vimeo con `dnt=1`) si carica solo al clic. Questi parametri limitano il tracciamento previsto dai player, ma non rendono la riproduzione indipendente dai servizi esterni. un link non riconosciuto non mostra niente (avviso nella console).
 
 ### immagini (`Immagini.tsx`)
 

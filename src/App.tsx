@@ -1,10 +1,10 @@
 import { lazy, Suspense, useEffect } from 'react'
 import { useLocation } from 'react-router'
 import { Cursore } from './components/cursore/Cursore'
+import { LogoContinuo } from './components/volto/LogoContinuo'
 import { Grana } from './components/effetti/Grana'
 import { useAvvio } from './components/preloader/AvvioContext'
 import { Preloader } from './components/preloader/Preloader'
-import { movimento } from './config/movimento'
 import { ScrollTrigger } from './lib/gsap'
 import { aggiornaDopoCaricamento, avviaScroll, getLenis } from './lib/scroll'
 import { RotteModali } from './router'
@@ -35,11 +35,12 @@ export default function App() {
       const portfolio = document.getElementById('portfolio')
       if (portfolio) {
         const lenis = getLenis()
-        // oltre l’inizio della sezione, così l’anello è già formato
-        const oltre = (movimento.portfolio.disposizione * innerHeight) / 100
-        const y = portfolio.getBoundingClientRect().top + scrollY + oltre
+        // Su tutti i dispositivi il link diretto arriva alla griglia finale.
+        const anello = ScrollTrigger.getById('portfolio-anello')
+        const y = anello ? anello.end + 1 : portfolio.getBoundingClientRect().top + scrollY
         if (lenis) lenis.scrollTo(y, { immediate: true, force: true })
         else scrollTo(0, y)
+        anello?.getTween()?.progress(1)
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -64,6 +65,7 @@ export default function App() {
         <ChiSono />
         <Contatti />
       </main>
+      <LogoContinuo />
       {pronto && <RotteModali />}
       <Preloader />
       <Cursore />

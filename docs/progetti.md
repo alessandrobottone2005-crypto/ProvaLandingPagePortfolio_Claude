@@ -89,4 +89,10 @@ per ogni progetto:
 
 ## i progetti segnaposto
 
-in `src/content/progetti/` ci sono dieci progetti provvisori, `segnaposto-01` … `segnaposto-10` (titoli “progetto 01” …, testi provvisori, copertine grigie numerate). ognuno ha un blocco `testo` e un blocco `immagini`. vanno sostituiti o cancellati quando arrivano i progetti veri: il primo progetto in ordine è anche la copertina che compare alla fine dell’header.
+In `src/content/progetti/` ci sono venti progetti provvisori, `segnaposto-01` … `segnaposto-20`: titoli e testi segnaposto, copertine numerate. Si possono sostituire, rimuovere o nascondere con `pubblicato: false`. Il numero di card viene ricavato dai progetti pubblicati: non serve modificare il codice della spirale o della griglia. Il preloader include la copertina del primo progetto.
+
+Titolo, discipline, anno e descrizione alimentano sia le informazioni della card espansa sia il pannello. Le copertine vengono usate a colori, anche nella scena 3d. [Interazioni](animazioni.md).
+
+## contenuti pubblici
+
+`pubblicato: false` è una scelta editoriale, non un controllo di accesso. I file importati o caricati sul sito possono essere raggiungibili tramite URL; non inserire contenuti riservati confidando che una card nascosta li protegga. `_originali/` è esclusa dagli import del runtime e dall’upload CLI configurato in `.vercelignore`, ma può restare nel repository GitHub. Il pannello opaco protegge la fedeltà visiva delle immagini, non rende privati i file.

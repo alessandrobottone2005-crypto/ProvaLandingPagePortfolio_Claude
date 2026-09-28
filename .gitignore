@@ -34,5 +34,16 @@ dist-ssr
 # impostazioni locali (chiavi e preferenze personali, non vanno su github)
 .mcp.json
 .claude/settings.local.json
+.claude/*.lock
 .vercel
-.env*
+
+# cache rigenerabili e copie di sicurezza Blender (restano sul computer)
+sorgenti/logo-3d/anteprime/frames/
+*.blend[0-9]*
+
+# bytecode degli script Python
+__pycache__/
+*.py[cod]
+
+# cache locali degli strumenti di revisione
+.impeccable/

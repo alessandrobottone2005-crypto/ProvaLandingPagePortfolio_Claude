@@ -1,0 +1,25 @@
+{
+  "titolo": "progetto 14",
+  "descrizione": "testo provvisorio: qui andrà una breve descrizione del progetto, di due o tre righe al massimo.",
+  "discipline": [
+    "web design"
+  ],
+  "anno": 2025,
+  "cliente": "cliente provvisorio",
+  "ordine": 14,
+  "pubblicato": true,
+  "copertina": "copertina.webp",
+  "blocchi": [
+    {
+      "tipo": "testo",
+      "testo": "paragrafo provvisorio sul processo."
+    },
+    {
+      "tipo": "immagini",
+      "file": [
+        "copertina.webp"
+      ],
+      "layout": "piena"
+    }
+  ]
+}

@@ -1,90 +1,51 @@
 # accessibilità e prestazioni
 
-## regole visive
+## leggibilità
 
-- **solo tre colori** (`src/styles/globals.css`, `@theme`): nero `#141414`, grigio `#4d4b4a`, bianco `#c9c5c0`, più le loro trasparenze. le variabili di shadcn sono mappate su questi tre. eccezioni: le immagini dei progetti e le sfumature della luce sul 3d.
-- **contrasto**: il testo da leggere è sempre bianco su nero (circa 10,7:1). il grigio su nero (circa 2:1) si usa solo per bordi, linee, dettagli decorativi e per le parole non ancora “accese” del chi sono (bianco al 31,5% = grigio).
-- **solo outfit** (variabile, in locale con `@fontsource-variable/outfit`), precaricato in `index.html` dal plugin `precarica-font` di `vite.config.ts`.
-- **mai maiuscole**: tutti i testi sono scritti in minuscolo (anche `<title>`, etichette, alt, aria-label) e in `globals.css` c’è `text-transform: lowercase !important` su tutto come rete di sicurezza.
-- selezione del testo: sfondo bianco, testo nero.
+Palette in `src/styles/globals.css`: nero `#141414`, grigio `#4d4b4a`, bianco `#c9c5c0`. Copertine a colori e luci 3d sono le eccezioni previste. Outfit Variable locale, testi/etichette in minuscolo, selezione bianca con testo nero.
 
-## movimento ridotto
+Il testo da leggere resta bianco sul fondo scuro; il grigio è riservato a bordi, superfici e parole biografiche prima della rivelazione. Biografia, etichette, nome fisso, contatti e copyright sono sopra il Canvas. I contenuti del pannello sono opachi, così immagini e colori non vengono alterati dall’ambiente.
 
-con `prefers-reduced-motion: reduce` il sito resta completo ma quasi fermo: niente lenis, pin, scrub, grana animata, cursore personalizzato, battiti del volto; l’anello diventa una griglia a due colonne; restano solo dissolvenze brevi (0,2s). elenco completo: [animazioni](animazioni.md#movimento-ridotto).
+## movimento ridotto e riserva
 
-## tastiera e focus
+`prefers-reduced-motion: reduce` è rispettato anche se cambia a pagina aperta: niente Lenis, pin, scrub, Canvas, battiti, cursore personalizzato o grana animata. SVG statici e griglia 3/2/1 subito interattiva; restano dissolvenze brevi. Il preloader non scarica la scena o il modello 3d in questa modalità. [Comportamenti completi](animazioni.md#movimento-ridotto).
 
-- **focus sempre visibile**: anello bianco 2px con distanza 4px (`:focus-visible` in `globals.css`), che entra in 0,3s. il cursore personalizzato non lo nasconde.
-- **anello del portfolio**: tab porta davanti la card che riceve il focus; frecce ← → ruotano; invio apre.
-- **pannello**: dialog di radix con focus intrappolato, `esc` chiude, focus restituito alla card.
-- **video**: barra di avanzamento con `role="slider"` usabile da tastiera (frecce, `home`, `end`).
-- **contatti**: con il focus da tastiera i pulsanti si “accendono” come al passaggio del mouse e mostrano il suggerimento con l’email.
+Un errore del modello o del Canvas viene gestito da `ScenaProtetta`: volto SVG e spirale DOM di riserva. La griglia e i pannelli continuano a funzionare. Il fallback non sostituisce i test sui dispositivi/browser reali.
 
-## struttura e aria
+## tastiera, touch e struttura
 
-- `<html lang="it">`; un solo `<main>` con quattro `section`:
-  - `#header`, etichettata “alessandro bottone”, con l’`h1` = nome (`aria-label` con nome e cognome, perché le lettere sono spezzate)
-  - `#portfolio`, `#chi-sono`, `#contatti`, ognuna con un `h2` nascosto (solo screen reader): “portfolio”, “chi sono”, “contatti”
-- `main` ha `aria-busy` finché il preloader non ha finito; il preloader è `aria-hidden`.
-- **volto**: nell’header `role="img"` con `aria-label="logo di alessandro bottone"`; altrove è decorativo (`aria-hidden`). anche il canvas 3d, la tavola dell’header, la grana e il cursore sono `aria-hidden`.
-- **testi animati**: il testo vero è in una copia `sr-only`, le lettere o parole animate sono `aria-hidden` (`TestoCheRotola`, `RotolaAlPassaggio`, testo del chi sono).
-- **card**: ogni link ha un testo accessibile con titolo, discipline e anno.
-- **email copiata**: annuncio “indirizzo email copiato” in una zona `aria-live="polite"`.
-- **pdf**: contatore delle pagine in `aria-live`; pulsanti con etichette (“pagina precedente”, “schermo intero”…).
-- testi alternativi descrittivi e in minuscolo: foto (“ritratto di alessandro bottone”), copertine e immagini del pannello (`copertina di <titolo>`, `immagine <n> di <titolo>`).
-- tutte le etichette per screen reader stanno in `src/config/sito.ts` (`etichette`, `pannello`).
+- Focus bianco 2px con offset 4px, sempre visibile.
+- Nome fisso attivabile da tastiera per tornare all’inizio.
+- Spirale: frecce sinistra/destra per avanzare; nessuna apertura delle card prima della griglia.
+- Griglia: Tab, Invio/Spazio sulla copertina, esplora, chiudi ed Esc. `aria-expanded` e `aria-controls`; contenuti e griglia non disponibili sono `inert`.
+- Dialog Radix: focus intrappolato, Esc, ritorno del focus alla card.
+- Video: slider con frecce, Home/End; PDF con pulsanti e contatore accessibile.
+- Contatti: hover equivalente a focus/tocco; copia email annunciata con `aria-live`.
+- Controlli principali almeno 48px; contatti 56px, margini minimi 16px e safe area iOS.
 
-## touch
+`html lang="it"`, un `main`, quattro sezioni etichettate, un `h1` e titoli di sezione `sr-only`. Testi animati hanno una copia accessibile e la copia visuale `aria-hidden`. Canvas, tavola, grana e cursore sono decorativi. Le copertine hanno etichette descrittive; foto/firma non compaiono nella home.
 
-- aree toccabili di almeno 48px (pulsanti del pannello e dei blocchi `size-12`/`min-h-12`, pulsanti dei contatti 56px).
-- ogni effetto al passaggio del mouse ha un equivalente su touch: pulsanti dei contatti (riempimento al tocco, testo che rotola quando entrano in vista), firma sopra la foto (tocco), peso del nome (punto toccato), card della pila (colore al centro dello schermo).
-- margini laterali di almeno 16px su telefono; safe area di ios rispettate (`viewport-fit=cover`, `env(safe-area-inset-*)`).
+## caricamento e rendering
 
-## prestazioni
-
-### codice diviso in pezzi
-
-il sito scarica subito solo ciò che serve alla home; il resto arriva quando serve:
-
-| pezzo | quando si scarica |
+| risorsa | quando viene richiesta |
 |---|---|
-| `Volto3D` + three.js (`tre.ts`) | durante il preloader (conta nell’avanzamento), insieme a `volto.glb` |
-| `Pannello` | alla prima apertura di un progetto |
-| blocchi `Pdf` (con react-pdf, page-flip e il worker di pdf.js), `Modello3D` (con drei), `Video`, `Immagini`, `Testo` | solo se il progetto aperto li usa (`React.lazy`) |
-| `Laboratorio` | mai nel sito pubblicato (solo in sviluppo) |
+| codice della scena Three.js/R3F e GLB V2 | preloader, salvo movimento ridotto |
+| copertine della spirale | montaggio delle card della scena; il preloader include la prima |
+| pannello | prima apertura di un progetto |
+| blocchi PDF, modello 3d, video, immagini, testo | solo se usati dal progetto aperto |
+| laboratorio | solo sviluppo |
+| player esterno Vimeo/YouTube | clic sul pulsante play |
 
-altre scelte:
-- drei non si importa intero: solo `OrbitControls` e `ContactShadows`; luci e caricamento dei modelli sono scritti con three puro (`src/components/volto/tre.ts`).
-- zod non entra nel sito: i progetti sono controllati in build e nel terminale; nel sito ci sono solo i valori predefiniti (`src/lib/dati.ts`).
-- `build.assetsInlineLimit: 0` in `vite.config.ts`: nessuna immagine “incollata” dentro il codice, i file restano separati.
-- `optimizeDeps.include` in `vite.config.ts`: in sviluppo le librerie del pannello sono preparate subito (evita ricaricamenti con due copie di react).
+- Modello V2 circa 872 kB con Meshopt, texture WebP incorporate e cache condivisa; nessuna HDRI di studio scaricata dalla home.
+- Canvas unico su `demand`, aggiornato solo con scena visibile e scheda attiva; le espressioni continuano quando posizione/scala sono ferme. I modelli nei pannelli si fermano fuori vista.
+- Stessi effetti e limite DPR 1,5 su desktop e mobile; volume a 32 campioni per raggio. Non esiste un ramo mobile che elimina l’ambiente.
+- Geometrie delle card condivise; materiali/texture locali, luci e render target liberati allo smontaggio. Le risorse della GLB condivisa restano in cache.
+- Immagini WebP fino a 2400px, copertine card da 900px; `srcset` per le immagini HTML. I file rimangono separati dal codice (`assetsInlineLimit: 0`).
+- Zod esegue controlli in sviluppo/build, non viene scaricato dal sito di produzione.
+- Video autoplay soltanto muti e in vista; PDF renderizzati vicino alla pagina aperta; grana animata solo con mouse.
 
-### 3d e canvas
+## verifiche e limiti delle misure
 
-- canvas dell’header in pausa (`frameloop="never"`) quando l’header non è attivo o prima del 45% dello scroll; canvas del blocco 3d creato solo quando arriva in vista e in pausa fuori vista.
-- dpr massimo 1,5 su telefono, 2 su desktop; mappa delle luci più piccola su telefono (64 invece di 128).
-- `volto.glb` compresso con meshopt: circa 92 kb.
+Build e lint verificano codice e file dei progetti; la verifica browser deve coprire scroll avanti/indietro, cambio viewport, griglia, espansione singola, pannello e link diretto, navbar, contatti, movimento ridotto e caricamento 3d fallito. Gli ultimi controlli della spirale sono descritti in [ambiente 3d](ambiente-3d.md#verifica-della-spirale--28-settembre-2026).
 
-### immagini e file
-
-- copertine: versione da 900px per le card (`-card.webp`) con `srcset` verso quella da 2400px; `loading="lazy"` tranne la prima.
-- immagini dei progetti in webp, lato massimo 2400px (`npm run prepara-progetti`); modelli compressi; avvisi per pdf sopra 15mb e video sopra 25mb.
-- foto del chi sono: webp convertito con `npm run foto-palette`, `loading="lazy"`.
-- video da link esterni caricati solo al clic; video con autoplay solo quando sono in vista; pagine pdf disegnate solo vicino a quella aperta.
-
-### animazioni leggere
-
-- si animano quasi solo `transform`, `opacity` e `clip-path`; il passaggio grigio → colore delle card è un’immagine sopra l’altra di cui cambia solo l’opacità (niente filtri ricalcolati).
-- `will-change` solo durante le animazioni (volo della copertina, involucro del preloader).
-- la grana è animata solo su dispositivi con mouse.
-
-### ultime misure (dalla fase 6, vedi “decisioni prese” in `CLAUDE.md`)
-
-| lighthouse (mobile) | prima | dopo |
-|---|---|---|
-| prestazioni | 73 | 81 |
-| accessibilità | 92 | 96 |
-| buone pratiche | 100 | 100 |
-| seo | 83 | 100 |
-
-bundle principale: da 250 a 210 kb (gzip). da ripetere dopo la pubblicazione, sul sito vero e con i progetti veri.
+Le misure Lighthouse del 26 settembre 2026 (prestazioni 81, accessibilità 96, buone pratiche 100, SEO 100) precedono il logo e l’ambiente V2: sono storiche e non descrivono la build corrente. L’obiettivo di 60fps non è una garanzia su ogni dispositivo. Ripetere misure sulla versione pubblicata e su telefoni fisici; un viewport mobile emulato verifica layout e interazioni, non le prestazioni del telefono.

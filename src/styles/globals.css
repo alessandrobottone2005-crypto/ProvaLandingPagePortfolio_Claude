@@ -36,6 +36,20 @@
   --text-etichetta: 0.8125rem;
   --text-etichetta--line-height: 1.2;
   --text-etichetta--letter-spacing: 0.02em;
+
+  /* bottoni (figma: button_atoms): small, medium, big */
+  --text-bottone-s: 0.875rem;
+  --text-bottone-s--line-height: 15px;
+  --text-bottone-s--font-weight: 500;
+  --text-bottone-m: 1rem;
+  --text-bottone-m--line-height: 17px;
+  --text-bottone-m--font-weight: 500;
+  --text-bottone-l: 1.125rem;
+  --text-bottone-l--line-height: 19px;
+  --text-bottone-l--font-weight: 600;
+
+  /* “bagliore” di figma: ombra bianca sotto i bottoni attivi */
+  --shadow-bagliore: 0 3px 4.6px var(--color-bianco);
 }
 
 /* variabili di shadcn mappate sui tre colori; nessun altro colore */

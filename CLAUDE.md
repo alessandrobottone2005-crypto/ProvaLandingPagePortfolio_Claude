@@ -1,539 +1,168 @@
 # CLAUDE.md — portfolio di alessandro bottone
 
-> Brief di progetto per Claude Code. Leggilo tutto prima di scrivere codice e rileggi la sezione pertinente all'inizio di ogni fase. Quando qualcosa non è chiaro, chiedi invece di indovinare.
-
----
+Brief operativo aggiornato al 29 settembre 2026. Le sezioni seguenti descrivono il sito attuale; lo storico in fondo conserva anche scelte poi sostituite. Per la guida pratica parti da [README.md](README.md).
 
 ## 0. come lavorare con me
 
-- Lavora per fasi (sezione 14). Alla fine di ogni fase fermati, avvia `npm run dev`, dimmi cosa guardare e aspetta il mio ok prima di proseguire.
-- Priorità in caso di conflitto: le mie istruzioni in chat > questo file > suggerimenti di UI/UX Pro Max e 21st.dev > impostazioni predefinite delle librerie.
-- Rispondimi in italiano e spiegami le cose tecniche in modo semplice: sono un designer, non uno sviluppatore.
-- Non installare software di sistema (Node, Python, Git): se manca qualcosa, dimmi come installarlo.
-- Non fare `git push` né deploy senza chiedermelo.
-- Quando prendiamo una decisione nuova, aggiungila in fondo a questo file, nella sezione "decisioni prese".
-
----
+- Le istruzioni in chat hanno priorità su questo file, sulle skill e sulle impostazioni delle librerie.
+- Rispondimi in italiano con spiegazioni semplici. Sono un designer.
+- Lavora sulle attività già autorizzate fino al risultato verificabile; mostra le modifiche e gli esiti dei controlli. Chiedi soltanto informazioni necessarie che mancano.
+- Non installare software di sistema. Per dipendenze nuove non già previste chiedimi prima.
+- Push e deploy richiedono una richiesta esplicita. **Il 29 settembre 2026 ho autorizzato un team a fare debugging, pulizia, riorganizzazione, aggiornamento dei Markdown, creazione di un branch GitHub e deploy Vercel.** Questa autorizzazione vale per tale manutenzione; non autorizza merge o nuove pubblicazioni future.
+- Conserva i file creativi originali e le decisioni storiche. Aggiorna la documentazione quando cambia il comportamento o la struttura.
 
 ## 1. il progetto
 
-Landing page portfolio one-page, immersiva, raccontata dallo scroll (scrollytelling).
-Chi sono: Alessandro Bottone, 21 anni, designer di Napoli, 7 anni di studio e pratica. Discipline: branding, illustrazione, 3D, web design.
+Portfolio one-page di Alessandro Bottone, designer di Napoli: branding, illustrazione, 3d e web design. Percorso unico:
 
-Percorso unico, dall'alto in basso: **preloader → header → portfolio → chi sono → contatti**. Nient'altro.
+**preloader → header → portfolio → chi sono → contatti**
 
-- nessuna navbar, nessun footer
-- solo italiano (`<html lang="it">`)
-- desktop e mobile curati allo stesso livello
-- sfondo sempre nero
-- protagonista del sito: il mio logo, che è un pittogramma del mio volto (sezione 5)
+Solo italiano, desktop e mobile curati allo stesso livello. Il logo è il protagonista: dapprima segno SVG, poi un volto metallico 3d continuo dentro l’ambiente della scena Blender V2. Lo scroll guida il racconto in entrambi i sensi.
 
-**Riferimenti** (per il livello e alcune idee, non da copiare):
-- pxpush.com: etichette e contatori in stile editoriale, ritmo tipografico, l'interazione "tieni premuto per scorrere veloce"
-- k95.it: progetti disposti ad anello, testi dei link che "rotolano" al passaggio del mouse, contatore dei lavori
+Il nome grande dell’header diventa un logo tipografico fisso in alto a destra, cliccabile per tornare all’inizio. Nei contatti, sotto i tre pulsanti, compare il copyright con anno corrente. Queste richieste sostituiscono il vecchio vincolo «nessuna navbar, nessun footer».
 
----
+Riferimenti: pxpush.com per ritmo e interazioni; k95.it per la spirale dei lavori. I riferimenti orientano il progetto, non vanno copiati.
 
 ## 2. regole non negoziabili
 
-1. **Palette**: solo `#141414` (nero), `#4D4B4A` (grigio), `#C9C5C0` (bianco) e loro trasparenze. Nessun altro colore nell'interfaccia. Uniche eccezioni: le immagini dei progetti e le sfumature prodotte dalla luce sul 3D. Sfondo sempre nero.
-2. **Font**: solo Outfit (versione variabile, pesi 100–900). Nessun altro font, nemmeno per numeri o dettagli.
-3. **Mai maiuscole visibili**: tutti i testi si scrivono in minuscolo nel codice e in più c'è `text-transform: lowercase` globale come rete di sicurezza. Vale per tutto: `<title>`, etichette, messaggi, alt, aria-label, codici esadecimali (`#c9c5c0`), nomi propri e sigle ("iuad").
-4. **Tutto animato, niente di rotto**: ogni elemento entra, reagisce o si muove, ma a 60fps e senza scatti. Si animano solo `transform`, `opacity`, `clip-path` e filtri leggeri.
-5. **Lo scroll resta dell'utente**: si può sempre scorrere avanti e indietro, tutto si riavvolge; lo scroll non si blocca mai (unica eccezione: i pochi secondi del preloader) e niente scroll automatici non richiesti. Le sezioni "bloccate" (pin) restano ferme a schermo mentre si scorre, ma lo scroll continua.
-6. **Testi forniti = testi pubblicati**: non riscrivere, accorciare o "migliorare" il testo del chi sono né quelli dei progetti.
-7. **Niente elementi extra**: nessuna sezione, titolo o testo oltre a quelli descritti qui. Nel dubbio, chiedi.
-8. **Accessibile e leggero**: rispetta `prefers-reduced-motion`, tastiera, contrasto e peso delle pagine (sezioni 4, 11 e 12).
+1. Interfaccia con nero `#141414`, grigio `#4d4b4a`, bianco `#c9c5c0` e trasparenze. Eccezioni: immagini dei progetti e luci sul 3d. Le copertine rimangono sempre a colori.
+2. Solo Outfit Variable; testi visibili, titolo del browser ed etichette accessibili in minuscolo. Apostrofo tipografico (’).
+3. Non riscrivere il testo biografico né i testi forniti dei progetti. Testi e link fissi in `src/config/sito.ts`.
+4. Scroll sempre controllabile e reversibile. Blocchi temporanei soltanto durante preloader e pannello modale. Il pin non ferma lo scroll.
+5. Niente sezioni o copy aggiuntivi non richiesti. Nome fisso e copyright sono già autorizzati.
+6. Testi, pulsanti e copyright devono restare leggibili sopra l’ambiente; i contenuti del pannello hanno sfondo opaco.
+7. Stessa spirale, camera, luci e nebbia su telefono. Il movimento ridotto è una preferenza di accessibilità, non una semplificazione legata al dispositivo.
+8. Tastiera, focus, contrasto, touch e fallback funzionanti; verificare le prestazioni senza promettere risultati non misurati.
 
----
+## 3. stack e responsabilità
 
-## 3. stack e ruoli
+React 19, TypeScript strict, Vite 8, Tailwind v4, GSAP e ScrollTrigger, Motion, Lenis, React Router, Three.js e React Three Fiber. Radix/shadcn per il dialog, Lucide e SVG Figma per le icone. PDF con react-pdf e page-flip; Zod per la validazione in sviluppo/build; Sharp e glTF Transform per gli script. Versioni esatte in `package-lock.json`.
 
-Usa le ultime versioni stabili e, prima di configurare, controlla la documentazione aggiornata (Tailwind v4 con `@tailwindcss/vite`, React Router in modalità libreria, Motion con import da `motion/react`, pacchetto `lenis`).
+- GSAP: scroll, pin, scrub, preloader, disegno/morph SVG, transizioni del pannello.
+- Motion: hover, tap, magnetismo, testi che rotolano, espansione delle card e micro-interazioni.
+- Una sola istanza Lenis sincronizzata con il ticker GSAP; su touch scroll nativo.
+- GSAP e Motion non animano la stessa proprietà dello stesso elemento. Usare wrapper distinti.
+- GSAP scrive le pose in `percorso.ts` e `cardImmersive.ts`; R3F le legge per fotogramma senza aggiornare lo stato React.
+- Plugin GSAP registrati in `src/lib/gsap.ts`; lifecycle e cleanup con `useGSAP`/`gsap.matchMedia`.
 
-| tecnologia | a cosa serve qui |
-|---|---|
-| React + TypeScript (strict) + Vite | base del progetto |
-| Tailwind CSS v4 | stile, solo tramite i token della sezione 4 |
-| shadcn/ui | basi accessibili (Dialog per il pannello, Tooltip), sempre ristilizzate |
-| Lucide React | icone dell'interfaccia (X, ArrowUpRight, Copy, Check, Play, Pause, Volume2, VolumeX, Maximize2, RotateCcw, ChevronLeft/Right) |
-| Motion | micro-interazioni e stati (hover, tap, magnetismo, cursore, entrata/uscita del pannello) |
-| GSAP + ScrollTrigger, SplitText, DrawSVG, MorphSVG, Flip, `@gsap/react` | tutto ciò che è guidato dallo scroll, disegno e morph del logo, testi spezzati |
-| Lenis | scroll fluido |
-| React Three Fiber + drei + three | volto 3D nell'header e visualizzatore 3D nei progetti |
-| React Router | `/` e `/progetti/:slug` come rotta modale |
-| UI/UX Pro Max | revisione di design e controllo anti-pattern |
-| 21st.dev (21st MCP) | ricerca di componenti di partenza |
-
-Tutti i plugin GSAP elencati sono gratuiti e inclusi nel pacchetto `gsap`.
-
-**Dipendenze extra ammesse**: `@fontsource-variable/outfit`, `zod`, `react-pdf`, `react-pageflip` (se dà problemi con React 19, usa direttamente `page-flip` in un wrapper), `simple-icons`; per gli script: `sharp`, `@gltf-transform/cli`. Per qualsiasi altra dipendenza chiedimi.
-
-### chi anima cosa (regola d'oro)
-
-- **GSAP** comanda tutto ciò che dipende dalla posizione di scroll (pin, scrub, timeline delle fasi), il disegno e il morph dei tracciati, lo split dei testi e le transizioni Flip.
-- **Motion** comanda stati e micro-interazioni.
-- **Mai** GSAP e Motion sulla stessa proprietà dello stesso elemento. Se un elemento è guidato dallo scroll, la micro-interazione va su un wrapper interno.
-- **Lenis**: una sola istanza, sincronizzata con il ticker di GSAP:
-
-```ts
-const lenis = new Lenis({ lerp: 0.1, smoothWheel: true, syncTouch: false })
-lenis.on('scroll', ScrollTrigger.update)
-gsap.ticker.add((time) => lenis.raf(time * 1000))
-gsap.ticker.lagSmoothing(0)
-```
-
-- Usa `gsap.matchMedia()` per separare desktop, mobile e movimento ridotto; `useGSAP` per la pulizia; `ScrollTrigger.config({ ignoreMobileResize: true })`; `ScrollTrigger.refresh()` dopo il caricamento di font e immagini.
-
-### strumenti di design
-
-- **UI/UX Pro Max**: usalo per la revisione (gerarchie, spaziature, anti-pattern, checklist prima della consegna). Se propone palette, font o maiuscole diversi, ignoralo: valgono le sezioni 2 e 4.
-- **21st.dev**: usalo per cercare componenti di partenza (bottoni magnetici, testi che rotolano, cursori, ecc.). Ogni componente importato va ripulito: palette, Outfit, minuscole, animazioni secondo la regola d'oro. Niente componenti lasciati "così come sono".
-
----
+Dettagli: [architettura](docs/architettura.md).
 
 ## 4. design system
 
-### colori
+Token in `src/styles/globals.css`: tre colori, Outfit, scala tipografica, bagliore e focus. Testo da leggere bianco sul fondo nero; grigio riservato a superfici, bordi e parole della biografia prima della rivelazione.
 
-```css
-@theme {
-  --color-nero: #141414;
-  --color-grigio: #4D4B4A;
-  --color-bianco: #C9C5C0;
-  --font-sans: "Outfit Variable", sans-serif;
-}
-```
+Pulsanti Figma in `src/components/bottoni/`: riposo bianco/testo nero, hover/focus nero/testo bianco con bagliore, premuto con bordo bianco. Contatti in misura big, solo testo. Card con cornice e raggi proporzionali alla larghezza, pannello con bordo grigio e raggio 16px. Focus bianco 2px con offset 4px; controlli principali almeno 48px.
 
-Mappa le variabili di shadcn su questi tre: `background` = nero, `foreground` = bianco, `muted`/`border`/`input` = grigio, `primary` = bianco, `primary-foreground` = nero, `ring` = bianco. Elimina ogni altro colore del tema.
-
-Uso:
-- testo da leggere: sempre bianco su nero (contrasto ≈ 10,7:1)
-- grigio su nero ha contrasto ≈ 2:1: solo bordi, linee, superfici, dettagli decorativi, testo gigante decorativo o stati di passaggio (le parole non ancora "accese" del chi sono)
-- selezione del testo: sfondo bianco, testo nero
-- focus da tastiera: anello bianco 2px con offset 4px
-- grana: rumore leggerissimo su tutto il sito (opacità 3–5%), animato su desktop, statico su mobile
-
-### tipografia
-
-- Outfit Variable in locale con `@fontsource-variable/outfit`, precaricato, `font-display: swap`
-- scala fluida di partenza (da rifinire a vista):
-
-| ruolo | dimensione | peso | interlinea | spaziatura |
-|---|---|---|---|---|
-| nome nell'header | `clamp(3.5rem, 15vw, 16rem)` | 300 | 0.85 | -0.04em |
-| titolo progetto | `clamp(2rem, 6vw, 5.5rem)` | 300 | 0.95 | -0.03em |
-| testo chi sono | `clamp(1.25rem, 2.6vw, 2.5rem)` | 300 | 1.3 | -0.01em |
-| testo corrente | `clamp(1rem, 1.1vw, 1.125rem)` | 400 | 1.55 | 0 |
-| etichette e contatori | `0.8125rem` | 400 | 1.2 | 0.02em, cifre tabellari |
-
-- apostrofi tipografici (’)
-- il peso variabile di Outfit è materia per le micro-interazioni (sezione 8)
-
-### movimento
-
-- ingressi: `expo.out` (≈ `cubic-bezier(0.16, 1, 0.3, 1)`); transizioni: `power3.inOut`
-- durate: micro 0,2–0,35s · standard 0,6–0,8s · grandi 1,2–1,6s
-- scrub: `1` su desktop, `0.6` su mobile
-- tutte le lunghezze di scroll e le durate stanno in `src/config/movimento.ts`, così posso regolarle da solo
-
-### forme
-
-- bordi grigi da 1px; raggio 999px per i pulsanti, 16px per card e pannello (richiama le forme tonde del logo)
-- icone Lucide con tratto 1.5
-
----
+Durate, scrub e lunghezze di scroll in `src/config/movimento.ts`. Evitare numeri duplicati nelle sezioni.
 
 ## 5. il protagonista: il volto
 
-### cos'è
+`Volto.tsx` usa la geometria a tratti in `geometria.ts` per preloader, prime fasi dell’header e riserva SVG. `LogoContinuo.tsx` ospita un unico Canvas della home; `Volto3D.tsx` usa `public/volto/logo-metallo-v2.glb`, esportata dalla scena originale `sorgenti/logo-3d/Logo3DAnimabile_MetalloGrezzo_V2.blend`.
 
-Il mio logo è un pittogramma del mio volto: due lenti circolari (occhiali) attraversate da una linea orizzontale che sporge ai lati come stanghette, palpebre ad arco semichiuse con pupille a mezzaluna, un naso verticale a forma di "l" che fa da ponte tra le lenti, un sorriso ad arco. Tratto monolineare spesso. Nel sito è sempre bianco su nero. Immagine di riferimento: `src/assets/volto/riferimento.png` (il logo originale, nero su bianco).
-Deve sembrare vivo: guarda, sbatte le palpebre, si addormenta, si sveglia, fa l'occhiolino.
+Il modello mantiene parti separate, materiale metallico grezzo e shape key. `VoltoContext` e `sguardo.ts` coordinano sguardo, battiti, sonno dopo inattività, risveglio, occhiolino e sorriso. Ai contatti posizione e scala si fermano, espressioni e sguardo continuano.
 
-### file che fornirò
+Gli originali Blender non vanno sovrascritti dagli script web. Le demo delle clip rimangono nei sorgenti; il runtime pilota le espressioni dagli eventi reali. [Volto](docs/volto.md) e [sorgenti Blender](sorgenti/logo-3d/README.md).
 
-- `src/assets/volto/volto.svg`: tracciati **a tratto (stroke), non espansi**, con ogni parte separata e un id: `lente-sx`, `lente-dx`, `palpebra-sx`, `palpebra-dx`, `pupilla-sx`, `pupilla-dx`, `naso`, `sorriso` (adatta i nomi al file reale). L'SVG va inserito inline come componente React, non come `<img>`. Se trovi tracciati espansi o parti unite, dimmelo e spiegami come riesportarlo.
-- `public/volto/volto.glb`: modello 3D con vista frontale allineata al disegno 2D e parti separate con nomi simili (`lente_sx`, `pupilla_sx`, …). Se ho un altro formato lo esporto in .glb da Blender.
-- Finché non arrivano, crea un segnaposto geometrico (cerchi e archi) chiaramente marcato come provvisorio, così il lavoro non si blocca.
-
-### componente `<Volto />`
-
-Un solo componente SVG riusato ovunque, con un context React per l'umore globale.
-
-- pupille = cerchi ritagliati (clipPath) dentro la lente e sotto la palpebra: più la palpebra sale, più si vede la pupilla
-- stati: `dorme` (palpebre chiuse), `naturale` (come il logo), `sveglio` (palpebre alte), `occhiolino`, `sorride` (sorriso più ampio, con MorphSVG)
-- comportamenti:
-  - le pupille seguono il cursore (spostamento massimo ≈ 20% del raggio, con inerzia); su mobile seguono l'ultimo tocco e guardano in basso mentre si scorre
-  - battito di palpebre a intervalli casuali (3–7s)
-  - dopo 8s senza input si addormenta; al primo movimento si sveglia con un battito
-  - clic o tap sul volto: occhiolino
-  - quando la scheda del browser non è attiva: titolo "zzz… torna qui" e favicon con gli occhi chiusi; al ritorno tutto si ripristina con un battito
-- props: `stato`, `guarda` (punto o elemento), `disegno` (da 0 a 1, per disegnare i tratti con DrawSVG), `dimensione`
-
-### dove compare
-
-preloader (si disegna e si sveglia) → header (quattro fasi) → chi sono (si disegna sopra la mia foto) → contatti (guarda i pulsanti, fa l'occhiolino) → favicon e titolo della scheda.
-
----
-
-## 6. storyboard dello scroll
+## 6. storyboard corrente
 
 ### 6.1 preloader
 
-- schermo nero; al centro il volto si disegna tratto dopo tratto in proporzione al caricamento reale, con gli occhi chiusi
-- in basso a destra un contatore `000 → 100` (cifre tabellari, peso 200)
-- avanzamento reale: font (`document.fonts.ready`), `volto.glb`, immagini dell'header, codice di three; durata minima 1,6s, massima 6s (poi si prosegue comunque)
-- a 100: battito di palpebre e passaggio da `dorme` a `naturale` ("il sito si sveglia"); il contatore esce; il volto vola nella sua posizione nell'header (stesso elemento o Flip); le lettere del nome salgono una a una
-- scroll bloccato durante il preloader; se ricarico nella stessa sessione, versione breve (≈ 0,8s)
+Contatore `000 → 100`, volto che si disegna e si sveglia, poi raggiunge l’header. Caricamento reale di font, codice 3d, GLB V2 condivisa e prima copertina; minimo 1,6s, massimo 6s, seconda visita 0,8s. Un errore non blocca il sito. Con movimento ridotto niente risorse 3d né volo.
 
-### 6.2 header: "dal segno al volume"
+### 6.2 header
 
-Sezione bloccata (pin) per 400vh su desktop e 300vh su mobile, guidata da un'unica timeline GSAP con etichette. Racconta le mie quattro discipline attraverso il volto.
+Pin 400vh desktop/tablet e 300vh telefono. Quattro discipline: illustrazione, branding, 3d, web design. Logo interamente visibile, largo `min(86vw, 104svh)`; nome e cognome restano fino al 92% e poi si raccolgono in alto a destra. Etichette grandi, senza numeri e senza quattro trattini. Ambiente e logo metallico compaiono insieme nella fase 3d.
 
-**Stato iniziale**: solo il volto al centro (≈ 26vmin) e il mio nome come `h1`. Proposta di composizione: "alessandro" in alto a sinistra, "bottone" in basso a destra, il volto tra i due (su mobile: nome sopra, volto, cognome sotto). Nessun altro testo. L'invito a scorrere è senza parole: il volto ogni tanto guarda in basso e una sottile linea verticale pulsa in fondo allo schermo.
+### 6.3 header → portfolio
 
-| scroll | fase | cosa succede | etichetta |
-|---|---|---|---|
-| 0–25% | illustrazione | il nome esce (lettere verso l'alto); i tratti del volto diventano "a mano libera" (feTurbulence + feDisplacementMap che cresce); compaiono linee di costruzione a matita disegnate con DrawSVG, come una pagina di sketchbook | `01 illustrazione` |
-| 25–50% | branding | il tremolio si azzera e il segno torna netto; gli schizzi diventano una griglia di costruzione rigorosa (cerchi guida, quote grafiche senza numeri, area di rispetto); compaiono i tre campioni della palette (tre cerchi pieni, senza testo) e il nome torna composto accanto al volto come logotipo: una pagina di manuale d'identità | `02 branding` |
-| 50–75% | 3d | la griglia svanisce; il volto SVG si dissolve nel modello 3D perfettamente sovrapposto (vista frontale), poi la camera ruota di ≈ 35° e una luce scorre sulla superficie rivelando il volume; il modello si inclina verso il cursore | `03 3d` |
-| 75–100% | web design | la camera arretra; attorno al modello si disegna il wireframe di una finestra del browser (barra, griglia a colonne, un pulsante, un puntatore che clicca); alla fine la finestra si restringe fino alla misura di una card | `04 web design` |
+Sovrapposizione di uno schermo, logo persistente al centro; card visibili solo dopo il racconto dell’header. Nessun rimontaggio del logo.
 
-- l'etichetta sta in basso a sinistra, piccola, e cambia con un testo che rotola; in basso a destra quattro trattini si riempiono con l'avanzamento
-- le etichette sono l'unico testo oltre al nome e compaiono solo durante le fasi
-- tornando indietro, tutto si riavvolge perfettamente
+### 6.4 portfolio: spirale → griglia
 
-**Note tecniche**
-- un solo `<Canvas>` fisso a tutto schermo dietro l'header, in pausa (`frameloop` su `demand` o `never`) quando l'header non è visibile
-- per far coincidere SVG e 3D: camera prospettica con campo visivo stretto (≈ 15–20°) in vista frontale e scala calcolata dal viewport di `useThree`, così la sagoma del modello ha la stessa misura in pixel dell'SVG
-- materiale del modello: bianco opaco (`MeshStandardMaterial`, roughness ≈ 0,55); luci con `Environment` + `Lightformer` di drei, senza HDRI scaricate da internet
-- mobile: DPR massimo 1,5, niente ombre, modello compresso
+Venti progetti segnaposto, sostituibili tramite cartelle. Spirale su tutti i dispositivi: corpo estruso, smussi, cornice forata, copertina incassata e retro; card davanti e dietro al logo. Camera diagonale, orbita parziale e luci radenti. Copertine senza riflessi aggiunti, immerse nella nebbia. Nessuna apertura o didascalia durante la spirale.
 
-### 6.3 passaggio header → portfolio
+70vh di disposizione, 50vh per ogni progetto dopo il primo, 30vh di pausa, 200vh finali. Nel finale campo lungo sull’elica, poi raddrizzamento e distensione nella griglia; scambio con le card HTML nell’ultimo tratto. Logo piccolo di lato, scroll normale per tutte le righe.
 
-La finestra della fase "web design" diventa la card frontale dell'anello: il volto 3D si dissolve dentro la finestra mentre compare la copertina del primo progetto, poi le altre card si dispongono attorno formando l'anello. Nessuno stacco netto.
+Griglia: 3 colonne da 1024px, 2 da 768px, 1 sotto. Clic sulla copertina: nome, discipline, anno, descrizione, «esplora» e «chiudi». Una card aperta alla volta, righe successive spostate dall’espansione. Esplora apre il pannello; clic, chiudi o esc richiudono le informazioni. Tutti i testi informativi bianchi.
 
-### 6.4 portfolio: l'anello
+### 6.5 pannello
 
-Ispirato agli anelli di k95 e alle lenti rotonde del volto.
-
-**Desktop e tablet (≥ 768px)**
-- le card stanno su un anello 3D fatto in CSS (`perspective` ≈ 1400px; ogni card `rotateY(i·360°/n) translateZ(r)`, con `r` calcolato da numero e larghezza delle card), così restano elementi DOM accessibili
-- sezione bloccata; lo scroll fa ruotare l'anello (lunghezza ≈ n × 50vh, regolabile); a fine scroll si aggancia alla card più vicina
-- la card frontale è a colori; le altre sono in scala di grigi e si scuriscono in base all'angolo; quelle di spalle sono nascoste
-- sotto l'anello: contatore `03 / 10`, titolo, discipline e anno della card frontale, che cambiano con testo che rotola
-- hover sulla card frontale: inclinazione 3D che segue il cursore (± 6°), copertina che si ingrandisce appena, cursore "apri"
-- tenendo premuto sull'anello gira veloce; al rilascio si aggancia (come "hold to skim" di pxpush)
-- le card si inclinano leggermente in base alla velocità dello scroll
-- tastiera: frecce ← → per ruotare, Invio per aprire
-- funziona con qualsiasi numero di progetti: raggio e lunghezza si ricalcolano da soli
-
-**Mobile (< 768px)**
-- niente anello: card impilate; ogni card si ferma in alto (sticky) e la successiva ci scorre sopra, mentre quella sotto si rimpicciolisce e si scurisce
-- la card al centro dello schermo è a colori, le altre in grigio; tap per aprire
-
-**Card**: copertina 4:5, titolo, discipline, anno. Raggio 16px, bordo grigio.
-
-### 6.5 il pannello del progetto
-
-- si apre sopra la pagina con indirizzo `/progetti/<slug>` (rotta modale di React Router con "background location"): la home resta montata sotto, quindi chiudendo torno esattamente dove ero
-- apertura: la copertina si espande dalla posizione della card fino alla testata del pannello (clone assoluto animato da rettangolo a rettangolo; non usare `layoutId` attraverso il contenitore trasformato in 3D); la pagina sotto si scurisce e arretra leggermente (scala 0,96)
-- desktop: pannello quasi a tutto schermo con un margine attorno; mobile: foglio a schermo intero che sale dal basso
-- chiusura: pulsante "chiudi" con icona X, Esc, clic fuori, tasto indietro del browser, trascinamento verso il basso su mobile
-- mentre è aperto: `lenis.stop()` e scroll interno nativo con `data-lenis-prevent`; alla chiusura `lenis.start()`
-- basato sul Dialog di shadcn (Radix): focus intrappolato, `aria-modal`, focus restituito alla card alla chiusura
-- link diretto a `/progetti/<slug>`: dopo il preloader la home si posiziona sul portfolio e il pannello si apre; slug inesistente → home
-- struttura: titolo → breve descrizione → riga meta (discipline · anno · cliente) → blocchi nell'ordine del file → in fondo l'anteprima del progetto successivo, che si apre al clic
-
-**Blocchi** (caricati solo all'apertura del pannello, con `React.lazy`)
-
-| tipo | uso | comportamento |
-|---|---|---|
-| `pdf` | branding, manuali | sfogliabile come un libro: `react-pdf` disegna le pagine (worker di pdf.js configurato per Vite), `react-pageflip` gira le pagine; doppia pagina su desktop, singola con swipe su mobile; frecce, contatore "3 / 24", schermo intero; pagine caricate man mano; cursore "sfoglia" |
-| `modello3d` | progetti 3d | `<Canvas>` dedicato montato solo quando visibile; `useGLTF`, `OrbitControls` con inerzia, rotazione automatica finché non lo tocco, zoom limitato, niente spostamento laterale; luci con `Lightformer`; ombra di contatto leggera; barra di caricamento; pulsante per ripristinare la vista; cursore "ruota" |
-| `video` | animazioni, reel | file mp4 (H.264) con poster e controlli personalizzati (play/pausa, barra, audio, schermo intero) oppure link Vimeo/YouTube (youtube-nocookie) caricato solo al clic; opzione `autoplay` (muto e in loop) per clip brevi; mai audio automatico; cursore "play"/"pausa" |
-| `immagini` | tutti | una o più immagini, `layout` `"piena"` o `"griglia"`, entrano con una rivelazione a maschera |
-| `testo` | processo, note | paragrafi |
+`/progetti/:slug` è una rotta modale; la home resta montata. Copertina vola dalla card, contenuti opachi, blocchi PDF/immagini/3d/video/testo caricati quando servono. Chiusura con pulsante, esc, sfondo, indietro e gesto mobile; focus restituito alla card. Link diretto: home sulla griglia finale, anche su mobile. [Pannello](docs/pannello.md).
 
 ### 6.6 chi sono
 
-Solo la mia foto e questo testo, riportato esattamente, in tre paragrafi:
-
-> sono alessandro bottone, graphic e brand designer con un percorso di 7 anni di esperienza maturata tra studio e attività sul campo. attualmente frequento il corso di design della comunicazione alla iuad per affinare ulteriormente la mia metodologia progettuale.
->
-> nell’ultimo anno ho scelto di ampliare i miei orizzonti creativi esplorando attivamente l’illustrazione e nuove contaminazioni visive, integrando la precisione strategica del branding con la forza espressiva del disegno.
->
-> il mio obiettivo è tradurre i valori e la visione dei clienti in sistemi d’identità solidi, maturi e dal forte impatto contemporaneo.
-
-- nessun titolo visibile (un `h2` "chi sono" solo per gli screen reader)
-- desktop: foto a sinistra (≈ 5/12), testo a destra; sezione bloccata per ≈ 150vh mentre il testo si "accende"
-- mobile: foto sopra (4:5), testo sotto
-- il testo si accende parola per parola con lo scroll, da grigio a bianco (SplitText + scrub); con movimento ridotto è tutto bianco da subito
-- foto: la fornisco a colori e va convertita in bianco e nero **mappato sulla palette** (nero puro → `#141414`, bianco puro → `#C9C5C0`), così i bordi si fondono con lo sfondo. Conversione una tantum con lo script `foto-palette` (`sharp`), originale conservato
-- entrata della foto: rivelazione con `clip-path` dal basso e leggero zoom indietro (1,15 → 1)
-- firma: quando la foto è entrata, i tratti del volto si disegnano sopra il mio viso (gli occhiali sui miei occhi), restano un istante e si cancellano; riappaiono al passaggio del mouse. Posizione e scala in `src/config/foto.ts`, con un'opzione per disattivare l'effetto
+Testo biografico attuale invariato: parole dal bianco al 31,5% al bianco pieno. Niente foto né firma. Logo a sinistra; dopo la rivelazione raggiunge i contatti. Pin soltanto se il testo entra nell’altezza disponibile; altrimenti flusso normale.
 
 ### 6.7 contatti
 
-Solo il volto e tre pulsanti. Niente titoli, niente footer: la pagina finisce qui.
+Logo grande al centro, posizione e scala ferme. Instagram, Behance ed email sotto; copyright con anno corrente. Email copiata con feedback, occhiolino/sorriso e annuncio accessibile; fallback `mailto:` se la copia fallisce.
 
-- all'entrata il volto (SVG, ≈ 36vmin) si disegna e si sveglia; segue il cursore e, al passaggio su un pulsante, lo guarda
-- tre pulsanti (in riga su desktop, in colonna a tutta larghezza su mobile, altezza minima 56px):
-  - `instagram` → https://www.instagram.com/ale.bottone.designer/ (nuova scheda)
-  - `behance` → https://www.behance.net/alessanbottone1 (nuova scheda)
-  - `email` → copia `alessandrobottone2005@gmail.com` negli appunti con un clic
-- stile: pillola con bordo grigio; al passaggio del mouse un riempimento bianco entra dal lato da cui arriva il cursore, il testo diventa nero e rotola, il pulsante è attratto dal cursore (massimo 12px); freccia ↗ per i link esterni
-- email copiata: l'etichetta diventa "copiata" con icona di spunta per 2s, il volto fa l'occhiolino e sorride, annuncio `aria-live` "indirizzo email copiato"; soluzione di riserva se l'API degli appunti non è disponibile; al passaggio del mouse un piccolo tooltip mostra l'indirizzo
-- icone: Instagram e Behance da `simple-icons` (Lucide non ha Behance), ricolorate con la palette; il resto da Lucide
+Dettagli e parametri: [animazioni](docs/animazioni.md), [ambiente 3d](docs/ambiente-3d.md).
 
----
+## 7. cursore
 
-## 7. cursore personalizzato
+Solo con mouse e senza movimento ridotto. Punto, anello sui controlli, parola contestuale sulle aree interattive. Si aggiorna anche dopo scroll, focus e cambio rotta; su touch cursore di sistema.
 
-Solo su dispositivi con mouse (`(hover: hover) and (pointer: fine)`); su touch non esiste.
+## 8. micro-interazioni
 
-- base: punto bianco da 10px con leggera inerzia (`gsap.quickTo`)
-- link e pulsanti: diventa un anello da 44px
-- card frontale: cerchio pieno da 96px con scritto "apri" in nero (una lente)
-- aree con significato: `sfoglia` (pdf), `ruota` (3d), `play`/`pausa` (video), `chiudi` (fuori dal pannello), `tieni premuto` (anello, solo al primo passaggio)
-- pressione: si contrae a 0,8
-- implementazione: attributi `data-cursore="apri"` letti da un unico componente globale
-- il focus da tastiera resta sempre visibile
+Riusare `Bottone`, `RotolaAlPassaggio`, `TestoCheRotola`, `Magnetico` e `NomePesoVariabile`. Ogni hover ha un equivalente touch/focus. Grana animata solo con mouse, statica su touch e con movimento ridotto.
 
----
+## 9. dati e authoring dei progetti
 
-## 8. micro-interazioni (checklist)
+Una cartella in `src/content/progetti/<slug>/` con `progetto.json`, copertina e file dei blocchi. Titolo, descrizione, discipline, anno e copertina obbligatori; cliente, ordine e blocchi facoltativi. `pubblicato: false` nasconde il progetto, non protegge file riservati.
 
-Ogni elemento interattivo ha tre stati animati: riposo, hover/focus, premuto.
+`src/lib/progetti.ts` legge URL e dati con glob Vite, completa i valori predefiniti, filtra e ordina. Zod e `scripts/valida-progetti.ts` controllano dati e file in sviluppo/build. Gli originali in `_originali/` non entrano nel bundle.
 
-- testi di link e pulsanti che "rotolano" (le lettere salgono e vengono sostituite da una copia), come k95
-- nome nell'header: le lettere vicine al cursore diventano più pesanti (asse `wght` di Outfit da 300 a ≈ 600, in base alla distanza)
-- pulsanti magnetici
-- card: inclinazione, passaggio al colore, reazione alla velocità dello scroll
-- volto: sguardo, battiti, sonno, occhiolino, sorriso
-- titolo e favicon della scheda quando esco
-- entrate sfalsate per ogni gruppo di elementi
-- focus da tastiera animato
-- grana animata
+- `npm run nuovo-progetto`: crea dati iniziali non pubblicati.
+- `npm run prepara-progetti`: WebP, copertine 900px, GLB Meshopt, controlli e avvisi sul peso.
+- `npm run build`: TypeScript, validazione e output Vite.
 
----
-
-## 9. progetti che si aggiungono da soli
-
-Obiettivo: per aggiungere un progetto basta creare una cartella con i file dentro. Nessun codice da toccare.
-
-### struttura
-
-```
-src/content/progetti/
-  nome-progetto/          ← il nome della cartella diventa l'indirizzo /progetti/nome-progetto
-    progetto.json
-    copertina.webp
-    …altri file usati nei blocchi (pdf, glb, mp4, webp)
-```
-
-### progetto.json
-
-```json
-{
-  "titolo": "nome del progetto",
-  "descrizione": "breve descrizione, due o tre righe al massimo.",
-  "discipline": ["branding"],
-  "anno": 2026,
-  "cliente": "nome del cliente",
-  "ordine": 1,
-  "pubblicato": true,
-  "copertina": "copertina.webp",
-  "blocchi": [
-    { "tipo": "pdf", "file": "manuale.pdf" },
-    { "tipo": "immagini", "file": ["01.webp", "02.webp"], "layout": "griglia" },
-    { "tipo": "modello3d", "file": "modello.glb" },
-    { "tipo": "video", "file": "reel.mp4", "poster": "poster.webp", "autoplay": false },
-    { "tipo": "video", "url": "https://vimeo.com/000000000" },
-    { "tipo": "testo", "testo": "paragrafo sul processo." }
-  ]
-}
-```
-
-- `discipline`: uno o più tra `branding`, `illustrazione`, `3d`, `web design`
-- `ordine` (facoltativo): numero più basso = prima; senza ordine, i progetti più recenti per `anno` vengono prima
-- `pubblicato: false` nasconde il progetto senza cancellarlo
-- `cliente` è facoltativo
-- i blocchi sono tutti facoltativi e si possono ripetere e combinare
-
-### come funziona nel codice
-
-- `src/lib/progetti.ts` legge tutte le cartelle con `import.meta.glob` (i json, e i file come URL con `?url`), valida con uno schema `zod`, trasforma i nomi dei file in URL, filtra e ordina
-- se manca un file o un campo, la build si ferma con un messaggio chiaro in italiano, per esempio `progetto "nome-progetto": manca il file "manuale.pdf"`
-- aggiungi `glb`/`gltf` agli `assetsInclude` di Vite se serve
-
-### script
-
-- `npm run nuovo-progetto`: mi fa qualche domanda nel terminale (titolo, discipline, anno, cliente) e crea la cartella con un `progetto.json` di partenza
-- `npm run prepara-progetti`: controlla tutti i progetti e ottimizza i file (immagini → webp, lato massimo 2400px, più una versione piccola per la card; `.glb` compressi con `gltf-transform`; avvisi se un pdf supera 15MB o un video 25MB)
-- `npm run build` esegue sempre la validazione
-
-### pubblicazione automatica
-
-Repository GitHub collegato a Vercel: ogni push sul ramo principale pubblica il sito da solo. Serve un `vercel.json` che rimandi tutte le rotte a `index.html`, altrimenti `/progetti/<slug>` non funziona dopo un refresh.
-
-### quando ti chiedo "aggiungi un progetto"
-
-1. chiedimi ciò che manca (titolo, descrizione, discipline, anno, cliente, file)
-2. crea la cartella e copia i file
-3. lancia `npm run prepara-progetti`
-4. scrivi `progetto.json`
-5. lancia `npm run build` e mostrami il risultato in locale
-6. proponimi il commit "aggiunto progetto: <titolo>" e chiedimi prima di fare push
-
-All'inizio crea 10 progetti segnaposto (copertine grigie numerate, testi provvisori) che sostituirò con quelli veri.
-
----
+[Guida pratica](docs/come-aggiungere-un-progetto.md), [schema e script](docs/progetti.md).
 
 ## 10. responsive
 
-- breakpoint: mobile < 768px, tablet 768–1023px, desktop ≥ 1024px
-- unità `svh`/`dvh` al posto di `100vh`; margini laterali minimi di 16px su mobile; rispetta le safe area di iOS
-- su touch ogni effetto hover ha un equivalente (quando l'elemento è in vista o al tocco)
-- Lenis solo per rotella e trackpad; su touch scroll nativo (`syncTouch: false`)
-- prova su Safari iOS e Chrome Android reali, oltre che negli strumenti del browser
-
----
+Telefono <768px, tablet 768–1023px, desktop ≥1024px. Griglia 1/2/3 colonne; spirale e ambiente restano presenti ovunque. `svh`/`dvh`, safe area iOS e almeno 16px di margine. Verificare anche dispositivi fisici quando disponibili: emulazione non equivale a prestazioni mobili reali.
 
 ## 11. prestazioni
 
-- obiettivo: 60fps su un portatile medio, nessuno scatto evidente su un telefono di fascia media di tre anni fa
-- codice diviso in parti caricate quando servono: three/R3F (precaricato durante il preloader), pannello e blocchi (pdf, pageflip, visualizzatore 3D)
-- `volto.glb` sotto 1MB; immagini webp/avif con `srcset`; `loading="lazy"` fuori dall'header
-- canvas in pausa quando non sono visibili; DPR limitato
-- `will-change` solo durante le animazioni
-- verifica con Lighthouse (mobile) e con il pannello Performance di Chrome, e riportami i numeri
+Canvas della home su `demand`, aggiornamenti soltanto con scena visibile e scheda attiva; DPR massimo 1,5 uguale su desktop e mobile. Geometrie delle card condivise; risorse locali liberate allo smontaggio, cache del modello conservata. Nebbia a 32 campioni, nessuna HDRI di studio nel runtime V2. Pannello e blocchi divisi in chunk; movimento ridotto evita il download 3d.
 
----
+Obiettivo di fluidità: 60fps. Misurare sulla versione pubblicata; le misure Lighthouse del 26 settembre sono storiche e precedono l’ambiente V2. [Accessibilità e prestazioni](docs/accessibilita-prestazioni.md).
 
 ## 12. accessibilità
 
-- `prefers-reduced-motion`: niente pin né scrub, niente Lenis, niente grana animata; solo dissolvenze brevi (≤ 200ms); l'anello diventa una griglia a due colonne; il volto non sbatte le palpebre; cursore normale del sistema
-- struttura: `main` con quattro `section` etichettate; `h1` = nome; un `h2` nascosto per ogni sezione
-- tutto usabile da tastiera, focus sempre visibile
-- pannello: `role="dialog"`, `aria-modal`, focus intrappolato e restituito
-- il volto decorativo ha `aria-hidden`; nell'header `role="img"` con `aria-label="logo di alessandro bottone"`
-- testi alternativi descrittivi e in minuscolo
-- aree toccabili di almeno 48px
+Movimento ridotto aggiornabile a sito aperto: niente pin/scrub/Lenis/Canvas, SVG statici e griglia 3/2/1 subito interattiva, dissolvenze brevi. Tastiera completa; controlli invisibili `inert`; dialog Radix con focus intrappolato e restituito. Un `main`, quattro sezioni etichettate, un `h1`, titoli di sezione accessibili. Canvas decorativo `aria-hidden`, copie `sr-only` dei testi animati. Testi alternativi in minuscolo.
 
----
+## 13. struttura
 
-## 13. struttura delle cartelle
+[Architettura e cartelle correnti](docs/architettura.md). `src/` contiene codice e progetti, `public/` soltanto asset runtime, `sorgenti/` originali creativi ed esportazioni, `scripts/` strumenti di authoring, `docs/` guide. File originali e backup Blender restano sul disco; cache rigenerabili e backup automatici non si pubblicano. Le letture live dei media query condividono `src/lib/useMediaQuery.ts`.
 
-```
-.
-├─ CLAUDE.md
-├─ vercel.json
-├─ docs/
-│  └─ come-aggiungere-un-progetto.md
-├─ sorgenti/            (logo originale: Logo.svg, Logo.glb — non pubblicati)
-├─ scripts/
-│  ├─ nuovo-progetto.mjs
-│  ├─ prepara-progetti.mjs
-│  ├─ valida-progetti.ts
-│  ├─ foto-palette.mjs
-│  ├─ genera-favicon.mjs
-│  └─ genera-og.mjs
-├─ public/
-│  ├─ volto/            (volto.glb, favicon sveglia e addormentata, apple-touch-icon)
-│  ├─ og.png
-│  └─ robots.txt
-└─ src/
-   ├─ main.tsx, App.tsx, router.tsx
-   ├─ config/           (sito.ts, movimento.ts, foto.ts)
-   ├─ styles/globals.css
-   ├─ lib/              (progetti.ts, schema.ts, dati.ts, gsap.ts, scroll.ts, caricamento.ts, appunti.ts, utils.ts)
-   ├─ types/            (page-flip.d.ts)
-   ├─ components/
-   │  ├─ volto/         (Volto.tsx, VoltoContext.tsx, Volto3D.tsx, geometria.ts, sguardo.ts, tre.ts)
-   │  ├─ cursore/       (Cursore.tsx)
-   │  ├─ preloader/     (Preloader.tsx, AvvioContext.tsx)
-   │  ├─ testo/         (TestoCheRotola.tsx, RotolaAlPassaggio.tsx, NomePesoVariabile.tsx)
-   │  ├─ effetti/       (Grana.tsx)
-   │  ├─ interazioni/   (Magnetico.tsx)
-   │  └─ ui/            (componenti shadcn: dialog, button)
-   ├─ sections/
-   │  ├─ Header/        (Header.tsx, Tavola.tsx, misure.ts)
-   │  ├─ Portfolio/     (Portfolio.tsx, Anello.tsx, Pila.tsx, Griglia.tsx, Copertina.tsx, carta.ts)
-   │  ├─ ChiSono/
-   │  └─ Contatti/
-   ├─ pannello/         (Pannello.tsx, Blocchi.tsx, transizioni.ts)
-   │  └─ blocchi/       (Pdf.tsx, Modello3D.tsx, Video.tsx, Immagini.tsx, Testo.tsx)
-   ├─ laboratorio/      (Laboratorio.tsx, solo in sviluppo)
-   ├─ assets/foto/      (originale e versione palette)
-   └─ content/progetti/<slug>/
-```
+## 14. lavoro e verifiche
 
-`src/config/sito.ts` contiene link, email e testo del chi sono: un'unica fonte per tutti i testi fissi.
-
----
-
-## 14. piano di lavoro
-
-Fermati alla fine di ogni fase e aspetta il mio ok.
-
-- **fase 0 — ambiente**: verifica Node LTS, Git, Python 3 (serve a UI/UX Pro Max), la skill UI/UX Pro Max e il 21st MCP. Se manca qualcosa, dimmelo e indicami i comandi della sezione 17.
-- **fase 1 — fondamenta**: progetto Vite React TS, Tailwind v4, shadcn con i token, Outfit, regola delle minuscole, Lenis + GSAP sincronizzati, router con rotta modale, caricamento dei progetti con schema e 10 segnaposto, script, `vercel.json`. Risultato: pagina nera che scorre, con le sezioni vuote.
-- **fase 2 — volto e cursore**: `<Volto />` con tutti gli stati e i comportamenti, cursore personalizzato, più una pagina `/laboratorio` (solo in sviluppo) per provare stati e animazioni.
-- **fase 3 — preloader e header**: le quattro fasi, il 3D e il passaggio al portfolio.
-- **fase 4 — portfolio e pannello**: anello, pila su mobile, pannello e i cinque tipi di blocco.
-- **fase 5 — chi sono e contatti**, con la conversione della foto.
-- **fase 6 — rifinitura**: passata completa di micro-interazioni, responsive, movimento ridotto, prestazioni e accessibilità; revisione con UI/UX Pro Max.
-- **fase 7 — pubblicazione**: GitHub + Vercel insieme a me; favicon, `og.png` (volto e nome su nero), meta description in minuscolo; guida `docs/come-aggiungere-un-progetto.md` scritta in modo semplice.
-
----
+La costruzione iniziale per fasi è conclusa. Per la manutenzione autorizzata del 29 settembre: debugging e pulizia → documentazione coerente → build/lint e verifica dei flussi → branch GitHub → deploy Vercel. Non creare pause di approvazione già superate dalla richiesta in chat.
 
 ## 15. checklist finale
 
-- [ ] nessuna maiuscola visibile in tutto il sito
-- [ ] solo i tre colori nell'interfaccia; sfondo sempre nero
-- [ ] solo Outfit
-- [ ] niente navbar, niente footer, nessun testo extra
-- [ ] scroll fluido avanti e indietro; le fasi dell'header si riavvolgono
-- [ ] aprendo e chiudendo un progetto 10 volte torno sempre allo stesso punto
-- [ ] il link diretto a un progetto funziona, anche dopo un refresh su Vercel
-- [ ] aggiungendo una cartella, il progetto compare nel sito senza toccare codice
-- [ ] pdf sfogliabile, 3D ruotabile e video funzionanti su desktop e mobile
-- [ ] l'email si copia con feedback visivo e annuncio per screen reader
-- [ ] tutto funziona con movimento ridotto e da tastiera
-- [ ] 60fps su desktop, nessuno scatto evidente su mobile
-- [ ] provato su Safari iOS e Chrome Android
+- Palette, Outfit e minuscole; nessun testo fornito modificato.
+- Header, spirale, campo lungo e griglia reversibili.
+- Venti progetti; espansione singola e pannello, chiusura e link diretto.
+- Nome fisso, biografia leggibile, contatti e copyright.
+- Tastiera, movimento ridotto, fallback SVG/DOM e cambio viewport.
+- Build/lint superati; asset, rotte e funzionalità verificati anche nel deploy.
+- Risultati e limiti di verifica riportati senza trasformare gli obiettivi in misure.
 
----
+## 16. materiali
 
-## 16. materiali che fornirò
+Logo SVG originale in `sorgenti/`; scene Blender, texture e render in `sorgenti/logo-3d/`; GLB V2 ottimizzata in `public/volto/`. I progetti attuali sono segnaposto 01–20. La foto non compare più nella home. Conservare le scene utente anche quando non sono usate dal sito.
 
-- `riferimento.png`: il logo attuale (già pronto)
-- `volto.svg`: tratti non espansi, parti separate e nominate
-- `volto.glb`: parti separate, vista frontale allineata all'SVG
-- la mia foto a colori ad alta risoluzione
-- per ogni progetto: titolo, breve descrizione, discipline, anno, cliente (se c'è), copertina e file dei blocchi
+## 17. pubblicazione
 
----
-
-## 17. installazione degli strumenti (la faccio io)
-
-- Node.js LTS (nodejs.org), Git, Python 3 (python.org)
-- UI/UX Pro Max, dentro Claude Code:
-  ```
-  /plugin marketplace add nextlevelbuilder/ui-ux-pro-max-skill
-  /plugin install ui-ux-pro-max@ui-ux-pro-max-skill
-  ```
-- 21st MCP: chiave gratuita su 21st.dev/mcp, poi nel terminale:
-  ```
-  npx @21st-dev/cli@latest init --client claude
-  ```
-  La chiave non va mai scritta nel codice né caricata su GitHub (`.env` sempre in `.gitignore`).
-
----
+Repository GitHub `alessandrobottone2005-crypto/ProvaLandingPagePortfolio_Claude`; progetto Vercel `provalandingpageportfolio-claude`. Branch di manutenzione `codex/manutenzione-portfolio-3d`; non fondere in `main` senza richiesta. La pubblicazione corrente si documenta solo dopo conferma di URL, commit ed esito. [Procedura e stato](docs/pubblicazione.md).
 
 ## decisioni prese
+
+Le voci seguenti sono uno storico cronologico: nomi di file, numeri e soluzioni superati non sono istruzioni per riportare il sito a una versione precedente.
+
 
 - 2026-09-26 — versioni: vite 8, react 19, react router 8 (modalità libreria con `BrowserRouter`), tailwind 4.3, gsap 3.15, motion 13, lenis 1.3, typescript 6 (strict).
 - 2026-09-26 — shadcn inizializzato con base radix e preset "nova"; ha portato le sue dipendenze (`radix-ui`, `class-variance-authority`, `cn`, `tw-animate-css`, `shadcn`). Il font geist del preset è stato rimosso.
@@ -579,3 +208,20 @@ Fermati alla fine di ogni fase e aspetta il mio ok.
 - 2026-09-26 — pulizia prima della pubblicazione: eliminato il progetto `prova-blocchi`; i file originali del logo (`Logo.glb`, `Logo.svg`) spostati da `public/` a `sorgenti/`, così restano conservati ma non vengono pubblicati.
 - 2026-09-27 — debugging, pulizia e documentazione fatti da un team di agenti prima della pubblicazione: corretti il battito di risveglio (preloader e VoltoContext), il 3d dell’header che se fallisce lascia il volto svg (`Senza3D`), i file `._*` del disco exfat (ignorati da oxlint, git e `prepara-progetti`); eliminati tooltip shadcn e foto provvisorie; `Grana.tsx` → `components/effetti/`, `Magnetico.tsx` → `components/interazioni/`; `pdfjs-dist` dichiarato in `package.json`; documentazione in `README.md` e `docs/`.
 - 2026-09-27 — pubblicazione: repository github `alessandrobottone2005-crypto/ProvaLandingPagePortfolio_Claude` (ramo `main`), progetto vercel `provalandingpageportfolio-claude`; nel repository anche `CLAUDE.md`, `sorgenti/` e la foto originale; esclusi `.mcp.json`, `.claude/settings.local.json`, `.vercel`. prima versione online con i 10 segnaposto.
+- 2026-09-27 — bottoni da figma (`button_atoms`, `icon button_atoms`, `iconset_atoms`): `components/bottoni/` (`BaseBottone`, `Bottone`, `BottoneIcona`) e `components/icone/Icona.tsx` con gli svg di figma in `src/assets/icone/` (colorati con mask). stati: riposo bianco con testo nero, mouse/focus nero che entra dal lato del cursore + bagliore (`shadow-bagliore`), premuto con bordo bianco, disattivato grigio. testo in minuscolo; pesi 500 (small, medium) e 600 (big), token `text-bottone-s/m/l`. usati solo nei contatti (big, solo testo, niente icone né ↗); icon button e icone pronti e visibili in `/laboratorio`. `simple-icons` rimosso.
+
+- 2026-09-27 — aggiornamento card da figma (`info-card_atoms` 9:607, `card` 121:172): cornice grigia, raggio e bagliore proporzionali, copertina dinamica. su desktop/tablet l’anello prosegue con 160vh di scroll verso la griglia piatta (3 colonne desktop, 2 tablet), poi scroll normale. card interattive solo nella griglia: clic → informazioni sotto l’immagine, una aperta alla volta; espansione sposta le righe successive; “esplora” apre il pannello esistente, “chiudi”/esc richiudono la card. testi informativi tutti bianchi; rimosse le informazioni sotto l’anello. mobile: pila e interazioni precedenti conservate. movimento ridotto: griglia immediata a 3/2/1 colonne. link diretti ai progetti posizionano la home sulla griglia finale.
+
+- 2026-09-27 — aggiornamento percorso logo concordato in chat: logo iniziale grande ma interamente visibile, nome presente fino alle card, categorie evidenti senza numeri e senza quattro trattini. dalla fase 3d un solo volto continuo, ricostruito dai tratti 2d in solidi animabili (originale GLB conservato): sguardo, battiti, sonno, risveglio, occhiolino e sorriso. spirale ispirata alla modalità “Spiral” di k95 anche su telefono, copertine sempre a colori; confermata griglia finale 3/2/1 con card Figma espandibili. il volto si rimpicciolisce di lato nella griglia, affianca il testo biografico invariato (foto e firma rimosse), poi, a testo bianco, si ingrandisce al centro dei contatti con i tre pulsanti sotto. posizione e scala ferme ai contatti; espressioni sempre attive. movimento ridotto: niente pin/spirale/Canvas, SVG statici e griglia immediata; preferenza aggiornata anche a sito aperto.
+
+- 2026-09-27 — logo Blender: su richiesta di alessandro, versione separata in `sorgenti/logo-3d/`, derivata da `~/Desktop/Logo3DAnimabile.blend`; bordi morbidi, espressioni animate e metallo grezzo poco lucido, con mappe ambientCG e HDRI Poly Haven CC0. File originale conservato; esportazioni GLB completa e Web pronte per successiva integrazione.
+
+- 2026-09-27 — integrato il modello Blender metallico nel volto continuo e nel laboratorio: GLB Meshopt locale con shape key, HDRI Studio Small 08, asset precaricati una sola volta. Percorso e interazioni esistenti conservati; movimento ridotto senza download 3D e fallback SVG in caso di errore.
+
+- 2026-09-27 — su richiesta di alessandro: progetti segnaposto portati a 20; copyright con anno corrente sotto i tre contatti. Nome e cognome dell’header si raccolgono in piccolo in alto a destra alla fine del racconto e restano fissi come logo tipografico cliccabile per tornare all’inizio; trasformazione reversibile e cambio diretto senza movimento con preferenza ridotta. Questa scelta aggiorna il precedente vincolo “nessuna navbar, nessun footer”.
+
+- 2026-09-28 — ambiente immersivo dalla V2 Blender, verificata tramite Computer: appare insieme al logo 3d, tre fari bianchi seguono il volto con inerzia, nebbia volumetrica in movimento e camera guidata dallo scroll. Card della spirale realmente dentro la scena WebGL, poi passaggio alla griglia interattiva. Biografia, contatti, copyright e navbar leggibili sopra l’ambiente; pannelli progetto opachi. Stessi effetti su desktop e mobile, senza semplificazioni visive per breakpoint; preferenza movimento ridotto conservata. GLB V2 separata, originale .blend conservato. Dettagli e limiti della riproduzione web in `docs/ambiente-3d.md`.
+
+- 2026-09-28 — approvati e implementati i cinque interventi sulla spirale: card con corpo estruso, smussi, cornice forata e copertina incassata; profondità davanti e dietro al logo; camera diagonale con campo visivo 42° e orbita parziale; due luci radenti sulle cornici; campo lungo finale e distensione nella griglia. Finale portato a 200vh, stesso percorso su telefono. Copertine senza riflessi aggiunti, griglia 3/2/1 e interazioni conservate. Parametri in `movimento.portfolio.spirale3d`, dettagli in `docs/ambiente-3d.md`.
+
+- 2026-09-29 — manutenzione autorizzata a un team: debugging runtime, rimozione del codice non usato e delle copie pubbliche V1/HDRI, rinomina dell’anello in spirale, conservazione dei sorgenti e aggiornamento della documentazione corrente. Autorizzati creazione/push del branch `codex/manutenzione-portfolio-3d` e deploy Vercel; nessun merge richiesto. Lo storico resta preservato, il brief operativo sostituisce le istruzioni iniziali ormai superate.
