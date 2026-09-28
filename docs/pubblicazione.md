@@ -7,18 +7,25 @@
 - [Dominio di produzione](https://provalandingpageportfolio-claude.vercel.app).
 - Branch della manutenzione del 29 settembre 2026: `codex/manutenzione-portfolio-3d`.
 
-L’utente ha autorizzato creazione/push del branch e deploy in produzione. **Questa pubblicazione viene preparata dal branch di manutenzione; non comporta un merge in `main`.** Un successivo deploy da `main` deve includere queste modifiche, altrimenti può riportare online il codice precedente.
+L’utente ha autorizzato creazione/push del branch e deploy in produzione. **La versione del 29 settembre 2026 è stata pubblicata dal branch di manutenzione, senza merge in `main`.** Un successivo deploy da `main` deve includere queste modifiche, altrimenti può riportare online il codice precedente.
 
 ## stato della manutenzione corrente
 
 | voce | stato |
 |---|---|
-| branch locale | `codex/manutenzione-portfolio-3d` |
-| commit pubblicato e push GitHub | da registrare dopo conferma |
-| deploy production e URL della versione | in preparazione; non ancora confermati |
-| verifica online | da registrare dopo il deploy |
+| branch GitHub | [`codex/manutenzione-portfolio-3d`](https://github.com/alessandrobottone2005-crypto/ProvaLandingPagePortfolio_Claude/tree/codex/manutenzione-portfolio-3d), push riuscito |
+| commit codice pubblicato | [`6db4e456239ee683268b7a6d0aeb512719bcb108`](https://github.com/alessandrobottone2005-crypto/ProvaLandingPagePortfolio_Claude/commit/6db4e456239ee683268b7a6d0aeb512719bcb108) |
+| deploy production | `READY`, 29 settembre 2026, circa 00:08 (Europe/Rome) |
+| URL immutabile della versione | [9g7a1ojwa](https://provalandingpageportfolio-claude-9g7a1ojwa-abd-esign1.vercel.app) |
+| alias aggiornato | [dominio pubblico](https://provalandingpageportfolio-claude.vercel.app) |
+| deployment | `dpl_Hdc8NqEk67VzLRdzBim6bGcdeTXy`, build Vite circa 21s |
+| verifica online | superata sul dominio pubblico: spirale 3D, griglia 3/2/1, card e pannello, link diretto/refresh, movimento ridotto; nessun errore browser rilevato |
 
-Il dominio sopra è l’indirizzo stabile del progetto, non la prova che il nuovo deploy sia già online. URL immutabile della versione, commit ed esito dei controlli vanno aggiornati solo dopo la pubblicazione riuscita.
+Deploy e alias sono confermati. L’URL immutabile identifica questa versione anche se il dominio pubblico verrà aggiornato in futuro. Le successive modifiche documentali del branch possono avere commit diversi dal commit del codice effettivamente pubblicato.
+
+Prima del deploy sono stati completati lint/build e controlli browser locali: desktop e viewport mobile 390px, venti card e griglia 3/1 senza overflow, espansione e pannello, link diretto/refresh, movimento ridotto e cambio della preferenza, chiusura e indietro del browser. Gli esiti locali non sostituiscono la verifica funzionale online né una prova su telefono fisico.
+
+Dopo il deploy, verificati nel browser sul dominio pubblico desktop 1440px, tablet 820px e mobile 390px, senza overflow orizzontale. Confermati caricamento del Canvas e spirale anche su mobile, venti card, griglia finale, apertura/chiusura del pannello e rotta diretta con ricarica. Con movimento ridotto il Canvas è assente e la griglia resta disponibile. Home, rotta progetto, modello V2, immagine social e robots rispondono HTTP 200; il modello pubblico coincide con quello locale. Nessun errore rilevato nel browser o nei log Vercel consultati dopo il deploy. Le prove mobile sono a viewport emulata; non sono nuove misure Lighthouse né prove su telefoni fisici.
 
 ## build e deploy
 
@@ -59,12 +66,12 @@ Il push di un branch può generare una preview se l’integrazione Git è attiva
 
 ## checklist di rilascio
 
-- [ ] branch/commit e progetto Vercel corretti, nessun merge non richiesto
-- [ ] lint e build completati, lockfile coerente e validazione dei progetti superata
-- [ ] comportamento desktop/tablet/telefono, scroll inverso, card e dialog verificati
-- [ ] link diretto e refresh della rotta verificati nella build e online
-- [ ] fallback SVG/DOM e cambio movimento ridotto verificati
-- [ ] testi, link, email, nome fisso, copyright e asset social controllati
-- [ ] pubblicazione riuscita, URL immutabile e commit annotati sopra
-- [ ] contenuti segnaposto dichiarati: i venti attuali restano pubblicati finché non vengono sostituiti
+- [x] branch/commit e progetto Vercel corretti, nessun merge non richiesto
+- [x] lint e build completati, lockfile coerente e validazione dei progetti superata
+- [x] comportamento desktop/tablet/viewport telefono, scroll inverso, card e dialog verificati
+- [x] link diretto e refresh della rotta verificati nella build e online
+- [x] fallback SVG/DOM e cambio movimento ridotto verificati localmente; movimento ridotto verificato anche online
+- [x] presenza di testi, link, pulsante email, nome fisso, copyright e asset social controllata
+- [x] pubblicazione riuscita, URL immutabile e commit annotati sopra
+- [x] contenuti segnaposto dichiarati: i venti attuali restano pubblicati finché non vengono sostituiti
 - [ ] misure Lighthouse e prova su Safari iOS/Chrome Android fisici ripetute quando disponibili
