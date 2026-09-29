@@ -1,0 +1,296 @@
+{
+  "coordinate": "blender (x,y,z); nel sito (x,z,-y)",
+  "stazioni": {
+    "header": {
+      "posizione": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotazione_z": 0.0
+    },
+    "spirale": {
+      "posizione": [
+        36.0,
+        0.0,
+        0.0
+      ],
+      "rotazione_z": 0.0
+    },
+    "biografia": {
+      "posizione": [
+        72.0,
+        0.0,
+        0.0
+      ],
+      "rotazione_z": 0.0
+    },
+    "contatti": {
+      "posizione": [
+        108.0,
+        0.0,
+        0.0
+      ],
+      "rotazione_z": 0.0
+    }
+  },
+  "sole": [
+    {
+      "nome": "sole radente",
+      "direzione": [
+        0.4557,
+        0.2149,
+        -0.8638
+      ],
+      "energia": 0.008,
+      "colore": [
+        1.0,
+        0.98,
+        0.95
+      ],
+      "angolo": 0.01222,
+      "visibile": true
+    }
+  ],
+  "aperture": [
+    {
+      "nome": "apertura_01",
+      "posizione": [
+        -3.0,
+        -1.0,
+        8.65
+      ],
+      "direzione": [
+        0.2348,
+        0.2348,
+        -0.9432
+      ],
+      "potenza": 1300.0,
+      "colore": [
+        1.0,
+        0.98,
+        0.95
+      ],
+      "dimensioni": [
+        1.3,
+        3.9
+      ]
+    },
+    {
+      "nome": "apertura_02",
+      "posizione": [
+        -3.0,
+        12.0,
+        8.65
+      ],
+      "direzione": [
+        0.3005,
+        0.3005,
+        -0.9052
+      ],
+      "potenza": 550.0,
+      "colore": [
+        1.0,
+        0.98,
+        0.95
+      ],
+      "dimensioni": [
+        1.2,
+        3.6
+      ]
+    },
+    {
+      "nome": "apertura_03",
+      "posizione": [
+        34.0,
+        -1.0,
+        30.0
+      ],
+      "direzione": [
+        0.0665,
+        0.0332,
+        -0.9972
+      ],
+      "potenza": 5600.0,
+      "colore": [
+        1.0,
+        0.98,
+        0.95
+      ],
+      "dimensioni": [
+        2.0,
+        6.0
+      ]
+    },
+    {
+      "nome": "apertura_04",
+      "posizione": [
+        42.0,
+        7.0,
+        30.0
+      ],
+      "direzione": [
+        0.1293,
+        -0.0216,
+        -0.9914
+      ],
+      "potenza": 3600.0,
+      "colore": [
+        1.0,
+        0.98,
+        0.95
+      ],
+      "dimensioni": [
+        1.5,
+        4.5
+      ]
+    },
+    {
+      "nome": "apertura_05",
+      "posizione": [
+        68.0,
+        3.0,
+        27.4
+      ],
+      "direzione": [
+        0.0484,
+        0.1934,
+        -0.9799
+      ],
+      "potenza": 3300.0,
+      "colore": [
+        1.0,
+        0.98,
+        0.95
+      ],
+      "dimensioni": [
+        1.0,
+        3.0
+      ]
+    },
+    {
+      "nome": "apertura_06",
+      "posizione": [
+        108.0,
+        22.0,
+        13.0
+      ],
+      "direzione": [
+        0.0,
+        -0.6189,
+        -0.7855
+      ],
+      "potenza": 1500.0,
+      "colore": [
+        1.0,
+        0.98,
+        0.95
+      ],
+      "dimensioni": [
+        3.0,
+        9.0
+      ]
+    }
+  ],
+  "esposizione": -0.7,
+  "lame": [
+    {
+      "nome": "luce_01",
+      "posizione": [
+        -3.0,
+        -1.0,
+        8.65
+      ],
+      "direzione": [
+        0.2348,
+        0.2348,
+        -0.9432
+      ],
+      "larghezza": 1.3,
+      "lunghezza": 12,
+      "intensita": 0.85
+    },
+    {
+      "nome": "luce_02",
+      "posizione": [
+        -3.0,
+        12.0,
+        8.65
+      ],
+      "direzione": [
+        0.3005,
+        0.3005,
+        -0.9052
+      ],
+      "larghezza": 1.2,
+      "lunghezza": 15,
+      "intensita": 0.65
+    },
+    {
+      "nome": "luce_03",
+      "posizione": [
+        34.0,
+        -1.0,
+        30.0
+      ],
+      "direzione": [
+        0.0665,
+        0.0332,
+        -0.9972
+      ],
+      "larghezza": 2,
+      "lunghezza": 50,
+      "intensita": 1
+    },
+    {
+      "nome": "luce_04",
+      "posizione": [
+        42.0,
+        7.0,
+        30.0
+      ],
+      "direzione": [
+        0.1293,
+        -0.0216,
+        -0.9914
+      ],
+      "larghezza": 1.5,
+      "lunghezza": 47,
+      "intensita": 0.75
+    },
+    {
+      "nome": "luce_05",
+      "posizione": [
+        68.0,
+        3.0,
+        27.4
+      ],
+      "direzione": [
+        0.0484,
+        0.1934,
+        -0.9799
+      ],
+      "larghezza": 1,
+      "lunghezza": 33,
+      "intensita": 0.55
+    },
+    {
+      "nome": "luce_06",
+      "posizione": [
+        108.0,
+        22.0,
+        13.0
+      ],
+      "direzione": [
+        0.0,
+        -0.6189,
+        -0.7855
+      ],
+      "larghezza": 3,
+      "lunghezza": 22,
+      "intensita": 0.95
+    }
+  ],
+  "oggetti": 13,
+  "triangoli_prima_dei_modificatori": 14984
+}

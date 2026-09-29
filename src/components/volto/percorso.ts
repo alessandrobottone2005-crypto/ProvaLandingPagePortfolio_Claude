@@ -8,6 +8,8 @@ export const percorso = {
   spirale: { apertura: 0, giro: 0, piatta: 0 },
   biografia: { uscita: 0 },
   guarda: null as Punto | null,
+  // 0 header → 1 spirale e griglia → 2 biografia → 3 contatti; scritto da leggiPosa.
+  stazione: 0,
 }
 
 export const limita = (n: number) => Math.min(1, Math.max(0, n))
@@ -25,6 +27,7 @@ export function leggiPosa() {
   const spirale = ScrollTrigger.getById('portfolio-anello')
   const inPortfolio = spirale && scrollY >= spirale.start - 1
   if (!inPortfolio) {
+    percorso.stazione = 0
     if (!header) return { ...posa, opacity: 0 }
     return {
       x: header.left + header.width / 2,
@@ -36,6 +39,7 @@ export function leggiPosa() {
     }
   }
 
+  percorso.stazione = limita(percorso.spirale.apertura)
   const p = fasiSpirale(percorso.spirale.piatta).distensione
   const mobile = w < 768
   const lato = { x: mobile ? 38 : 62, y: mobile ? 38 : h / 2, larghezza: mobile ? 48 : 84 }
@@ -55,6 +59,7 @@ export function leggiPosa() {
     posa.rotazione = mix(0, -8, ingresso)
     posa.fase = 'biografia'
     const uscita = morbido(percorso.biografia.uscita)
+    percorso.stazione = 1 + ingresso + uscita
     posa.x = mix(posa.x, w / 2, uscita)
     posa.y = mix(posa.y, h / 2, uscita)
     posa.larghezza = mix(posa.larghezza, larghezzaLogoContatti(), uscita)

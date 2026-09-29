@@ -14,6 +14,7 @@ import { CameraImmersiva } from './CameraImmersiva'
 import { CardNelloSpazio } from './CardNelloSpazio'
 import { NebbiaVolumetrica } from './NebbiaVolumetrica'
 import { scenaImmersiva } from './scenaImmersiva'
+import { AmbienteBrutalista, ambienteAttivo } from './AmbienteBrutalista'
 
 function morph(mesh: THREE.Mesh, nome: string, valore: number) {
   const indice = mesh.morphTargetDictionary?.[nome]
@@ -29,8 +30,10 @@ type Props = {
 
 export default function Volto3D({ riferimento, controllo, attivo = true }: Props) {
   const risorse = use(caricaLogo())
+  const edificio = !riferimento && ambienteAttivo
   return (
     <Canvas
+      shadows={edificio && 'percentage'}
       frameloop="demand"
       dpr={[1, 1.5]}
       camera={{ fov: 18, position: [0, 0, 20], near: 1, far: 60 }}
@@ -41,6 +44,7 @@ export default function Volto3D({ riferimento, controllo, attivo = true }: Props
       <LuciTeatro />
       {!riferimento && <CameraImmersiva />}
       {!riferimento && <Suspense fallback={null}><CardNelloSpazio /></Suspense>}
+      {edificio && <Suspense fallback={null}><AmbienteBrutalista /></Suspense>}
       <NebbiaVolumetrica />
       <RenderVisibile attivo={attivo} laboratorio={Boolean(riferimento)} />
       <VoltoAnimato riferimento={riferimento} controllo={controllo} modello={risorse.modello.scene} />
