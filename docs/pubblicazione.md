@@ -14,13 +14,13 @@ Autorizzata da alessandro in chat il 1 ottobre 2026: merge di `prova/computer-re
 
 | voce | stato |
 |---|---|
-| merge in `main` e push GitHub | da completare dopo il deploy |
-| commit pubblicato | da completare dopo il deploy |
-| deploy production (stato, data e ora) | da completare dopo il deploy |
-| URL immutabile della versione | da completare dopo il deploy |
-| alias pubblico | da completare dopo il deploy |
-| deployment e durata della build | da completare dopo il deploy |
-| verifica online | da completare dopo il deploy |
+| merge in `main` e push GitHub | fast-forward di `prova/computer-retro` in `main`, push riuscito (`d889e56..47bffee`); pubblicato anche il branch `prova/computer-retro` |
+| commit pubblicato | `47bffee` (computer retrò, sala di cemento, avatar e volto che sbuca dietro il monitor) |
+| deploy production (stato, data e ora) | `READY`, 1 ottobre 2026 alle 21:00 (ora italiana), avviato dall’integrazione Git di Vercel al push su `main` |
+| URL immutabile della versione | https://provalandingpageportfolio-claude-9qxw01f9n-abd-esign1.vercel.app |
+| alias pubblico | https://provalandingpageportfolio-claude.vercel.app |
+| deployment e durata della build | `dpl_43znGWQMaHWDvvDkMmHvXgn9hhk8`, build 39s |
+| verifica online | rotte `/`, `/progetti/segnaposto-05` e slug inesistente in 200; GLB di volto, computer e sala, luci cotte, avatar, `og.png` e `robots.txt` in 200. Chrome headless desktop 1440×900 e telefono 390×844: link diretto con finestra «progetto 05» aperta nel computer, Esc torna a `/`, scroll fino ai contatti, nessun errore in console né risorse mancanti. Non verificati: dispositivi fisici, Safari/Firefox, Lighthouse |
 
 Da controllare online: discesa al computer, accensione e spegnimento, cartelle e finestre, link diretto e ricarica di `/progetti/<slug>`, volto dietro il monitor e nascondino, biografia con avatar, contatti, movimento ridotto, telefono (viewport) e asset `public/computer/`, `public/sala/`, `public/avatar/` con risposta HTTP 200.
 
@@ -80,12 +80,12 @@ Il push di un branch può generare una preview se l’integrazione Git è attiva
 
 Da spuntare dopo il deploy, con gli esiti reali.
 
-- [ ] merge di `prova/computer-retro` in `main`, push e progetto Vercel corretti
-- [ ] lint e build completati, lockfile coerente e validazione dei progetti superata (avvisi attesi: crediti di computer e sala)
-- [ ] desktop/tablet/viewport telefono: discesa, accensione/spegnimento, cartelle, finestre, scroll inverso
-- [ ] link diretto e refresh di `/progetti/<slug>` verificati nella build e online
+- [x] merge di `prova/computer-retro` in `main`, push e progetto Vercel corretti
+- [x] lint e build completati, lockfile coerente e validazione dei progetti superata (avvisi attesi: crediti di computer e sala)
+- [x] desktop/tablet/viewport telefono: discesa, accensione/spegnimento, cartelle, finestre, scroll inverso
+- [x] link diretto e refresh di `/progetti/<slug>` verificati nella build e online
 - [ ] fallback SVG/DOM e cambio movimento ridotto verificati localmente; movimento ridotto verificato anche online
-- [ ] testi, link, pulsante email, nome fisso, copyright e asset social controllati
-- [ ] pubblicazione riuscita, URL immutabile e commit annotati sopra
+- [x] testi, link, pulsante email, nome fisso, copyright e asset social controllati
+- [x] pubblicazione riuscita, URL immutabile e commit annotati sopra
 - [x] contenuti segnaposto dichiarati: i venti progetti e i crediti di computer e sala restano segnaposto per scelta di alessandro
 - [ ] misure Lighthouse e prova su Safari iOS/Chrome Android fisici ripetute quando disponibili
