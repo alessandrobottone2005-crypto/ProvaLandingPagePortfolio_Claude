@@ -1,6 +1,6 @@
 # CLAUDE.md — portfolio di alessandro bottone
 
-Brief operativo aggiornato al 29 settembre 2026. Le sezioni seguenti descrivono il sito attuale; lo storico in fondo conserva anche scelte poi sostituite. Per la guida pratica parti da [README.md](README.md).
+Brief operativo aggiornato al 1 ottobre 2026. Le sezioni seguenti descrivono il sito attuale; lo storico in fondo conserva anche scelte poi sostituite. Per la guida pratica parti da [README.md](README.md).
 
 ## 0. come lavorare con me
 
@@ -8,7 +8,7 @@ Brief operativo aggiornato al 29 settembre 2026. Le sezioni seguenti descrivono 
 - Rispondimi in italiano con spiegazioni semplici. Sono un designer.
 - Lavora sulle attività già autorizzate fino al risultato verificabile; mostra le modifiche e gli esiti dei controlli. Chiedi soltanto informazioni necessarie che mancano.
 - Non installare software di sistema. Per dipendenze nuove non già previste chiedimi prima.
-- Push e deploy richiedono una richiesta esplicita. **Il 29 settembre 2026 ho autorizzato un team a fare debugging, pulizia, riorganizzazione, aggiornamento dei Markdown, creazione di un branch GitHub e deploy Vercel.** Questa autorizzazione vale per tale manutenzione; non autorizza merge o nuove pubblicazioni future.
+- Push e deploy richiedono una richiesta esplicita. **Il 29 settembre 2026 ho autorizzato un team a fare debugging, pulizia, riorganizzazione, aggiornamento dei Markdown, creazione di un branch GitHub e deploy Vercel.** **Il 1 ottobre 2026 ho autorizzato un team a: mettere il logo dietro il computer, debugging, pulizia, documentazione, merge di `prova/computer-retro` in `main`, push su GitHub e deploy Vercel in produzione, anche con i crediti del computer e della sala ancora segnaposto (rischio accettato).** Queste autorizzazioni valgono per quei lavori; non autorizzano nuove pubblicazioni future.
 - Conserva i file creativi originali e le decisioni storiche. Aggiorna la documentazione quando cambia il comportamento o la struttura.
 
 ## 1. il progetto
@@ -17,32 +17,32 @@ Portfolio one-page di Alessandro Bottone, designer di Napoli: branding, illustra
 
 **preloader → header → portfolio → chi sono → contatti**
 
-Solo italiano, desktop e mobile curati allo stesso livello. Il logo è il protagonista: dapprima segno SVG, poi un volto metallico 3d continuo dentro l’ambiente della scena Blender V2. Lo scroll guida il racconto in entrambi i sensi.
+Solo italiano, desktop e mobile curati allo stesso livello. Il logo è il protagonista: dapprima segno SVG, poi un volto metallico 3d continuo dentro una sala di cemento realistica. Lo scroll guida il racconto in entrambi i sensi.
 
 Il nome grande dell’header diventa un logo tipografico fisso in alto a destra, cliccabile per tornare all’inizio. Nei contatti, sotto i tre pulsanti, compare il copyright con anno corrente. Queste richieste sostituiscono il vecchio vincolo «nessuna navbar, nessun footer».
 
-Riferimenti: pxpush.com per ritmo e interazioni; k95.it per la spirale dei lavori. I riferimenti orientano il progetto, non vanno copiati.
+Riferimenti: pxpush.com per ritmo e interazioni; il Finder del Macintosh 1984 per l’interfaccia del computer. I riferimenti orientano il progetto, non vanno copiati (niente marchi Apple).
 
 ## 2. regole non negoziabili
 
-1. Interfaccia con nero `#141414`, grigio `#4d4b4a`, bianco `#c9c5c0` e trasparenze. Eccezioni: immagini dei progetti e luci sul 3d. Le copertine rimangono sempre a colori.
-2. Solo Outfit Variable; testi visibili, titolo del browser ed etichette accessibili in minuscolo. Apostrofo tipografico (’).
+1. Interfaccia con nero `#141414`, grigio `#4d4b4a`, bianco `#c9c5c0` e trasparenze. Eccezioni: immagini dei progetti, luci sul 3d e, solo dentro lo schermo del computer, bianco e nero puri. Le copertine rimangono sempre a colori. L’avatar olografico del chi sono usa le foto di alessandro ridotte al bianco della palette.
+2. Solo Outfit Variable, tranne ChicagoFLF dentro lo schermo del computer; testi visibili, titolo del browser ed etichette accessibili in minuscolo. Apostrofo tipografico (’).
 3. Non riscrivere il testo biografico né i testi forniti dei progetti. Testi e link fissi in `src/config/sito.ts`.
-4. Scroll sempre controllabile e reversibile. Blocchi temporanei soltanto durante preloader e pannello modale. Il pin non ferma lo scroll.
+4. Scroll sempre controllabile e reversibile. Blocchi temporanei soltanto durante il preloader. Il pin non ferma lo scroll.
 5. Niente sezioni o copy aggiuntivi non richiesti. Nome fisso e copyright sono già autorizzati.
-6. Testi, pulsanti e copyright devono restare leggibili sopra l’ambiente; i contenuti del pannello hanno sfondo opaco.
-7. Stessa spirale, camera, luci e nebbia su telefono. Il movimento ridotto è una preferenza di accessibilità, non una semplificazione legata al dispositivo.
+6. Testi, pulsanti e copyright devono restare leggibili sopra l’ambiente; le finestre del computer hanno sfondo opaco.
+7. Stesso computer, discesa della camera, luci e nebbia su telefono (lì l’interfaccia occupa la vista). Il movimento ridotto è una preferenza di accessibilità, non una semplificazione legata al dispositivo.
 8. Tastiera, focus, contrasto, touch e fallback funzionanti; verificare le prestazioni senza promettere risultati non misurati.
 
 ## 3. stack e responsabilità
 
-React 19, TypeScript strict, Vite 8, Tailwind v4, GSAP e ScrollTrigger, Motion, Lenis, React Router, Three.js e React Three Fiber. Radix/shadcn per il dialog, Lucide e SVG Figma per le icone. PDF con react-pdf e page-flip; Zod per la validazione in sviluppo/build; Sharp e glTF Transform per gli script. Versioni esatte in `package-lock.json`.
+React 19, TypeScript strict, Vite 8, Tailwind v4, GSAP e ScrollTrigger, Motion, Lenis, React Router, Three.js e React Three Fiber. shadcn per il button di base (conservato in `components/ui/`, oggi non usato), Lucide e SVG Figma per le icone. post-produzione con postprocessing e @react-three/postprocessing; PDF con react-pdf e page-flip; Zod per la validazione in sviluppo/build; Sharp e glTF Transform per gli script. Versioni esatte in `package-lock.json`.
 
-- GSAP: scroll, pin, scrub, preloader, disegno/morph SVG, transizioni del pannello.
-- Motion: hover, tap, magnetismo, testi che rotolano, espansione delle card e micro-interazioni.
+- GSAP: scroll, pin, scrub, avvicinamento al computer, preloader, disegno/morph SVG.
+- Motion: hover, tap, magnetismo, testi che rotolano, rivelazione delle immagini e micro-interazioni.
 - Una sola istanza Lenis sincronizzata con il ticker GSAP; su touch scroll nativo.
 - GSAP e Motion non animano la stessa proprietà dello stesso elemento. Usare wrapper distinti.
-- GSAP scrive le pose in `percorso.ts` e `cardImmersive.ts`; R3F le legge per fotogramma senza aggiornare lo stato React.
+- GSAP scrive le pose in `percorso.ts`; R3F le legge per fotogramma senza aggiornare lo stato React. La camera reale resta ferma: `Mondo.tsx` muove sala e computer (`components/computer/inquadratura.ts`).
 - Plugin GSAP registrati in `src/lib/gsap.ts`; lifecycle e cleanup con `useGSAP`/`gsap.matchMedia`.
 
 Dettagli: [architettura](docs/architettura.md).
@@ -51,7 +51,7 @@ Dettagli: [architettura](docs/architettura.md).
 
 Token in `src/styles/globals.css`: tre colori, Outfit, scala tipografica, bagliore e focus. Testo da leggere bianco sul fondo nero; grigio riservato a superfici, bordi e parole della biografia prima della rivelazione.
 
-Pulsanti Figma in `src/components/bottoni/`: riposo bianco/testo nero, hover/focus nero/testo bianco con bagliore, premuto con bordo bianco. Contatti in misura big, solo testo. Card con cornice e raggi proporzionali alla larghezza, pannello con bordo grigio e raggio 16px. Focus bianco 2px con offset 4px; controlli principali almeno 48px.
+Pulsanti Figma in `src/components/bottoni/`: riposo bianco/testo nero, hover/focus nero/testo bianco con bagliore, premuto con bordo bianco. Contatti in misura big, solo testo. Dentro lo schermo del computer valgono le regole del Finder 1984 (`components/computer/computer.css`): bianco e nero, trama grigia retinata, finestre a righe, ChicagoFLF. Focus bianco 2px con offset 4px; controlli principali almeno 48px.
 
 Durate, scrub e lunghezze di scroll in `src/config/movimento.ts`. Evitare numeri duplicati nelle sezioni.
 
@@ -60,6 +60,8 @@ Durate, scrub e lunghezze di scroll in `src/config/movimento.ts`. Evitare numeri
 `Volto.tsx` usa la geometria a tratti in `geometria.ts` per preloader, prime fasi dell’header e riserva SVG. `LogoContinuo.tsx` ospita un unico Canvas della home; `Volto3D.tsx` usa `public/volto/logo-metallo-v2.glb`, esportata dalla scena originale `sorgenti/logo-3d/Logo3DAnimabile_MetalloGrezzo_V2.blend`.
 
 Il modello mantiene parti separate, materiale metallico grezzo e shape key. `VoltoContext` e `sguardo.ts` coordinano sguardo, battiti, sonno dopo inattività, risveglio, occhiolino e sorriso. Ai contatti posizione e scala si fermano, espressioni e sguardo continuano.
+
+`Ologramma.tsx` (stesso Canvas) disegna l’avatar del chi sono dall’atlante di fotogrammi in `public/avatar/`.
 
 Gli originali Blender non vanno sovrascritti dagli script web. Le demo delle clip rimangono nei sorgenti; il runtime pilota le espressioni dagli eventi reali. [Volto](docs/volto.md) e [sorgenti Blender](sorgenti/logo-3d/README.md).
 
@@ -75,23 +77,21 @@ Pin 400vh desktop/tablet e 300vh telefono. Quattro discipline: illustrazione, br
 
 ### 6.3 header → portfolio
 
-Sovrapposizione di uno schermo, logo persistente al centro; card visibili solo dopo il racconto dell’header. Nessun rimontaggio del logo.
+Sovrapposizione di uno schermo, logo persistente al centro. Nessun rimontaggio del logo.
 
-### 6.4 portfolio: spirale → griglia
+### 6.4 portfolio: il computer
 
-Venti progetti segnaposto, sostituibili tramite cartelle. Spirale su tutti i dispositivi: corpo estruso, smussi, cornice forata, copertina incassata e retro; card davanti e dietro al logo. Camera diagonale, orbita parziale e luci radenti. Copertine senza riflessi aggiunti, immerse nella nebbia. Nessuna apertura o didascalia durante la spirale.
+`Computer.glb` (PC beige, originale in `sorgenti/computer/`) poggia sul pavimento della sala di cemento, nel fascio di sole della fessura. Nessun pin: 100vh di avvicinamento (la camera guarda giù verso il computer a terra e scende fino allo schermo; il volto va dietro il computer, più grande del monitor, e sporge sopra) e 120vh di sosta con la camera ferma. Nella sosta il volto gioca a nascondino dietro il monitor, solo dai lati in cui si vedono gli occhi interi (`latiDisponibili` in `percorso.ts`): su desktop e tablet orizzontale destra e sinistra (sopra non c’è spazio), su tablet verticale sopra e sopra spostato verso un lato; mai lo stesso lato due volte di fila, resta qualche secondo e rientra; mentre dorme non sbuca. Sbatte le palpebre aprendo una cartella, sorride all’apertura di un progetto, fa l’occhiolino alla chiusura; lo sguardo segue il cursore anche sopra il Finder, un clic sull’interfaccia non fa l’occhiolino. Su telefono nessun nascondino: nella sosta l’interfaccia lo copre, si vede grande durante la discesa. Al 90% dell’avvicinamento si accende (tubo che si apre, trama grigia, volto pixelato al posto dell’Happy Mac, scrivania); tornando su si spegne. Desktop/tablet: cornice del monitor visibile. Telefono: la camera supera la cornice e l’interfaccia occupa la vista.
 
-70vh di disposizione, 50vh per ogni progetto dopo il primo, 30vh di pausa, 200vh finali. Nel finale campo lungo sull’elica, poi raddrizzamento e distensione nella griglia; scambio con le card HTML nell’ultimo tratto. Logo piccolo di lato, scroll normale per tutte le righe.
+Interfaccia fedele al Finder del Macintosh 1984, DOM vero posato sul vetro con una `matrix3d`: barra dei menu (volto, archivio, vista, speciale), quattro cartelle per disciplina (illustrazione, branding, 3d, web design), un documento per progetto (un progetto può stare in più cartelle). Clic seleziona, doppio clic apre; tocco, penna e tastiera aprono con un’attivazione. Finestre trascinabili, vista per icona o per nome, Esc e casella di chiusura. Interattiva soltanto nella sosta.
 
-Griglia: 3 colonne da 1024px, 2 da 768px, 1 sotto. Clic sulla copertina: nome, discipline, anno, descrizione, «esplora» e «chiudi». Una card aperta alla volta, righe successive spostate dall’espansione. Esplora apre il pannello; clic, chiudi o esc richiudono le informazioni. Tutti i testi informativi bianchi.
+### 6.5 finestra del progetto
 
-### 6.5 pannello
-
-`/progetti/:slug` è una rotta modale; la home resta montata. Copertina vola dalla card, contenuti opachi, blocchi PDF/immagini/3d/video/testo caricati quando servono. Chiusura con pulsante, esc, sfondo, indietro e gesto mobile; focus restituito alla card. Link diretto: home sulla griglia finale, anche su mobile. [Pannello](docs/pannello.md).
+`/progetti/:slug` apre la finestra del documento dentro il computer; la home resta montata. Copertina e immagini a colori, discipline · anno · cliente, descrizione, blocchi PDF/immagini/3d/video/testo caricati quando servono. Chiusura con casella, Esc, «archivio → chiudi» o indietro; focus restituito all’icona. Link diretto: home a metà della sosta, computer acceso, finestra aperta, anche su mobile. [Computer](docs/computer.md).
 
 ### 6.6 chi sono
 
-Testo biografico attuale invariato: parole dal bianco al 31,5% al bianco pieno. Niente foto né firma. Logo a sinistra; dopo la rivelazione raggiunge i contatti. Pin soltanto se il testo entra nell’altezza disponibile; altrimenti flusso normale.
+Testo biografico attuale invariato: parole dal bianco al 31,5% al bianco pieno. Niente firma. Il logo arriva a sinistra, si schiaccia in una riga e lascia il posto all’avatar di alessandro a nuvola di punti (video di Google Flow, monocromo, bagliore leggero): la testa segue il cursore scegliendo i fotogrammi del video (destra = specchio), su e giù con una piccola inclinazione; con tocco o mouse fermo si guarda intorno da sola. Prima del volo ai contatti l’avatar torna logo. Movimento ridotto: avatar fermo. Pin soltanto se il testo entra nell’altezza disponibile; altrimenti flusso normale. [Volto](docs/volto.md#avatar-olografico-del-chi-sono).
 
 ### 6.7 contatti
 
@@ -101,7 +101,7 @@ Dettagli e parametri: [animazioni](docs/animazioni.md), [ambiente 3d](docs/ambie
 
 ## 7. cursore
 
-Solo con mouse e senza movimento ridotto. Punto, anello sui controlli, parola contestuale sulle aree interattive. Si aggiorna anche dopo scroll, focus e cambio rotta; su touch cursore di sistema.
+Solo con mouse e senza movimento ridotto. Punto, anello sui controlli, parola contestuale sulle aree interattive. Sullo schermo del computer lascia il posto alla freccia pixel del 1984. Si aggiorna anche dopo scroll, focus e cambio rotta; su touch cursore di sistema.
 
 ## 8. micro-interazioni
 
@@ -121,17 +121,17 @@ Una cartella in `src/content/progetti/<slug>/` con `progetto.json`, copertina e 
 
 ## 10. responsive
 
-Telefono <768px, tablet 768–1023px, desktop ≥1024px. Griglia 1/2/3 colonne; spirale e ambiente restano presenti ovunque. `svh`/`dvh`, safe area iOS e almeno 16px di margine. Verificare anche dispositivi fisici quando disponibili: emulazione non equivale a prestazioni mobili reali.
+Telefono <768px, tablet 768–1023px, desktop ≥1024px. Computer e ambiente restano presenti ovunque; su telefono l’interfaccia del computer occupa la vista, con una fascia per il nome fisso. `svh`/`dvh`, safe area iOS e almeno 16px di margine. Verificare anche dispositivi fisici quando disponibili: emulazione non equivale a prestazioni mobili reali.
 
 ## 11. prestazioni
 
-Canvas della home su `demand`, aggiornamenti soltanto con scena visibile e scheda attiva; DPR massimo 1,5 uguale su desktop e mobile. Geometrie delle card condivise; risorse locali liberate allo smontaggio, cache del modello conservata. Nebbia a 32 campioni, nessuna HDRI di studio nel runtime V2. Pannello e blocchi divisi in chunk; movimento ridotto evita il download 3d.
+Canvas della home su `demand`, aggiornamenti soltanto con scena visibile e scheda attiva; DPR massimo 1,5 uguale su desktop e mobile. Modello del computer ≈ 1 MB, scaricato dopo il preloader insieme all’interfaccia; risorse locali liberate allo smontaggio, cache dei modelli conservata. Sala ≈ 4,6 MB (luce cotta in Blender, cemento PBR), scaricata dopo il preloader; post-produzione (occlusione, volume a 32 campioni con polvere nel fascio, bagliore, AgX) come render unico; nessuna HDRI di studio. Interfaccia e blocchi divisi in chunk; movimento ridotto evita il download del logo 3d ma scarica computer e sala per la scena ferma.
 
 Obiettivo di fluidità: 60fps. Misurare sulla versione pubblicata; le misure Lighthouse del 26 settembre sono storiche e precedono l’ambiente V2. [Accessibilità e prestazioni](docs/accessibilita-prestazioni.md).
 
 ## 12. accessibilità
 
-Movimento ridotto aggiornabile a sito aperto: niente pin/scrub/Lenis/Canvas, SVG statici e griglia 3/2/1 subito interattiva, dissolvenze brevi. Tastiera completa; controlli invisibili `inert`; dialog Radix con focus intrappolato e restituito. Un `main`, quattro sezioni etichettate, un `h1`, titoli di sezione accessibili. Canvas decorativo `aria-hidden`, copie `sr-only` dei testi animati. Testi alternativi in minuscolo.
+Movimento ridotto aggiornabile a sito aperto: niente pin/scrub/Lenis né logo 3d, SVG statici, computer già acceso in una scena ferma e subito utilizzabile, dissolvenze brevi. Tastiera completa; controlli invisibili `inert`; menu con frecce, finestre non modali con Esc e focus restituito all’icona. Un `main`, quattro sezioni etichettate, un `h1`, titoli di sezione accessibili. Canvas decorativo `aria-hidden`, copie `sr-only` dei testi animati. Testi alternativi in minuscolo.
 
 ## 13. struttura
 
@@ -139,25 +139,26 @@ Movimento ridotto aggiornabile a sito aperto: niente pin/scrub/Lenis/Canvas, SVG
 
 ## 14. lavoro e verifiche
 
-La costruzione iniziale per fasi è conclusa. Per la manutenzione autorizzata del 29 settembre: debugging e pulizia → documentazione coerente → build/lint e verifica dei flussi → branch GitHub → deploy Vercel. Non creare pause di approvazione già superate dalla richiesta in chat.
+La costruzione iniziale per fasi è conclusa. Per il lavoro autorizzato del 1 ottobre: logo dietro il computer → debugging e pulizia → documentazione coerente → build/lint e verifica dei flussi → merge in `main` → push GitHub → deploy Vercel in produzione. Non creare pause di approvazione già superate dalla richiesta in chat.
 
 ## 15. checklist finale
 
 - Palette, Outfit e minuscole; nessun testo fornito modificato.
-- Header, spirale, campo lungo e griglia reversibili.
-- Venti progetti; espansione singola e pannello, chiusura e link diretto.
+- Header, discesa al computer, accensione/spegnimento e uscita reversibili.
+- Venti progetti nelle cartelle; finestre, chiusura, indietro e link diretto.
+- Crediti CC BY del computer e licenza della sala completi in `sito.computer.crediti`. Il 1 ottobre 2026 alessandro ha scelto di pubblicare comunque con i segnaposto (rischio accettato): restano da completare.
 - Nome fisso, biografia leggibile, contatti e copyright.
-- Tastiera, movimento ridotto, fallback SVG/DOM e cambio viewport.
+- Tastiera, movimento ridotto, fallback SVG/DOM, telefono e cambio viewport.
 - Build/lint superati; asset, rotte e funzionalità verificati anche nel deploy.
 - Risultati e limiti di verifica riportati senza trasformare gli obiettivi in misure.
 
 ## 16. materiali
 
-Logo SVG originale in `sorgenti/`; scene Blender, texture e render in `sorgenti/logo-3d/`; GLB V2 ottimizzata in `public/volto/`. I progetti attuali sono segnaposto 01–20. La foto non compare più nella home. Conservare le scene utente anche quando non sono usate dal sito.
+Logo SVG originale in `sorgenti/`; scene Blender, texture e render in `sorgenti/logo-3d/`; GLB V2 ottimizzata in `public/volto/`. Sala originale `Ambiente.glb`, scena realistica e cottura in `sorgenti/sala/` (licenza da verificare), copia web in `public/sala/`. Computer originale in `sorgenti/computer/` (licenza CC BY: autore e link da ritrovare), copia web in `public/computer/`; ChicagoFLF (dominio pubblico) in `src/assets/font/`. I progetti attuali sono segnaposto 01–20. Foto di alessandro originali in `sorgenti/foto/FotoMie/` (fuori da `public/`); foto e video a punti di Google Flow in `sorgenti/foto/flow/`; atlante web in `public/avatar/` (`npm run prepara-avatar`). `sorgenti/foto/avatar/` conserva i materiali della prima prova scartata. Conservare le scene utente anche quando non sono usate dal sito.
 
 ## 17. pubblicazione
 
-Repository GitHub `alessandrobottone2005-crypto/ProvaLandingPagePortfolio_Claude`; progetto Vercel `provalandingpageportfolio-claude`. Branch di manutenzione `codex/manutenzione-portfolio-3d`; non fondere in `main` senza richiesta. La pubblicazione corrente si documenta solo dopo conferma di URL, commit ed esito. [Procedura e stato](docs/pubblicazione.md).
+Repository GitHub `alessandrobottone2005-crypto/ProvaLandingPagePortfolio_Claude`; progetto Vercel `provalandingpageportfolio-claude`. Dal 1 ottobre 2026 si lavora su `main`, dove è stato fuso `prova/computer-retro`; `codex/manutenzione-portfolio-3d` è il branch storico della manutenzione del 29 settembre. Nuovi merge, push e deploy richiedono una richiesta esplicita. La pubblicazione corrente si documenta solo dopo conferma di URL, commit ed esito. [Procedura e stato](docs/pubblicazione.md).
 
 ## decisioni prese
 
@@ -227,3 +228,15 @@ Le voci seguenti sono uno storico cronologico: nomi di file, numeri e soluzioni 
 - 2026-09-29 — manutenzione autorizzata a un team: debugging runtime, rimozione del codice non usato e delle copie pubbliche V1/HDRI, rinomina dell’anello in spirale, conservazione dei sorgenti e aggiornamento della documentazione corrente. Autorizzati creazione/push del branch `codex/manutenzione-portfolio-3d` e deploy Vercel; nessun merge richiesto. Lo storico resta preservato, il brief operativo sostituisce le istruzioni iniziali ormai superate.
 
 - 2026-09-29 — pubblicato in produzione il commit `6db4e456239ee683268b7a6d0aeb512719bcb108` dal branch `codex/manutenzione-portfolio-3d`, push riuscito e nessun merge in `main`. Deploy Vercel `READY`, alias esistente aggiornato; versione immutabile e stato della verifica online in [docs/pubblicazione.md](docs/pubblicazione.md).
+
+- 2026-10-01 — su richiesta di alessandro la spirale e la griglia sono sostituite da un computer retrò (`Computer.glb`, PC beige con case e monitor) appoggiato sul pavimento del pozzo della greybox, nella stazione rinominata `computer`. Scelte confermate in chat: il modello resta quello fornito, è l’interfaccia a riprendere il Finder del Macintosh 1984, fedele al 100% (bianco e nero puri e ChicagoFLF solo dentro lo schermo; immagini dei progetti a colori); quattro cartelle per disciplina con un documento per progetto; il progetto si apre in una finestra del computer che segue `/progetti/:slug` (pannello e card rimossi); su desktop/tablet cornice visibile e nessun pin, su telefono interfaccia a tutta vista; accensione automatica con il volto pixelato al posto dell’Happy Mac; movimento ridotto con scena 3d ferma e computer acceso. Il modello è CC BY da Sketchfab ma il link è perso: crediti segnaposto in `sito.computer.crediti`, avviso in build, nessuna pubblicazione finché non sono completi. Lavoro sul branch `prova/computer-retro`, senza push né deploy.
+
+- 2026-10-01 — su richiesta di alessandro la greybox fatta con ChatGPT è sostituita da `Ambiente.glb` (sala di cemento con fessura nel soffitto, Sketchfab), resa realistica. Scelte confermate in chat: tutto il racconto nella stessa sala (header in fondo, computer a terra nel fascio della fessura, biografia verso una parete in ombra, contatti dall’inizio della sala); ricottura in Blender (cemento PBR CC0 quasi grigio, sole dalla fessura, Cycles) più post-produzione nel sito; pavimento di cemento bagnato con riflessi veri; librerie `postprocessing` e `@react-three/postprocessing` autorizzate; peso ≈ 4–6 MB (misurato 4,6). Camera reale a campo 40° e 8,7 u, con il volto della stessa misura. Licenza della sala sconosciuta: credito segnaposto in `sito.computer.crediti`, avviso in build, nessuna pubblicazione finché non è chiara. Greybox tolta dal runtime, sorgenti conservati in `sorgenti/ambiente/`.
+
+- 2026-10-01 — su richiesta di alessandro il chi sono ha un avatar olografico al posto del logo. Scelte confermate in chat: tecnica ibrida (rotazione 2.5D della foto frontale con mappa di profondità + salto glitch alle foto con la testa girata), monocromo in palette, mezzobusto scontornato, al posto del logo nella colonna sinistra; il logo si rompe in glitch nell’ologramma e si ricompone all’uscita verso i contatti; glitch molto disturbato; movimento autonomo su touch e a mouse fermo; cono di luce dal basso e bagliore. Scontorno (MODNet) e profondità (Depth Anything V2 small) generati una volta con l’AI fuori dal progetto, nessuna dipendenza aggiunta al sito. Foto originali spostate da `public/FotoMie/` a `sorgenti/foto/FotoMie/` per non pubblicarle. Questa scelta supera «niente foto» del chi sono.
+
+- 2026-10-01 — la prima versione dell’avatar (foto 2.5D, glitch forte, cono) non è piaciuta ed è sostituita. Alessandro ha generato con Google Flow un ritratto e un video a nuvola di punti; scelte in chat: somiglianza approvata, nessuna clip in più, destra ottenuta specchiando la clip verso sinistra, su e giù con una piccola inclinazione, solo bagliore leggero, passaggio dal logo più elegante (schiacciamento e scansione, niente scosse). Atlante di 24 fotogrammi ≈ 1,1 MB.
+
+- 2026-10-01 — su richiesta di alessandro il volto non si fa più da parte nel portfolio: sta dietro il computer, più grande del monitor visto dalla camera (`movimento.computer.volto.fattore` 1,25), occluso davvero dal depth buffer (la posa ha una profondità `z` oltre alla misura in pixel). Nella sosta nascondino animato da GSAP su `percorso.computer.sbircia` (lati scelti in base allo spazio: su desktop destra/sinistra, su tablet verticale sopra e sopra spostato; nessuno su telefono), reazioni del Finder tramite `VoltoContext`. Dettagli in [computer](docs/computer.md#il-volto-dietro-il-computer).
+
+- 2026-10-01 — debugging, pulizia e pubblicazione autorizzati da alessandro in chat. Debugging: acceso/spento del computer controllato anche a ogni tick di GSAP (i refresh di ScrollTrigger non chiamano `onUpdate`); posizione nella sosta conservata a resize e rotazione; cambiando il movimento ridotto a sito aperto si resta nella stessa sezione (`src/lib/scroll.ts`); evento `cursore:ricalcola` (`src/components/cursore/ricalcola.ts`) inviato da `Interfaccia.tsx` quando lo schermo compare o diventa interattivo; un clic sull’interfaccia del computer non fa più l’occhiolino. Pulizia: tolti valori non usati in `movimento.ts` (`volto.sguardoMax`, `media.chiSonoPin`, `media.chiSonoBasso`), `RAPPORTO_SCHERMO`, `etichette.foto` in `sito.ts`, i token `--text-nome`, `--text-titolo`, `--text-chisono` e alcuni export non usati altrove; conservati per scelta `src/components/ui/button.tsx`, `src/assets/foto/` e `scripts/foto-palette.mjs`. Documentazione allineata al codice. Per scelta esplicita di alessandro `prova/computer-retro` è fuso in `main`, pushato e pubblicato in produzione con i crediti CC BY del computer e della sala ancora segnaposto (rischio accettato, da completare in `sito.computer.crediti`). Esito in [pubblicazione](docs/pubblicazione.md).

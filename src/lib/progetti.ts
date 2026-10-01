@@ -117,8 +117,3 @@ export const progetti = leggi()
 export function trovaProgetto(slug: string | undefined) {
   return progetti.find((p) => p.slug === slug)
 }
-
-export function progettoSuccessivo(slug: string) {
-  const i = progetti.findIndex((p) => p.slug === slug)
-  return progetti[(i + 1) % progetti.length]
-}

@@ -1,6 +1,6 @@
 # architettura
 
-Il sito separa racconto della home, scena immersiva e pannelli progetto. Testi e parametri hanno una fonte condivisa; le pose 3d vengono aggiornate senza render React a ogni fotogramma.
+Il sito separa racconto della home, scena immersiva e interfaccia del computer con le finestre dei progetti. Testi e parametri hanno una fonte condivisa; le pose 3d vengono aggiornate senza render React a ogni fotogramma.
 
 ## librerie e responsabilità
 
@@ -8,16 +8,17 @@ Il sito separa racconto della home, scena immersiva e pannelli progetto. Testi e
 |---|---|
 | React 19, TypeScript strict, Vite 8 | componenti, tipi, sviluppo e build |
 | Tailwind v4 | token e stile in `src/styles/globals.css` |
-| GSAP, ScrollTrigger, SplitText, DrawSVG, MorphSVG | pin/scrub, testo biografico, SVG, preloader e transizioni del pannello |
-| Motion | stati delle card, hover/tap, magnetismo, testi e cursore |
+| GSAP, ScrollTrigger, SplitText, DrawSVG, MorphSVG | pin/scrub, avvicinamento al computer, testo biografico, SVG e preloader |
+| Motion | hover/tap, magnetismo, testi, rivelazione delle immagini e cursore |
 | Lenis | unica istanza di scroll fluido, sincronizzata con GSAP; touch nativo |
 | Three.js e React Three Fiber | Canvas globale della home e visualizzatori dei progetti |
 | drei | `OrbitControls` e `ContactShadows` nei modelli dei progetti |
-| React Router | home sempre montata e `/progetti/:slug` come rotta modale |
-| Radix/shadcn | dialog accessibile; componenti sorgente ristilizzati |
-| Lucide e SVG Figma | icone UI e social |
+| React Router | home sempre montata; `/progetti/:slug` apre la finestra del progetto nel computer |
+| Radix/shadcn | `Slot` del button di base (`components/ui/button.tsx`, conservato ma oggi non importato dal sito) |
+| Lucide e SVG Figma | icone dei controlli dei blocchi (Lucide) e icone social Figma (`components/icone/`, oggi visibili solo in `/laboratorio`) |
 | react-pdf, pdfjs-dist, page-flip | PDF sfogliabili |
-| Outfit Variable | unico font locale |
+| Outfit Variable, ChicagoFLF | Outfit per il sito; ChicagoFLF solo dentro lo schermo del computer |
+| postprocessing, @react-three/postprocessing | post-produzione della scena (scaricata con il 3d) |
 | Zod, Sharp, glTF Transform | validazione/build e strumenti di authoring |
 
 Zod non è nel runtime di produzione; shadcn è uno strumento di sviluppo, i componenti generati sono sorgenti locali. Le versioni esatte sono nel lockfile.
@@ -30,14 +31,22 @@ Zod non è nel runtime di produzione; shadcn è uno strumento di sviluppo, i com
 ├─ docs/                     documentazione
 ├─ scripts/                  authoring, validazione, immagini e icone
 ├─ sorgenti/                 originali creativi; esclusi dal sito
-│  └─ logo-3d/               scene Blender, texture, export, script e anteprime
-│     └─ legacy/             vecchio volto.glb conservato
+│  ├─ Logo.svg, Logo.glb     logo originale fornito
+│  ├─ logo-3d/               scene Blender, texture, export, script e anteprime
+│  │  └─ legacy/             vecchio volto.glb conservato
+│  ├─ sala/                  Ambiente.glb, scena realistica, cottura ed esportazione
+│  ├─ computer/              Computer.glb originale
+│  ├─ ambiente/              greybox brutalista non più usata, conservata
+│  └─ foto/                  foto originali (FotoMie/), materiali Google Flow (flow/), prima prova avatar (avatar/)
 ├─ public/                   asset serviti senza trasformazione
+│  ├─ avatar/                atlante dell’avatar a punti giro.webp e fermo.webp (da npm run prepara-avatar)
+│  ├─ computer/              computer.glb (da npm run prepara-computer)
+│  ├─ sala/                  sala.glb e luce cotta (da npm run prepara-sala)
 │  ├─ volto/                 logo-metallo-v2.glb, favicon, icona iOS, crediti
 │  ├─ og.png
 │  └─ robots.txt
 ├─ index.html                meta, lingua, titolo e favicon
-├─ vite.config.ts            controllo progetti, preload font e alias @
+├─ vite.config.ts            controllo progetti, avviso sui crediti, preload font e alias @
 ├─ vercel.json               fallback SPA delle rotte
 ├─ .vercelignore             esclusioni dal caricamento di deploy
 └─ src/
@@ -46,17 +55,18 @@ Zod non è nel runtime di produzione; shadcn è uno strumento di sviluppo, i com
    ├─ styles/                globals.css
    ├─ lib/                   scroll, GSAP, caricamento, dati/schema/progetti, appunti, useMediaQuery
    ├─ components/
-   │  ├─ volto/              SVG, context, sguardo, logo V2 e ambiente 3d
-   │  ├─ preloader/, cursore/, testo/, interazioni/, effetti/
+   │  ├─ volto/              SVG, context, sguardo, logo V2, avatar, sala, mondo, computer 3d e post-produzione
+   │  ├─ computer/           interfaccia finder 1984, inquadratura, stato, finestre e blocchi lazy (blocchi/)
+   │  ├─ cursore/            cursore e segnale cursore:ricalcola
+   │  ├─ preloader/, testo/, interazioni/, effetti/
    │  ├─ bottoni/, icone/     componenti Figma
-   │  └─ ui/                 dialog e button di base
+   │  └─ ui/                 button shadcn di base, non usato
    ├─ sections/
    │  ├─ Header/             racconto iniziale, tavola e nome fisso
-   │  ├─ Portfolio/          Spirale, Griglia, CardProgetto e copertine
+   │  ├─ Portfolio/          spazio di scroll del computer e versione ferma
    │  ├─ ChiSono/, Contatti/
-   ├─ pannello/              dialog, transizioni e blocchi lazy
    ├─ laboratorio/           solo sviluppo
-   ├─ assets/                icone e fotografie conservate fuori dalla home
+   ├─ assets/                icone Figma, font ChicagoFLF e foto/ (fotografie conservate, non importate dalla home)
    ├─ types/                 tipi page-flip
    └─ content/progetti/      una cartella per progetto
 ```
@@ -69,39 +79,43 @@ Zod non è nel runtime di produzione; shadcn è uno strumento di sviluppo, i com
 2. `App.tsx`: avvia scroll, monta le quattro sezioni, `LogoContinuo`, preloader, cursore e grana; `main` resta `aria-busy` fino a sito pronto.
 3. `caricamento.ts`: misura font, codice 3d, GLB V2 condivisa e prima copertina. Un errore non impedisce la fine del preloader. Il ramo movimento ridotto evita codice e asset 3d.
 4. `Preloader.tsx`: contatore e disegno, risveglio, passaggio all’header, riavvio scroll. Durate in `movimento.preloader`.
-5. A sito pronto: refresh delle misure e rotte modali; con link diretto a un progetto la home raggiunge la griglia finale su tutti i dispositivi.
+5. A sito pronto: refresh delle misure e rotte; con link diretto a un progetto la home va a metà della sosta davanti al computer acceso, con la finestra del progetto aperta, su tutti i dispositivi. Il modello del computer e l’interfaccia si scaricano dopo il preloader.
 
 ## scena continua
 
-`LogoContinuo.tsx` è un host fisso, senza rimontaggi tra sezioni. Il Canvas diventa visibile insieme al logo metallico nell’header. `Volto3D.tsx` compone volto, card, camera, fari e volume.
+`LogoContinuo.tsx` è un host fisso, senza rimontaggi tra sezioni. Il Canvas diventa visibile insieme al logo metallico nell’header. `Volto3D.tsx` compone volto, mondo (sala e computer), camera, fari e post-produzione.
 
 | modulo | responsabilità |
 |---|---|
 | `modelloLogo.ts` | unica promessa GLB V2, Meshopt e cache condivisa |
-| `percorso.ts` | pose del logo e ancoraggi DOM tra le sezioni |
-| `cardImmersive.ts` | pose delle card e `fasiSpirale`, senza import Three.js nel bundle iniziale |
+| `percorso.ts` | pose del logo e ancoraggi DOM tra le sezioni; volto dietro il monitor (profondità `z`, rollio) e lati del nascondino (`latiDisponibili`) |
 | `scenaImmersiva.ts` | posizione/scala del logo e posizioni dei fari |
-| `CameraImmersiva.tsx` | orbita diagonale, campo lungo e ritorno frontale |
-| `CardNelloSpazio.tsx` | corpi/cornici/copertine e scambio con la griglia HTML |
-| `LuciTeatro.tsx` | tre fari V2 con inerzia e due tagli per le card |
-| `NebbiaVolumetrica.tsx` | composizione di scena e volume con profondità |
+| `CameraImmersiva.tsx` | camera reale ferma, inclinazione d’ingresso nell’header |
+| `Mondo.tsx` | sala e computer mossi come se si spostasse una camera virtuale (`components/computer/inquadratura.ts`) |
+| `ComputerNellaScena.tsx`, `modelloComputer.ts` | computer a terra, bagliore del vetro, aggancio dell’interfaccia |
+| `LuciTeatro.tsx` | tre fari V2 con inerzia |
+| `Sala.tsx`, `modelloSala.ts`, `luceSala.ts` | sala con luce cotta, pavimento bagnato riflettente, sole in tempo reale |
+| `Rifinitura.tsx` | post-produzione e render finale: occlusione, volume, bagliore, vignetta, AgX |
+| `NebbiaVolumetrica.tsx` | effetto del volume: alone del volto e polvere nel fascio della fessura |
+| `Ologramma.tsx`, `ologramma.glsl.ts` | avatar a punti del chi sono, nello stesso Canvas |
+| `VoltoContext.tsx`, `sguardo.ts` | umore, sonno, azioni (battito, occhiolino, sorriso) e sguardo condivisi da SVG e 3d |
+| `ScenaRidotta.tsx` | Canvas a parte per il movimento ridotto: sala e computer acceso, inquadratura ferma, senza volto |
 
 Le timeline scrivono valori condivisi; R3F li legge nel ciclo di rendering. Gli SVG rimangono disponibili come riserva. [Ambiente 3d](ambiente-3d.md).
 
 ## scroll e layout
 
-`lib/gsap.ts` registra i plugin. `lib/scroll.ts` crea Lenis, lo collega a ScrollTrigger e al ticker GSAP, gestisce blocco/ripresa e scroll programmati. Movimento ridotto: scroll nativo.
+`lib/gsap.ts` registra i plugin. `lib/scroll.ts` crea Lenis, lo collega a ScrollTrigger e al ticker GSAP, gestisce blocco/ripresa (preloader) e scroll programmati. Movimento ridotto: scroll nativo; se la preferenza cambia a sito aperto, `scroll.ts` riporta la pagina nella stessa sezione dopo che le sezioni si sono rimontate (nel portfolio a metà della sosta).
 
 - Header: 400vh desktop/tablet, 300vh telefono.
-- Portfolio: si sovrappone all’ultimo schermo dell’header; spirale su tutti i dispositivi, campo lungo/distensione finale da 200vh, poi griglia in flusso normale. `Spirale.tsx` conserva l’id ScrollTrigger `portfolio-anello`, letto dai moduli di posa e dalle rotte.
-- Griglia: espansione singola, aggiornamento Lenis/ScrollTrigger dopo il cambiamento d’altezza, controlli non disponibili `inert`.
+- Portfolio: si sovrappone all’ultimo schermo dell’header; 100vh di avvicinamento e 120vh di sosta senza pin (ScrollTrigger `portfolio-computer`, letto da `percorso.ts`, da `scroll.ts` e dal link diretto). L’interfaccia del computer è DOM `fixed` posato sul vetro con una `matrix3d`, interattiva solo nella sosta. Acceso/spento si controlla anche a ogni tick di GSAP (i refresh di ScrollTrigger non chiamano `onUpdate`); a resize e rotazione chi sta nella sosta resta nello stesso punto. Il nascondino del volto è `useNascondino` in `Portfolio.tsx`.
 - Biografia: pin solo quando il testo entra nello schermo; altrimenti flusso normale. Testo sopra il volume.
 - Contatti: logo fermo in posa/dimensione, espressioni vive; pulsanti e copyright sopra l’ambiente.
 
-GSAP e Motion non animano le stesse proprietà dello stesso elemento. Per esempio GSAP muove le pose della spirale, Motion espande le informazioni nella griglia finale.
+GSAP e Motion non animano le stesse proprietà dello stesso elemento. GSAP scrive l’avvicinamento al computer; accensione e spegnimento del tubo sono transizioni CSS su un elemento interno.
 
-## pannello e laboratorio
+## computer e laboratorio
 
-`router.tsx` carica il pannello con `React.lazy`. La home resta montata; il dialog ha scroll nativo e sfondo opaco. Ogni blocco si scarica soltanto se usato. [Pannello](pannello.md).
+`router.tsx` accetta `/` e `/progetti/:slug`; la finestra del progetto in `Finder.tsx` segue l’indirizzo. La home resta montata. Ogni blocco si scarica soltanto se usato. [Computer](computer.md).
 
 `/laboratorio` è dietro `import.meta.env.DEV`: serve a provare stati, sguardo, azioni, volto 3d e cursore; non è pubblicato.

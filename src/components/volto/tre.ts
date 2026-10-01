@@ -1,4 +1,4 @@
-// pezzi 3d condivisi tra il volto dell’header (Volto3D) e il blocco modello3d del pannello.
+// pezzi 3d del blocco modello3d nella finestra del progetto (caricamento .glb e luci da studio).
 // scritti con three puro invece di importare drei per intero: stesso risultato, molto meno codice da scaricare.
 import { useThree, useLoader } from '@react-three/fiber'
 import { useLayoutEffect } from 'react'

@@ -21,16 +21,6 @@
   --radius-pillola: 999px;
 
   /* scala tipografica fluida */
-  /* limitato anche dall’altezza: su un telefono in orizzontale il nome non copre il volto */
-  --text-nome: clamp(3.5rem, min(15vw, 26svh), 16rem);
-  --text-nome--line-height: 0.85;
-  --text-nome--letter-spacing: -0.04em;
-  --text-titolo: clamp(2rem, 6vw, 5.5rem);
-  --text-titolo--line-height: 0.95;
-  --text-titolo--letter-spacing: -0.03em;
-  --text-chisono: clamp(1.25rem, 2.6vw, 2.5rem);
-  --text-chisono--line-height: 1.3;
-  --text-chisono--letter-spacing: -0.01em;
   --text-corrente: clamp(1rem, 1.1vw, 1.125rem);
   --text-corrente--line-height: 1.55;
   --text-etichetta: 0.8125rem;
@@ -223,7 +213,7 @@
   100% { transform: translate3d(0, 0, 0); }
 }
 
-/* scroll bloccato (preloader, pannello aperto) anche senza lenis */
+/* scroll bloccato (preloader) anche senza lenis */
 html.scroll-fermo {
   overflow: hidden;
 }

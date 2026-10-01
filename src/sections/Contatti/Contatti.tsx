@@ -86,6 +86,8 @@ export function Contatti() {
       aria-labelledby="titolo-contatti"
       className="relative flex min-h-svh flex-col items-center justify-center gap-[max(3rem,9svh)] px-4 pt-24 pb-[max(3rem,env(safe-area-inset-bottom))] md:px-8"
     >
+      {/* fascia scura in basso: pulsanti e copyright leggibili sopra il fascio di luce della sala */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 z-[15] h-[45svh] bg-linear-to-t from-nero/85 via-nero/45 to-transparent" />
       <h2 id="titolo-contatti" className="sr-only">
         {sito.sezioni.contatti}
       </h2>

@@ -31,11 +31,9 @@ export const sito = {
   },
 
   etichette: {
-    chiudi: 'chiudi',
     emailCopiata: 'indirizzo email copiato',
     copiata: 'copiata',
     logo: 'logo di alessandro bottone',
-    foto: 'ritratto di alessandro bottone',
     navigazione: 'navigazione principale',
     tornaInizio: 'alessandro bottone — torna all’inizio',
   },
@@ -47,15 +45,36 @@ export const sito = {
     email: 'email',
     copyright: (anno: number) => `© ${anno} alessandro bottone. tutti i diritti riservati.`,
   },
-  portfolio: {
-    info: 'info',
-    esplora: 'esplora',
-    animazione: 'animazione dei progetti; frecce sinistra e destra per ruotare la spirale',
-  },
-  // testi del pannello del progetto (etichette per screen reader e messaggi)
-  pannello: {
-    successivo: 'progetto successivo',
+  // il computer del portfolio: menu e finestre in stile finder 1984, tutto in minuscolo
+  computer: {
+    schermo: 'computer del portfolio: cartelle dei progetti divise per disciplina',
+    scrivania: 'scrivania',
+    menu: { volto: 'menu del volto', archivio: 'archivio', vista: 'vista', speciale: 'speciale' },
+    voci: {
+      informazioni: 'informazioni',
+      apri: 'apri',
+      chiudi: 'chiudi',
+      perIcona: 'per icona',
+      perNome: 'per nome',
+      riordina: 'riordina',
+    },
+    colonne: { nome: 'nome', anno: 'anno', discipline: 'discipline' },
+    chiudiFinestra: (titolo: string) => `chiudi ${titolo}`,
+    aperta: (titolo: string) => `finestra aperta: ${titolo}`,
+    chiusa: (titolo: string) => `finestra chiusa: ${titolo}`,
+    avvio: 'accensione del computer',
     copertina: (titolo: string) => `copertina di ${titolo}`,
+    // crediti obbligatori del modello (cc by): autore e link vanno completati prima di pubblicare
+    crediti: {
+      modello: 'modello 3d del computer: autore da indicare · licenza cc by 4.0',
+      modelloLink: '',
+      ambiente: 'sala di cemento: autore da indicare · licenza da verificare',
+      ambienteLink: '',
+      carattere: 'carattere chicagoflf di robin casady · dominio pubblico',
+    },
+  },
+  // testi dei blocchi dei progetti (etichette per screen reader e messaggi)
+  blocchi: {
     immagine: (titolo: string, n: number) => `immagine ${n} di ${titolo}`,
     paginaPrecedente: 'pagina precedente',
     paginaSuccessiva: 'pagina successiva',

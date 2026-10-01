@@ -3,7 +3,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Suspense, use, useEffect, useMemo, useRef, type RefObject } from 'react'
 import * as THREE from 'three'
 import { APERTURA, SGUARDO_MAX } from './geometria'
-import { leggiPosa, percorso } from './percorso'
+import { leggiPosa, percorso, type Posa } from './percorso'
 import { sguardo } from './sguardo'
 import { caricaLogo } from './modelloLogo'
 import { useVolto } from './VoltoContext'
@@ -11,10 +11,23 @@ import { gsap } from '@/lib/gsap'
 import { movimento } from '@/config/movimento'
 import { LuciTeatro } from './LuciTeatro'
 import { CameraImmersiva } from './CameraImmersiva'
-import { CardNelloSpazio } from './CardNelloSpazio'
-import { NebbiaVolumetrica } from './NebbiaVolumetrica'
+import { Rifinitura } from './Rifinitura'
 import { scenaImmersiva } from './scenaImmersiva'
-import { AmbienteBrutalista, ambienteAttivo } from './AmbienteBrutalista'
+import { Sala, salaAttiva } from './Sala'
+import { CAMERA, CAMPO } from '@/components/computer/inquadratura'
+import { ComputerNellaScena } from './ComputerNellaScena'
+import { Mondo } from './Mondo'
+import { Ologramma } from './Ologramma'
+
+/** il sole della fessura serve al computer; il volto resta illuminato dai suoi fari */
+function senzaSole(m: THREE.Material) {
+  if (m.userData.senzaSole) return
+  m.userData.senzaSole = true
+  m.onBeforeCompile = (shader) => {
+    shader.fragmentShader = shader.fragmentShader.replace('#if ( NUM_DIR_LIGHTS > 0 ) && defined( RE_Direct )', '#if 0')
+  }
+  m.customProgramCacheKey = () => 'volto-senza-sole'
+}
 
 function morph(mesh: THREE.Mesh, nome: string, valore: number) {
   const indice = mesh.morphTargetDictionary?.[nome]
@@ -30,24 +43,30 @@ type Props = {
 
 export default function Volto3D({ riferimento, controllo, attivo = true }: Props) {
   const risorse = use(caricaLogo())
-  const edificio = !riferimento && ambienteAttivo
+  const edificio = !riferimento && salaAttiva
   return (
     <Canvas
       shadows={edificio && 'percentage'}
       frameloop="demand"
       dpr={[1, 1.5]}
-      camera={{ fov: 18, position: [0, 0, 20], near: 1, far: 60 }}
+      // home: campo 40° (si vede la sala); laboratorio: la vista frontale di sempre
+      camera={riferimento ? { fov: 18, position: [0, 0, 20], near: 1, far: 60 } : { fov: CAMPO, position: CAMERA.toArray(), near: 0.5, far: 200 }}
       gl={{ antialias: true, alpha: true, toneMapping: THREE.AgXToneMapping }}
       style={{ pointerEvents: 'none' }}
       aria-hidden="true"
     >
       <LuciTeatro />
       {!riferimento && <CameraImmersiva />}
-      {!riferimento && <Suspense fallback={null}><CardNelloSpazio /></Suspense>}
-      {edificio && <Suspense fallback={null}><AmbienteBrutalista /></Suspense>}
-      <NebbiaVolumetrica />
+      {!riferimento && (
+        <Mondo>
+          {edificio && <Suspense fallback={null}><Sala /></Suspense>}
+          <Suspense fallback={null}><ComputerNellaScena /></Suspense>
+        </Mondo>
+      )}
+      <Rifinitura sala={edificio} />
       <RenderVisibile attivo={attivo} laboratorio={Boolean(riferimento)} />
       <VoltoAnimato riferimento={riferimento} controllo={controllo} modello={risorse.modello.scene} />
+      {!riferimento && <Suspense fallback={null}><Ologramma /></Suspense>}
     </Canvas>
   )
 }
@@ -95,6 +114,7 @@ function VoltoAnimato({
     scena.traverse((o) => {
       if (!(o instanceof THREE.Mesh)) return
       o.frustumCulled = false
+      senzaSole(o.material as THREE.Material)
       // I bounding box dei morph includono tutte le pose: misuriamo solo quella neutra.
       const posizioni = o.geometry.getAttribute('position')
       for (let i = 0; i < posizioni.count; i++)
@@ -136,7 +156,7 @@ function VoltoAnimato({
     if (!g) return
     const r = riferimento?.current?.getBoundingClientRect(),
       c = controllo?.current
-    const posa =
+    const posa: Posa =
       r && c
         ? {
             x: r.left + r.width / 2,
@@ -162,8 +182,12 @@ function VoltoAnimato({
     }
     g.visible = posa.opacity > 0.001 && !document.hidden
     if (!g.visible) return
-    const unita = (40 * Math.tan(THREE.MathUtils.degToRad(9))) / size.height
-    g.position.set((posa.x - size.width / 2) * unita, -(posa.y - size.height / 2) * unita, 0)
+    // pixel → scena alla profondità della posa (dietro il computer il volto si allontana, la misura in pixel resta)
+    const z = posa.z ?? 0
+    const unita = riferimento
+      ? (40 * Math.tan(THREE.MathUtils.degToRad(9))) / size.height
+      : (2 * (CAMERA.z - z) * Math.tan(THREE.MathUtils.degToRad(CAMPO / 2))) / size.height
+    g.position.set((posa.x - size.width / 2) * unita, -(posa.y - size.height / 2) * unita, z)
     g.scale.setScalar((posa.larghezza * unita) / parti.larghezza)
     const { punto, scorre, tocco } = sguardo.get()
     const target = percorso.guarda ?? punto
@@ -178,7 +202,18 @@ function VoltoAnimato({
     s.y = THREE.MathUtils.damp(s.y, dy, 7, delta)
     s.inclinazioneX = THREE.MathUtils.damp(s.inclinazioneX, dorme ? 0 : (vy / size.height) * 0.16, 4, delta)
     s.inclinazioneY = THREE.MathUtils.damp(s.inclinazioneY, dorme ? 0 : (vx / size.width) * 0.22, 4, delta)
-    g.rotation.set(s.inclinazioneX, THREE.MathUtils.degToRad(posa.rotazione) + s.inclinazioneY, 0)
+    g.rotation.set(
+      s.inclinazioneX,
+      THREE.MathUtils.degToRad(posa.rotazione) + s.inclinazioneY,
+      THREE.MathUtils.degToRad(posa.rollio ?? 0),
+    )
+    // nel chi sono il logo lascia il posto all’avatar: si schiaccia in una riga, come un tubo che si spegne
+    const scambio = riferimento ? 0 : percorso.biografia.ologramma
+    if (scambio > 0) {
+      const via = THREE.MathUtils.smoothstep(scambio, 0.05, 0.4)
+      g.scale.y *= Math.max(0.01, 1 - via)
+      if (via >= 0.999) g.visible = false
+    }
     if (!s.prossimo) s.prossimo = ora + 4
     if (ora > s.prossimo) {
       if (!dorme) a.battito = ora
@@ -186,12 +221,17 @@ function VoltoAnimato({
         ora + movimento.volto.battitoMin + Math.random() * (movimento.volto.battitoMax - movimento.volto.battitoMin)
     }
     const battito = ora - a.battito,
-      occhiolino = ora - a.occhiolino
+      occhiolino = ora - a.occhiolino,
+      sorride = ora - a.sorriso < 1.4
+    // occhiolino con l’occhio destro, o con quello che si vede quando sbuca da sinistra del monitor
+    const sb = percorso.computer.sbircia
+    const ammicca = !riferimento && posa.fase === 'computer' && sb.lato === 'sinistra' && sb.uscita > 0.5 ? 0 : 1
     for (let i = 0; i < 2; i++) {
-      const chiuso = (battito >= 0 && battito < 0.22) || (i === 1 && occhiolino >= 0 && occhiolino < 0.48)
+      const chiuso = (battito >= 0 && battito < 0.22) || (i === ammicca && occhiolino >= 0 && occhiolino < 0.48)
       s.aperture[i] = THREE.MathUtils.damp(
         s.aperture[i],
-        dorme || chiuso ? 0 : APERTURA.naturale,
+        // sorridendo gli occhi si stringono un poco, come nel logo 2d: si capisce anche quando la bocca è nascosta
+        dorme || chiuso ? 0 : sorride ? APERTURA.sorride : APERTURA.naturale,
         dorme ? 3 : chiuso ? 45 : 20,
         delta,
       )
@@ -205,7 +245,7 @@ function VoltoAnimato({
         occhio.riposo.z,
       )
     }
-    s.sorriso = THREE.MathUtils.damp(s.sorriso, ora - a.sorriso < 1.4 ? 1 : 0, 6, delta)
+    s.sorriso = THREE.MathUtils.damp(s.sorriso, sorride ? 1 : 0, 6, delta)
     morph(parti.sorriso, 'sorriso_ampio', s.sorriso)
     const sonno = 1 - s.aperture[0] / APERTURA.naturale
     parti.testa.rotation.set(dorme ? sonno * (0.1 + Math.sin(ora * 2) * 0.012) : 0, 0, dorme ? sonno * 0.055 : 0)

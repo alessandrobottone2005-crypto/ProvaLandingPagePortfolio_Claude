@@ -26,7 +26,7 @@ non servono sottocartelle: tutto nella cartella del progetto.
 
 ## 3. scegli i contenuti (i “blocchi”)
 
-apri `progetto.json` con un editor di testo e compila `"blocchi"`. compaiono nel pannello nell’ordine in cui li scrivi. puoi usarne quanti vuoi, anche ripetuti.
+apri `progetto.json` con un editor di testo e compila `"blocchi"`. compaiono nella finestra del progetto, dentro il computer, nell’ordine in cui li scrivi. puoi usarne quanti vuoi, anche ripetuti.
 
 ```json
 "blocchi": [
@@ -67,7 +67,7 @@ npm run prepara-progetti
 
 questo comando:
 - converte le immagini in webp e le ridimensiona (gli originali restano in `_originali/`, che non finisce nel sito)
-- crea la versione piccola della copertina per la card
+- crea la versione piccola della copertina per l’icona del documento
 - comprime i modelli 3d
 - ti avvisa se un pdf supera 15mb o un video 25mb
 - controlla che non manchi niente
@@ -81,7 +81,7 @@ se qualcosa non va, leggi il messaggio: dice esattamente quale progetto e quale 
 npm run dev
 ```
 
-Apri [localhost:5173](http://localhost:5173): controlla copertina nella spirale, disposizione nella griglia e clic sulla card. Verifica titolo, discipline, anno e descrizione; «esplora» apre il pannello con i blocchi. Prova anche il link diretto `http://localhost:5173/progetti/<nome-progetto>` con lo slug effettivo, e i formati desktop/telefono.
+Apri [localhost:5173](http://localhost:5173): scendi fino al computer, apri la cartella della disciplina e il documento del progetto (doppio clic). Verifica titolo, discipline, anno, descrizione e blocchi nella finestra. Prova anche il link diretto `http://localhost:5173/progetti/<nome-progetto>` con lo slug effettivo, e i formati desktop/telefono.
 
 ## 7. pubblica il sito
 
@@ -91,7 +91,7 @@ Quando il progetto è pronto, esegui `npm run lint` e `npm run build`, poi contr
 
 ### consigli sui file
 
-- **contenuti**: il sito è pubblico; `pubblicato: false` nasconde la card ma non protegge file riservati.
+- **contenuti**: il sito è pubblico; `pubblicato: false` nasconde il progetto ma non protegge file riservati.
 - **immagini**: jpg o png grandi vanno bene, il comando del punto 5 le ottimizza
 - **pdf**: esporta per lo schermo (non per la stampa) per restare sotto i 15mb
 - **video**: mp4 (h.264). se hai un .mov, esportalo in mp4

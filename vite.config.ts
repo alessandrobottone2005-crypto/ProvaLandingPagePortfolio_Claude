@@ -3,6 +3,7 @@ import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig, type Plugin } from 'vite'
 import { validaProgetti } from './scripts/valida-progetti.ts'
+import { sito } from './src/config/sito.ts'
 
 // controlla tutti i progetti: in build si ferma con un messaggio chiaro, in sviluppo avvisa nel terminale
 function controllaProgetti(): Plugin {
@@ -21,6 +22,21 @@ function controllaProgetti(): Plugin {
       }
       avvisa()
       server.watcher.on('add', avvisa).on('change', avvisa).on('unlink', avvisa)
+    },
+  }
+}
+
+// computer (cc by) e sala (licenza da verificare): senza autore e link la build avvisa (sorgenti/*/README.md)
+function controllaCrediti(): Plugin {
+  return {
+    name: 'controlla-crediti',
+    buildStart() {
+      const { modello, modelloLink } = sito.computer.crediti
+      if (!modelloLink || modello.includes('da indicare'))
+        this.warn('crediti del computer incompleti: indica autore e link sketchfab in src/config/sito.ts prima di pubblicare')
+      const { ambiente, ambienteLink } = sito.computer.crediti
+      if (!ambienteLink || ambiente.includes('da indicare'))
+        this.warn('crediti della sala incompleti: indica autore, link e licenza in src/config/sito.ts prima di pubblicare')
     },
   }
 }
@@ -47,12 +63,12 @@ function precaricaFont(): Plugin {
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss(), controllaProgetti(), precaricaFont()],
+  plugins: [react(), tailwindcss(), controllaProgetti(), controllaCrediti(), precaricaFont()],
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
   assetsInclude: ['**/*.glb', '**/*.gltf'],
-  // librerie del pannello (scaricate solo all’apertura): le preparo subito, così in sviluppo
+  // librerie dei blocchi e del 3d (scaricate solo quando servono): le preparo subito, così in sviluppo
   // vite non le scopre a metà navigazione ricaricando la pagina con due copie di react
   optimizeDeps: {
     include: [

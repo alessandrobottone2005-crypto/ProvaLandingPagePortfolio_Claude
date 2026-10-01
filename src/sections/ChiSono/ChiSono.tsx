@@ -1,6 +1,6 @@
-// Il testo resta identico. Il volto globale lo affianca, poi raggiunge i contatti.
+// Il testo resta identico. Il volto globale arriva nella colonna, si rompe nell’avatar olografico
+// (Ologramma.tsx) e, all’uscita, si ricompone per raggiungere i contatti.
 import { useEffect, useRef, useState } from 'react'
-import { Volto } from '@/components/volto/Volto'
 import { percorso } from '@/components/volto/percorso'
 import { media, movimento } from '@/config/movimento'
 import { sito } from '@/config/sito'
@@ -49,7 +49,8 @@ export function ChiSono() {
             uscita?.kill()
             // Su schermi troppo bassi il testo resta in flusso normale, senza parole fuori dal pin.
             const pin = testo.getBoundingClientRect().height < innerHeight * 0.86 && innerHeight > 500
-            gsap.set(percorso.biografia, { uscita: 0 })
+            gsap.set(percorso.biografia, { uscita: 0, ologramma: 0 })
+            const scambio = movimento.chiSono.scambio
             const tl = gsap.timeline({
               defaults: { ease: 'none' },
               scrollTrigger: {
@@ -70,6 +71,9 @@ export function ChiSono() {
               0,
             )
             if (pin) {
+              // il logo arriva già in colonna all’inizio del pin: qui diventa ologramma e, prima del volo, torna logo
+              tl.to(percorso.biografia, { ologramma: 1, duration: scambio }, 1)
+              tl.to(percorso.biografia, { ologramma: 0, duration: scambio }, movimento.chiSono.pin - scambio)
               tl.to(
                 percorso.biografia,
                 { uscita: 1, duration: movimento.chiSono.versoContatti, ease: 'power2.inOut' },
@@ -81,6 +85,9 @@ export function ChiSono() {
                 movimento.chiSono.pin + movimento.chiSono.versoContatti * 0.1,
               )
             } else {
+              // senza pin: ologramma mentre il testo scorre, logo di nuovo prima dell’uscita
+              tl.to(percorso.biografia, { ologramma: 1, duration: scambio }, 0)
+              tl.to(percorso.biografia, { ologramma: 0, duration: scambio }, movimento.chiSono.pin - scambio)
               uscita = gsap.to(percorso.biografia, {
                 uscita: 1,
                 ease: 'none',
@@ -116,10 +123,19 @@ export function ChiSono() {
         <div className="grid w-full grid-cols-[minmax(64px,20vw)_minmax(0,1fr)] items-center gap-4 md:grid-cols-12 md:gap-8">
           <div
             data-logo-biografia
-            className="aspect-[247.41/180] w-full md:col-span-5 md:max-w-[48svh] md:justify-self-start"
+            className="aspect-[4/5] w-full md:col-span-5 md:max-w-[48svh] md:justify-self-start"
           >
-            <div className="hidden motion-reduce:block">
-              <Volto dimensione="100%" interattivo={false} />
+            {/* movimento ridotto o 3d non disponibile: l’avatar fermo, in palette, con le righe di scansione */}
+            <div className="relative hidden size-full motion-reduce:block in-data-volto-riserva:block">
+              <div
+                className="size-full bg-bianco"
+                style={{
+                  maskImage: 'url(/avatar/fermo.webp)',
+                  maskMode: 'luminance',
+                  maskSize: '100% 100%',
+                }}
+              />
+              <div className="absolute inset-0 bg-[repeating-linear-gradient(to_bottom,transparent_0_2px,var(--color-nero)_2px_3px)] opacity-60" />
             </div>
           </div>
           <div

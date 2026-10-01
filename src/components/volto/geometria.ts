@@ -4,6 +4,8 @@
 // coordinate nello stesso sistema dell’originale (247.41 × 176.88), con un po’ di spazio sotto per il sorriso.
 
 export const VIEWBOX = { larghezza: 247.41, altezza: 180 } as const
+/** ingombro del logo originale, senza lo spazio in più sotto: è la misura del modello 3d */
+export const INGOMBRO = { larghezza: 247.41, altezza: 176.88 } as const
 
 export const SPESSORE = {
   occhio: 13.6,
@@ -48,7 +50,7 @@ export const APERTURA = {
   sveglio: 1,
 } as const
 
-export function puntiPalpebra(apertura: number): Punti {
+function puntiPalpebra(apertura: number): Punti {
   const a = Math.min(1, Math.max(0, apertura))
   const [da, verso, t] = a < 0.5 ? [CHIUSA, NATURALE, a / 0.5] : [NATURALE, APERTA, (a - 0.5) / 0.5]
   return da.map((v, i) => v + (verso[i] - v) * t) as Punti

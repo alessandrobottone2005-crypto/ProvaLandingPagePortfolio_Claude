@@ -1,44 +1,64 @@
-# ambiente 3d della V2
+# ambiente 3d: la sala di cemento
 
-Il riferimento è `sorgenti/logo-3d/Logo3DAnimabile_MetalloGrezzo_V2.blend`, aperto e verificato in Blender tramite il plugin Computer. Il file originale non viene risalvato dagli script di esportazione.
+Dal 1 ottobre 2026 l’ambiente è una sala di cemento realistica (`sorgenti/sala/`), al posto della greybox brutalista. Header, computer, biografia e contatti sono punti diversi della stessa sala. Il logo resta quello della V2 (`sorgenti/logo-3d/Logo3DAnimabile_MetalloGrezzo_V2.blend`), con i suoi tre fari.
 
 ## percorso
 
-Le prime fasi illustrate dell’header restano invariate. La scena scura compare con il logo metallico, rimane dietro tutte le sezioni e accompagna le venti card della spirale. Lo scroll guida una camera diagonale con campo visivo fino a 42°, elevazione di 10–14° e orbita parziale da −24° a +22°. Focale e distanza cambiano insieme per conservare l’inquadratura del logo. Nel finale la camera arretra per mostrare tutta l’elica, poi torna esattamente frontale prima dello scambio con la griglia. L’ultimo tratto sfuma le card WebGL nelle card HTML interattive, conservando espansione, tastiera e pannello progetto.
+La camera reale resta ferma (campo 40°, a 8,7 u dal piano del volto, così il volto ha la stessa misura di prima). Il mondo (sala e computer, `Mondo.tsx`) riceve la trasformazione inversa di una camera virtuale (`components/computer/inquadratura.ts`):
 
-Biografia, etichette, navbar, contatti e copyright sono sopra il volume e restano leggibili. I pannelli progetto hanno sfondo opaco. La modalità movimento ridotto conserva il percorso statico accessibile senza Canvas; non è collegata alla dimensione dello schermo.
+- header: in fondo alla sala, guardando la parete con la colonna di luce;
+- discesa: la camera arretra e si alza, il computer appare a terra nel fascio di sole della fessura, poi scende fino allo schermo; il volto va dietro il monitor, coperto dal buffer di profondità ([computer](computer.md#il-volto-dietro-il-computer));
+- biografia: si gira verso la parete sinistra in ombra; la metà destra resta scura per il testo;
+- contatti: dall’inizio della sala si vede tutta la sua lunghezza, con il fascio di luce al centro; una sfumatura scura in basso tiene leggibili pulsanti e copyright.
 
-## spirale delle venti card
+I punti vengono da `src/components/volto/stazioniSala.json`, scritto da `prepara_sala.py` (passo `stazioni`) e copiato da `npm run prepara-sala`. Percorso del computer e interfaccia: [computer](computer.md).
 
-- Ogni card ha tre superfici reali: corpo con retro scuro, cornice forata estrusa e copertina incassata. Smussi arrotondati e normali continue fanno scorrere la luce sui bordi. Le geometrie sono condivise tra tutte le card.
-- La spirale attraversa il piano del logo: le card vicine lo possono coprire, quelle lontane sono dietro di lui. La profondità è proporzionale all’altezza della finestra anche su telefono; non viene compressa in base alla larghezza.
-- Due ulteriori luci d’area radenti illuminano cornici, fianchi e retro durante la spirale. Si spengono prima della griglia. Le copertine conservano il materiale senza riflessi; restano soggette alla stessa nebbia della scena.
-- Il finale dura 200vh: nel primo 30% la camera arretra e l’elica si allarga e riduce il passo per entrare nell’inquadratura; dal 30% all’88% le card si raddrizzano, raggiungono la griglia e perdono spessore; nell’ultimo 12% la grafica HTML compare sopra le superfici WebGL ancora opache. Nessuna doppia dissolvenza o rumore sulle immagini. Le card diventano interattive solo a transizione terminata.
-- Il percorso è interamente reversibile. La griglia finale, l’apertura delle informazioni e il pannello progetto restano gli stessi. In movimento ridotto si arriva direttamente alla griglia.
+## luce
 
-I parametri di orbita, profondità, passo, campo lungo e tempi sono in `movimento.portfolio.spirale3d`; `fasiSpirale` sincronizza camera, card, logo e dissolvenza.
+- **cotta in Blender** (Cycles, rimbalzi completi, ripulita con OIDN): sole stretto e neutro dalla fessura del soffitto + cielo grigio. Pareti 4096, pavimento 2048, su una seconda serie di UV. Nel sito è la `lightMap` dei materiali (`Sala.tsx`, `modelloSala.ts`): la luce diffusa di pareti e pavimento viene solo da lì.
+- **in tempo reale** soltanto per ciò che si muove: un sole direzionale con ombre morbide su computer e tastiera (il volto ne è escluso e resta illuminato dai suoi fari), un piano che raccoglie l’ombra del computer, il bagliore dello schermo.
+- **riflessi**: il cemento riflette un ambiente generato una volta sola dalla sala stessa (PMREM); il pavimento è cemento bagnato con riflessi veri (`MeshReflectorMaterial` di drei), sfocati sull’asciutto e più netti nelle chiazze bagnate, con effetto Fresnel. Riflette anche computer e volto.
+- colori: cemento quasi grigio (8% del colore originale) verso la palette; computer beige e copertine risaltano.
 
-## illuminazione e nebbia
+## rifinitura (post-produzione)
 
-- Tre luci principali d’area bianche, nelle posizioni della V2 convertite dagli assi Blender a quelli di Three.js. Puntano al logo come i vincoli Track To del file. La posizione inseguita ha inerzia; luci e dimensioni si adattano alla scala del volto.
-- Ambiente senza HDRI di studio: fondo scuro, luci radenti, materiale metallico della V2, tone mapping AgX. L’intensità è calibrata per il renderer web; un render Cycles e WebGL non producono pixel identici.
-- Nebbia volumetrica calcolata in 32 campioni lungo ogni raggio, densità di base 0,01 e rumore tridimensionale lento. La profondità della scena arresta il volume davanti alle superfici. Non è una GIF o un video di sfondo.
-- Desktop e mobile usano gli stessi effetti, 32 campioni, antialiasing e limite DPR 1,5. Nessun ramo mobile elimina luci, nebbia o viaggio della camera. Il rendering si ferma quando la scheda è nascosta o prima dell’apparizione del 3D.
+`Rifinitura.tsx`, con `postprocessing` e `@react-three/postprocessing`. È anche il render finale del Canvas: un solo disegno della scena.
 
-La nebbia web approssima la diffusione della V2; non riproduce il path tracing, i rimbalzi indiretti o le ombre volumetriche complete di Cycles.
+| effetto | ruolo |
+|---|---|
+| N8AO | occlusione ambientale: contatto tra computer e pavimento, angoli dei pilastri |
+| `NebbiaVolumetrica.tsx` | 32 campioni per raggio: alone leggero solo attorno al volto (sfera di 3–8 u) e pulviscolo nel fascio di sole della fessura, con grana sfalsata per pixel |
+| Bloom | bagliore leggero sulle zone più luminose (fessura, schermo) |
+| Vignette, AgX | vignetta e tone mapping; il renderer non applica AgX una seconda volta |
+
+Parametri di prova in sviluppo: `?ambiente=0` (senza sala), `?effetti=0` (senza post-produzione), `?senza=ao,nebbia,bagliore,vignetta`, `?polvere=0.02` (densità del pulviscolo, predefinita 0,008).
+
+Desktop e telefono usano gli stessi effetti, DPR massimo 1,5. Con movimento ridotto: stessa sala e stessi effetti, volume fermo.
+
+## computer
+
+- `Computer.glb` (originale in `sorgenti/computer/`) è ottimizzato in `public/computer/computer.glb` (≈ 1 MB) con `npm run prepara-computer`.
+- Poggia dove la luce della fessura tocca il pavimento, scala ×4, vetro rivolto verso l’inizio della sala.
 
 ## file da regolare
 
-- `src/components/volto/CameraImmersiva.tsx`: percorso della camera.
-- `LuciTeatro.tsx`: posizioni, intensità e ritardo dei fari.
-- `NebbiaVolumetrica.tsx`: densità, movimento e diffusione del volume; composizione con buffer di profondità.
-- `CardNelloSpazio.tsx`: copertine reali dentro la scena; passaggio alla griglia.
-- `scenaImmersiva.ts` e `cardImmersive.ts`: pose condivise senza aggiornamenti React per fotogramma.
-- `Volto3D.tsx`: viso, espressioni e composizione della scena.
+- `sorgenti/sala/scripts/prepara_sala.py`: scala, materiali, sole, stazioni e cottura ([sorgenti della sala](../sorgenti/sala/README.md)).
+- `src/components/computer/inquadratura.ts`: percorso della camera virtuale tra le stazioni.
+- `src/components/volto/Sala.tsx`, `modelloSala.ts`, `luceSala.ts`: materiali, lightmap, pavimento bagnato, sole in tempo reale.
+- `Rifinitura.tsx` e `NebbiaVolumetrica.tsx`: effetti, polvere e nebbia.
+- `LuciTeatro.tsx`: fari del volto. `Volto3D.tsx`: viso, espressioni e composizione della scena.
 
-Le geometrie/materiali del modello restano nella cache del caricatore. Render target, luci, materiali e texture delle card vengono liberati allo smontaggio. In caso di errore del 3D rimangono il volto SVG e la spirale DOM di riserva. Il render target della nebbia segue dimensioni e DPR effettivo; il cambio della preferenza di movimento smonta/ripristina la scena anche a sito aperto.
+Le geometrie/materiali dei modelli restano nella cache del caricatore; materiali, luci e render target locali vengono liberati allo smontaggio. Se la sala non si carica, la scena resta nel nero con volto e computer; se il 3d fallisce, rimangono il volto SVG e l’interfaccia del computer.
 
-## esportazione
+## peso
+
+`public/sala/`: `sala.glb` 4,45 MB (texture WebP 2048, Meshopt) + luce cotta 0,16 MB = 4,6 MB, scaricati dopo il preloader. Le librerie di post-produzione sono nel codice della scena 3d, non nel bundle iniziale (≈ 207 kB gzip).
+
+## verifica — 1 ottobre 2026
+
+Build e lint superati. Chrome headless (GPU Metal, Mac con chip M5) a 1440×900 e 390×844, più tablet 820×1180 per il computer: header, discesa, sosta, biografia, contatti, movimento ridotto. Discesa con scroll continuo: 60 fps medi a 1440×900 (95° percentile 20 ms) e 59 fps a 390×844 (viewport emulato). Sono misure locali su un computer veloce: non valgono per un telefono reale, da provare.
+
+## esportazione del logo
 
 ```sh
 /Applications/Blender.app/Contents/MacOS/Blender -b sorgenti/logo-3d/Logo3DAnimabile_MetalloGrezzo_V2.blend --python sorgenti/logo-3d/scripts/export_v2_web.py
@@ -49,10 +69,12 @@ L’esportazione prende solo la gerarchia del logo, con shape key e posa neutra 
 
 Riferimenti tecnici: [luci d’area](https://threejs.org/docs/pages/RectAreaLight.html), [buffer di profondità](https://threejs.org/docs/pages/DepthTexture.html), [render target](https://threejs.org/manual/pages/rendertargets.html).
 
-## verifica della spirale — 28 settembre 2026
+## storico: verifica della spirale — 28 settembre 2026
+
+La spirale descritta qui è stata sostituita dal computer il 1 ottobre 2026.
 
 Build TypeScript/Vite e lint completati. Verifica nel browser a 1440×900, 820×1180 e 390×844: geometrie e camera, griglia 3/2/1 senza overflow orizzontale, espansione di una sola card, apertura e chiusura del pannello, ritorno alla spirale e all’header. L’allineamento delle venti pose alle card HTML prima dello scambio è entro la precisione numerica. Il cambio a movimento ridotto smonta il Canvas e lascia tutti i venti progetti utilizzabili. Nessun errore nel caricamento e percorso finali; l’utility delle normali è inclusa nell’ottimizzazione iniziale di Vite per evitare ricaricamenti delle dipendenze durante lo sviluppo. Restano gli avvisi già presenti sui bundle grandi. Le dimensioni mobili sono simulate nel browser, non costituiscono una misura di prestazioni su un telefono fisico.
 
 ## manutenzione — 29 settembre 2026
 
-Il componente di scroll è ora `src/sections/Portfolio/Spirale.tsx`; l’id ScrollTrigger `portfolio-anello` rimane per le letture di posa e le rotte. La pila mobile e le misure della vecchia card header sono state eliminate perché non usate. La home continua a usare la V2: copie pubbliche del modello V1 e dell’HDRI rimosse, sorgenti conservati fuori dal runtime. Debugging e controlli correnti sono descritti in [accessibilità e prestazioni](accessibilita-prestazioni.md) e [pubblicazione](pubblicazione.md).
+Allora il componente di scroll era `Spirale.tsx` in `src/sections/Portfolio/`, con l’id ScrollTrigger `portfolio-anello`; entrambi sono stati rimossi il 1 ottobre 2026 con il passaggio al computer (oggi `Portfolio.tsx`, id `portfolio-computer`). La pila mobile e le misure della vecchia card header sono state eliminate perché non usate. La home usava già la V2: copie pubbliche del modello V1 e dell’HDRI rimosse, sorgenti conservati fuori dal runtime. Debugging e controlli correnti sono descritti in [accessibilità e prestazioni](accessibilita-prestazioni.md) e [pubblicazione](pubblicazione.md).

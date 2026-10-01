@@ -39,6 +39,10 @@ dist-ssr
 
 # cache rigenerabili e copie di sicurezza Blender (restano sul computer)
 sorgenti/logo-3d/anteprime/frames/
+# sala: cottura della luce e glb intermedia (si rigenerano con prepara_sala.py, centinaia di MB)
+sorgenti/sala/export/*.exr
+sorgenti/sala/export/Sala_Web.glb
+sorgenti/sala/textures/
 *.blend[0-9]*
 
 # bytecode degli script Python

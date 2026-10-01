@@ -1,5 +1,5 @@
 // testo che “rotola”: quando cambia, le lettere vecchie salgono e quelle nuove arrivano dal basso.
-// usato per le etichette che cambiano (fasi dell’header, contatori, titoli sotto l’anello).
+// usato per le etichette che cambiano (fasi dell’header).
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 
 type Props = { testo: string; className?: string }

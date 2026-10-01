@@ -5,7 +5,7 @@ import { useAvvio } from '@/components/preloader/AvvioContext'
 import { NomePesoVariabile } from '@/components/testo/NomePesoVariabile'
 import { TestoCheRotola } from '@/components/testo/TestoCheRotola'
 import { Volto } from '@/components/volto/Volto'
-import { larghezzaLogoSpirale, percorso } from '@/components/volto/percorso'
+import { larghezzaLogoCentro, percorso } from '@/components/volto/percorso'
 import { media, movimento, volto as misure } from '@/config/movimento'
 import { sito } from '@/config/sito'
 import { gsap, ScrollTrigger, useGSAP } from '@/lib/gsap'
@@ -71,7 +71,7 @@ export function Header() {
   useGSAP(
     () => {
       const mm = gsap.matchMedia()
-      mm.add({ mobile: media.mobile, desktop: media.anello, ridotto: media.ridotto }, (ctx) => {
+      mm.add({ mobile: media.mobile, desktop: media.daTablet, ridotto: media.ridotto }, (ctx) => {
         const { mobile, ridotto: conRidotto } = ctx.conditions as Record<string, boolean>
         const parole = [...nome.current!.querySelectorAll<HTMLElement>('[data-parola-nome]')]
         const fontPiccolo = mobile ? 18 : 20
@@ -178,7 +178,7 @@ export function Header() {
         tl.to(
           c,
           {
-            scala: () => larghezzaLogoSpirale() / (voltoHeader.current?.getBoundingClientRect().width || innerWidth),
+            scala: () => larghezzaLogoCentro() / (voltoHeader.current?.getBoundingClientRect().width || innerWidth),
             duration: 8,
             ease: 'power2.inOut',
           },

@@ -6,8 +6,9 @@ import { useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router'
 import { media, movimento } from '@/config/movimento'
 import { gsap } from '@/lib/gsap'
+import { EVENTO_RICALCOLA } from './ricalcola'
 
-type Forma = { tipo: 'punto' } | { tipo: 'anello' } | { tipo: 'etichetta'; testo: string }
+type Forma = { tipo: 'punto' } | { tipo: 'anello' } | { tipo: 'nascosto' } | { tipo: 'etichetta'; testo: string }
 
 const INTERATTIVI = 'a[href], button, [role="button"], input, select, textarea, label, summary, [tabindex]:not([tabindex="-1"])'
 const PUNTO = 10
@@ -17,6 +18,8 @@ const LENTE = 96
 const ease = [0.16, 1, 0.3, 1] as const
 
 function formaDi(el: Element | null): Forma {
+  // sullo schermo del computer vale la freccia pixel del 1984
+  if (el?.closest('[data-mac]')) return { tipo: 'nascosto' }
   const conEtichetta = el?.closest<HTMLElement>('[data-cursore]')
   const testo = conEtichetta?.dataset.cursore
   if (testo) return { tipo: 'etichetta', testo }
@@ -55,8 +58,8 @@ function CursoreAttivo() {
   const ricalcola = useRef(() => {})
   const { pathname } = useLocation()
 
-  // aprendo o chiudendo il pannello cambia ciò che sta sotto il cursore anche se il mouse è fermo:
-  // la forma si ricalcola subito e poi mentre il pannello entra o esce
+  // aprendo o chiudendo la finestra di un progetto cambia ciò che sta sotto il cursore anche se il mouse è fermo:
+  // la forma si ricalcola subito e poi mentre la finestra compare o sparisce
   useEffect(() => {
     const id = requestAnimationFrame(() => ricalcola.current())
     const tempi = [120, 450, 900].map((ms) => window.setTimeout(() => ricalcola.current(), ms))
@@ -93,7 +96,7 @@ function CursoreAttivo() {
       setVisibile(true)
       cambiaForma(e.target instanceof Element ? e.target : null)
     }
-    // dopo uno scroll (o l’apertura del pannello) l’elemento sotto il cursore cambia anche senza muovere il mouse
+    // dopo uno scroll (o l’apertura di una finestra) l’elemento sotto il cursore cambia anche senza muovere il mouse
     let ultimo = { x: 0, y: 0 }
     const dopoScroll = () => {
       if (primo) return
@@ -113,9 +116,10 @@ function CursoreAttivo() {
     addEventListener('pointerup', su)
     addEventListener('pointercancel', su)
     addEventListener('blur', perdeFocus)
-    // in cattura: così arrivano anche gli scroll interni (il pannello scorre per conto suo)
+    // in cattura: così arrivano anche gli scroll interni (le finestre del computer scorrono per conto loro)
     addEventListener('scroll', dopoScroll, { passive: true, capture: true })
     addEventListener('focusin', dopoScroll)
+    addEventListener(EVENTO_RICALCOLA, dopoScroll)
     document.documentElement.addEventListener('mouseleave', esci)
     return () => {
       document.documentElement.classList.remove('cursore-personalizzato')
@@ -126,6 +130,7 @@ function CursoreAttivo() {
       removeEventListener('blur', perdeFocus)
       removeEventListener('scroll', dopoScroll, { capture: true })
       removeEventListener('focusin', dopoScroll)
+      removeEventListener(EVENTO_RICALCOLA, dopoScroll)
       ricalcola.current = () => {}
       document.documentElement.removeEventListener('mouseleave', esci)
       x.tween.kill()
@@ -141,7 +146,7 @@ function CursoreAttivo() {
       <motion.div
         className="relative"
         initial={false}
-        animate={{ scale: premuto ? 0.8 : 1, opacity: visibile ? 1 : 0 }}
+        animate={{ scale: premuto ? 0.8 : 1, opacity: visibile && forma.tipo !== 'nascosto' ? 1 : 0 }}
         transition={t}
       >
         {/* disco pieno: punto da 10px oppure lente da 96px con l’etichetta */}

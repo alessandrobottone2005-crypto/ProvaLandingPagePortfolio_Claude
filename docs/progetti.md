@@ -9,7 +9,7 @@ src/content/progetti/
   nome-progetto/           ← il nome della cartella diventa l’indirizzo /progetti/nome-progetto
     progetto.json
     copertina.webp
-    copertina-card.webp    ← creata da npm run prepara-progetti (900px, per le card)
+    copertina-card.webp    ← creata da npm run prepara-progetti (900px, per le icone)
     …altri file dei blocchi (webp, pdf, glb, mp4)
     _originali/            ← creata da npm run prepara-progetti: gli originali, non finiscono nel sito
 ```
@@ -32,7 +32,7 @@ schema in `src/lib/schema.ts` (zod). non sono ammessi campi diversi da questi.
 | `ordine` | no | numero: più basso = prima |
 | `pubblicato` | no | `true` (predefinito) o `false` per nasconderlo senza cancellarlo |
 | `copertina` | sì | nome del file della copertina (proporzione 4:5) |
-| `blocchi` | no | elenco dei blocchi del pannello, nell’ordine in cui compaiono (predefinito: nessuno) |
+| `blocchi` | no | elenco dei blocchi della finestra del progetto, nell’ordine in cui compaiono (predefinito: nessuno) |
 
 ### i blocchi
 
@@ -44,7 +44,7 @@ schema in `src/lib/schema.ts` (zod). non sono ammessi campi diversi da questi.
 | `video` | `file` **oppure** `url` (uno solo dei due), `poster`, `autoplay` | `url`: link vimeo o youtube. `autoplay` (predefinito `false`): muto e in loop, solo per clip brevi |
 | `testo` | `testo` | una riga vuota separa i paragrafi |
 
-i blocchi si possono ripetere e combinare. come si comportano nel pannello: [pannello](pannello.md).
+i blocchi si possono ripetere e combinare. come si comportano nella finestra: [computer](computer.md#i-blocchi).
 
 **ordine dei progetti**: prima quelli con `ordine` (dal numero più basso), poi quelli senza, dal più recente per `anno` (a parità di anno, in ordine alfabetico di cartella).
 
@@ -54,8 +54,8 @@ i blocchi si possono ripetere e combinare. come si comportano nel pannello: [pan
 
 1. con `import.meta.glob` di vite legge tutti i `src/content/progetti/*/progetto.json` e tutti i file `webp, avif, jpg, jpeg, png, gif, pdf, glb, gltf, mp4, webm` delle cartelle, come indirizzi (`?url`). i file dentro `_originali/` non vengono presi.
 2. completa i valori predefiniti (`pubblicato`, `blocchi`, `layout`, `autoplay`) senza zod, così zod non si scarica nel sito: i valori condivisi stanno in `src/lib/dati.ts` (`DISCIPLINE`, `SLUG_VALIDO`, `fileUsati`).
-3. salta i progetti non pubblicati; trasforma ogni nome di file in un indirizzo; se esiste `<copertina>-card.webp` la usa per le card (`copertinaCard`).
-4. ordina e restituisce `progetti`. funzioni in più: `trovaProgetto(slug)` e `progettoSuccessivo(slug)` (dopo l’ultimo si torna al primo).
+3. salta i progetti non pubblicati; trasforma ogni nome di file in un indirizzo; se esiste `<copertina>-card.webp` la usa per le icone dei documenti (`copertinaCard`).
+4. ordina e restituisce `progetti`; `trovaProgetto(slug)` trova il progetto della rotta `/progetti/:slug`.
 
 in sviluppo, se un `progetto.json` non va, l’errore compare anche nella console del browser.
 
@@ -82,17 +82,17 @@ chiede nel terminale: titolo, indirizzo (proposto dal titolo), breve descrizione
 
 per ogni progetto:
 - **immagini** (`jpg, jpeg, png, avif, tif, tiff, webp`): l’originale va in `_originali/`, al suo posto c’è un `.webp` con lato massimo 2400px (qualità 82). se l’estensione cambia, `progetto.json` viene aggiornato da solo. un file già presente in `_originali/` non viene rifatto
-- **copertina per le card**: crea `<copertina>-card.webp` largo 900px (la ricrea se la copertina è più recente)
+- **copertina piccola**: crea `<copertina>-card.webp` largo 900px (la ricrea se la copertina è più recente)
 - **modelli `.glb`**: l’originale va in `_originali/`, la versione compressa (meshopt, texture in webp, con `gltf-transform`) prende il suo posto
 - **avvisi**: pdf sopra 15mb, video sopra 25mb, file `.mov`/`.m4v` da esportare in mp4 (h.264)
 - alla fine esegue il controllo completo e dice quanti progetti ci sono e quanti sono pubblicati; se ci sono problemi esce con errore
 
 ## i progetti segnaposto
 
-In `src/content/progetti/` ci sono venti progetti provvisori, `segnaposto-01` … `segnaposto-20`: titoli e testi segnaposto, copertine numerate. Si possono sostituire, rimuovere o nascondere con `pubblicato: false`. Il numero di card viene ricavato dai progetti pubblicati: non serve modificare il codice della spirale o della griglia. Il preloader include la copertina del primo progetto.
+In `src/content/progetti/` ci sono venti progetti provvisori, `segnaposto-01` … `segnaposto-20`: titoli e testi segnaposto, copertine numerate. Si possono sostituire, rimuovere o nascondere con `pubblicato: false`. Le cartelle del computer si riempiono da sole con i progetti pubblicati, in base alle `discipline` (un progetto con più discipline compare in più cartelle): non serve modificare il codice. Il preloader include la copertina del primo progetto.
 
-Titolo, discipline, anno e descrizione alimentano sia le informazioni della card espansa sia il pannello. Le copertine vengono usate a colori, anche nella scena 3d. [Interazioni](animazioni.md).
+Titolo, discipline, anno, cliente e descrizione compaiono nella finestra del progetto; il titolo è anche il nome del documento. Le copertine restano a colori anche dentro lo schermo in bianco e nero. [Computer](computer.md).
 
 ## contenuti pubblici
 
-`pubblicato: false` è una scelta editoriale, non un controllo di accesso. I file importati o caricati sul sito possono essere raggiungibili tramite URL; non inserire contenuti riservati confidando che una card nascosta li protegga. `_originali/` è esclusa dagli import del runtime e dall’upload CLI configurato in `.vercelignore`, ma può restare nel repository GitHub. Il pannello opaco protegge la fedeltà visiva delle immagini, non rende privati i file.
+`pubblicato: false` è una scelta editoriale, non un controllo di accesso. I file importati o caricati sul sito possono essere raggiungibili tramite URL; non inserire contenuti riservati confidando che un progetto nascosto li protegga. `_originali/` è esclusa dagli import del runtime e dall’upload CLI configurato in `.vercelignore`, ma può restare nel repository GitHub. Le finestre opache proteggono la fedeltà visiva delle immagini, non rendono privati i file.

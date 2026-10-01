@@ -8,31 +8,25 @@ file: `src/sections/Header/Header.tsx`, `Tavola.tsx`, `src/components/volto/Logo
 
 - header bloccato per 400vh desktop/tablet, 300vh telefono. una timeline in unità 0–100: illustrazione 0, branding 25, 3d 50, web 75.
 - volto interamente visibile, largo `min(86vw, 104svh)`. nome e cognome restano sui bordi fino al 92% dell’header, poi si riducono in due righe fisse in alto a destra, cliccabili per tornare all’inizio; etichette grandi, senza numeri, nessun trattino di avanzamento.
-- illustrazione: filtro matita e schizzi; branding: griglia di costruzione e campioni, piccolo arretramento del volto; 3d: SVG e modello animabile si sovrappongono e si dissolvono, poi rotazione fino a -35°; web: finestra disegnata e puntatore, il volto arretra e raggiunge la misura del logo centrale della spirale. la finestra svanisce, il volto resta.
+- illustrazione: filtro matita e schizzi; branding: griglia di costruzione e campioni, piccolo arretramento del volto; 3d: SVG e modello animabile si sovrappongono e si dissolvono, poi rotazione fino a -35°; web: finestra disegnata e puntatore, il volto arretra e raggiunge la misura con cui il portfolio lo riceve al centro. la finestra svanisce, il volto resta.
 - il Canvas globale continua attraverso tutte le sezioni. `percorso.ts` legge gli ancoraggi DOM e i numeri delle timeline: nessun rimontaggio tra header, portfolio, biografia e contatti. tutto si riavvolge tornando su.
 
-## portfolio: spirale → griglia
+## portfolio: il computer
 
-file: `src/sections/Portfolio/Spirale.tsx` (id ScrollTrigger `portfolio-anello` conservato per i moduli che lo leggono), `Portfolio.tsx`, `CardCopertina.tsx`, `Griglia.tsx`.
+file: `src/sections/Portfolio/Portfolio.tsx` (id ScrollTrigger `portfolio-computer`), `src/components/computer/`, `src/components/volto/Mondo.tsx`, `ComputerNellaScena.tsx`. guida completa: [computer](computer.md).
 
-- spirale elicoidale con cornici solide smussate, copertine incassate e retro scuro; le venti card passano davanti e dietro al logo. camera diagonale con orbita parziale, presente anche su telefono. dettagli in [ambiente 3d](ambiente-3d.md).
-- copertine sempre a colori, usando una sola immagine con `srcset`. niente didascalie o aperture nella scena 3d.
-- scroll: 70vh di apertura, 50vh per ogni progetto dopo il primo, 30vh di pausa e 200vh per mostrare l’elica in campo lungo, raddrizzare le card e raggiungere le posizioni misurate dalla griglia reale.
-- durante il passaggio alla griglia il logo si rimpicciolisce e si sposta a sinistra. desktop/tablet hanno spazio laterale riservato; sul telefono il logo piccolo sta in alto.
-- a griglia completa scroll normale per tutte le righe. tornando su la trasformazione si riavvolge e la card aperta si richiude. il refresh delle misure non altera lo stato aperto.
-- frecce ← → per ruotare la scena; “tieni premuto” e aggancio soltanto con mouse/penna, senza aggancio automatico sul telefono. La vecchia pila mobile è stata rimossa: la home usa un unico percorso spirale → griglia.
-
-### griglia e card informative (`Griglia.tsx`, `CardProgetto.tsx`, `portfolio.css`)
-
-- **3 colonne da 1024px**, **2 da 768px**, **1 sotto i 768px**; nessun titolo o didascalia fuori dalle card. anche sul telefono la spirale termina nella griglia a una colonna.
-- a riposo le card mostrano solo la copertina. il clic espande il pannello nero sotto l’immagine: titolo, discipline, anno, descrizione, “esplora” e “chiudi”. tutti i testi informativi sono bianchi; i bottoni mantengono gli stati figma già usati nei contatti.
-- una sola card aperta alla volta. l’espansione aumenta l’altezza della riga e sposta le successive; a fine animazione si aggiornano le misure di lenis e scrolltrigger.
-- “esplora” apre il pannello esistente, con il volo della copertina. “chiudi”, un altro clic sulla copertina o esc richiudono le informazioni. il pulsante della copertina espone `aria-expanded` e `aria-controls`; i controlli chiusi o non ancora disponibili sono esclusi dalla tastiera.
-- `CardCopertina.tsx` è l’aspetto comune all’anello e alla griglia; i dati e le immagini provengono dai file dei progetti. misure, raggi e spaziature di figma si adattano alla larghezza della card; i testi hanno una misura minima leggibile.
+- nessun pin: 100vh di avvicinamento e 120vh di sosta, poi la biografia entra dal basso.
+- avvicinamento: la camera scivola alla stazione del computer, guarda giù verso il computer a terra e scende fino allo schermo; il volto lascia il centro e va dietro il computer, più grande del monitor, con lenti e occhi sopra il bordo. arrivando davanti allo schermo si abbassa e si nasconde.
+- nascondino nella sosta: il volto sbuca dai lati in cui si vedono gli occhi (destra e sinistra su desktop e tablet orizzontale; sopra e sopra spostato su tablet verticale; nessuno su telefono, dove l’interfaccia lo copre) e reagisce al Finder (vedi [computer](computer.md#il-volto-dietro-il-computer)).
+- al 90% il computer si accende: il tubo si apre da una riga, trama grigia, volto pixelato sul piccolo computer, poi la scrivania. tornando sotto il 60% lo schermo si richiude in una riga; le finestre restano dove erano.
+- sosta: camera ferma, interfaccia utilizzabile. su telefono l’interfaccia occupa tutta la vista.
+- uscita: con la biografia la camera si rialza e si gira verso la parete; l’interfaccia segue il vetro.
+- tutto è reversibile in entrambe le direzioni.
 
 ## chi sono (`src/sections/ChiSono/ChiSono.tsx`)
 
-- foto e firma rimosse; resta il testo biografico invariato, con il logo 3d a sinistra. su mobile il logo è più piccolo per lasciare spazio al testo.
+- testo biografico invariato; a sinistra l’avatar olografico di alessandro (vedi [volto](volto.md#avatar-olografico-del-chi-sono)). su mobile la colonna è più piccola per lasciare spazio al testo.
+- scambio: il logo arriva nella colonna, all’inizio del pin si schiaccia in una riga come un tubo che si spegne e l’avatar a punti si disegna con una scansione dall’alto; alla fine del pin avviene il contrario e il logo vola ai contatti. `percorso.biografia.ologramma` (0 logo → 1 avatar), durata `movimento.chiSono.scambio`. tutto guidato dallo scroll, quindi reversibile.
 - SplitText accende ogni parola da opacità 0,315 a 1, in sequenza, durante 150vh di scroll. poi 100vh accompagnano il logo verso il centro e la misura dei contatti; il testo si dissolve.
 - il pin si usa soltanto se il testo entra nello schermo (meno dell’86% dell’altezza, schermo alto più di 500px). altrimenti testo in flusso normale e uscita del logo guidata dall’ultimo tratto di scroll della sezione.
 - `autoSplit` riallinea le parole dopo i cambi di font/layout. copie `sr-only` per lettura accessibile, parole animate `aria-hidden`.
@@ -60,22 +54,22 @@ file: `src/sections/Portfolio/Spirale.tsx` (id ScrollTrigger `portfolio-anello` 
 | elementi con `data-cursore="…"` | cerchio pieno da 96px con la parola in nero |
 | pressione | si contrae a 0,8 |
 
-parole usate: `info` / `chiudi` (copertina delle card in griglia), `tieni premuto` (spirale, al primo passaggio), `chiudi` (fuori dal pannello), `sfoglia` (pdf), `ruota` (3d), `play` / `pausa` (video).
+sullo schermo del computer (`[data-mac]`) il cursore del sito si nasconde e compare la freccia pixel del 1984. i blocchi conservano le parole `sfoglia` (pdf), `ruota` (3d), `play` / `pausa` (video) nel codice, ma oggi si trovano solo dentro lo schermo e quindi non compaiono.
 
-la forma si ricalcola anche senza muovere il mouse: dopo uno scroll (anche dentro il pannello), a ogni cambio di focus e a ogni cambio di indirizzo (apertura e chiusura del pannello).
+la forma si ricalcola anche senza muovere il mouse: dopo uno scroll (anche dentro una finestra), a ogni cambio di focus, a ogni cambio di indirizzo (apertura e chiusura di un progetto) e quando lo schermo del computer compare o diventa interattivo sotto un mouse fermo (evento `cursore:ricalcola`, `src/components/cursore/ricalcola.ts`, inviato da `Interfaccia.tsx`).
 
 ## micro-interazioni riusabili
 
 | componente | cosa fa | dove si usa |
 |---|---|---|
-| `src/components/testo/RotolaAlPassaggio.tsx` | testo di link e pulsanti che “rotola”: le lettere salgono e una copia arriva dal basso. si attiva da solo con passaggio del mouse o focus da tastiera sul link/pulsante che lo contiene (su touch al tocco), oppure con la prop `attivo` | pulsanti dei contatti, “chiudi” del pannello |
+| `src/components/testo/RotolaAlPassaggio.tsx` | testo di link e pulsanti che “rotola”: le lettere salgono e una copia arriva dal basso. si attiva da solo con passaggio del mouse o focus da tastiera sul link/pulsante che lo contiene (su touch al tocco), oppure con la prop `attivo` | pulsanti dei contatti |
 | `src/components/testo/TestoCheRotola.tsx` | quando il testo cambia, le lettere vecchie salgono e le nuove arrivano dal basso | etichette dell’header |
 | `src/components/testo/NomePesoVariabile.tsx` | le lettere vicine al cursore diventano più pesanti (asse `wght` di outfit da 300 a 600, in base alla distanza); su touch nel punto toccato | nome dell’header  |
-| `src/components/interazioni/Magnetico.tsx` | involucro attratto dal cursore (max 12px, `movimento.magnetismo.pulsanti`; 4–6px per i controlli piccoli). solo con il mouse | pulsanti dei contatti, del pannello e dei blocchi |
+| `src/components/interazioni/Magnetico.tsx` | involucro attratto dal cursore (max 12px, `movimento.magnetismo.pulsanti`; 4–6px per i controlli piccoli). solo con il mouse | pulsanti dei contatti e dei blocchi |
 | `src/components/effetti/Grana.tsx` + `.grana` in `globals.css` | rumore leggerissimo (opacità 4%) su tutto il sito; animato solo con mouse e senza movimento ridotto, fermo su touch | ovunque |
 
 altre regole:
-- stati “premuto” con `active:scale-…` sui pulsanti e sulle card.
+- stati “premuto” con `active:scale-…` sui pulsanti.
 - focus da tastiera: anello bianco 2px con distanza 4px, che entra stringendosi in 0,3s (`globals.css`).
 
 ## cosa controlla `src/config/movimento.ts`
@@ -87,12 +81,14 @@ altre regole:
 | `scrub` | `desktop` 1 · `mobile` 0,6 |
 | `lenis` | `lerp` 0,1 (più basso = più morbido e lento) |
 | `preloader` | `minimo` 1,6s · `massimo` 6s · `breve` 0,8s (seconda visita nella stessa sessione) |
-| `header` | `pinDesktop` 400 · `pinMobile` 300 (vh) |
-| `portfolio` | `perProgetto` 50vh · `disposizione` 70vh · `coda` 30vh · `versoGriglia` 200vh · `prospettiva` 1400px · `aggancio` 0,6s · `tieniPremutoDopo` 0,25s · `tieniPremutoVelocita` 4 card/s · `inclinazioneVelocita` 5° |
-| `portfolio.spirale3d` | `campoVisivo` 42° · `orbitaDa/A` −24°/+22° · `elevazione` 10° · `profondita` 0,52 · `passo` 0,82 · ritiro/distensione finali da 0 a 0,3 e da 0,3 a 0,88 |
-| `chiSono` | `pin` 150 · `versoContatti` 100 (vh) |
+| `header` | `pinDesktop` 400 · `pinMobile` 300 (vh) · `inizioNomeCompatto` 92 (% dell’header in cui il nome inizia a raccogliersi) |
+| `computer` | `avvicinamento` 100vh · `sosta` 120vh · `accendiDa` 0,9 · `spegniSotto` 0,6 · `avvio` 2,2s · `avvioBreve` 0,7s · `altezzaSchermo` 0,5 · `larghezzaSchermo` 0,6 |
+| `computer.volto` | volto dietro il monitor: `fattore` 1,25 · `fattoreNascosto` 0,86 · `distacco` 0,5 u · `versoDa` 0,3 · `versoA` 0,55 · `nascondiDa` 0,85 · `margine` 0,03 ([computer](computer.md#il-volto-dietro-il-computer)) |
+| `computer.sbircia` | nascondino: `uscita` 0,9s · `rientro` 0,7s · `restaMin/Max` 4–8s · `nascostoMin/Max` 1,4–3s · `rollio` 9° · `altezza` 0,38 · `spostamento` 0,16 |
+| `chiSono` | `pin` 150 · `versoContatti` 100 (vh) · `scambio` 14 (scroll in cui logo e avatar si scambiano) |
+| `avatar` | `fotogrammi` 24 · `inclinazioneMax` 11° · `smorzamento` 6 · `autonomoDopo` 2s |
 | `volto` | `battitoMin` 3s · `battitoMax` 7s · `sonnoDopo` 8s |
-| `pannello` | `volo` 0,9s · `entrata` 0,7s · `uscita` 0,45s · `scalaPagina` 0,96 · `velo` 0,7 · `trascinaPerChiudere` 120px · `giroPagina` 0,8s |
+| `blocchi` | `giroPagina` 0,8s (pdf) |
 | `magnetismo` | `pulsanti` 12px |
 
 nello stesso file:
@@ -105,11 +101,11 @@ con `prefers-reduced-motion: reduce`:
 
 - niente lenis (scroll nativo), niente pin né scrub
 - header: nome e volto fermi, niente tavola né 3d, niente etichette delle fasi; all’uscita dell’header il nome passa direttamente al formato piccolo fisso
-- portfolio: griglia a 3/2/1 colonne, subito interattiva, senza anello
-- chi sono: testo tutto bianco da subito e volto SVG statico, senza foto né firma
+- portfolio: scena 3d ferma davanti al computer già acceso, subito utilizzabile; niente avvio né sfarfallio del tubo
+- chi sono: testo tutto bianco da subito e avatar fermo (primo fotogramma del video a punti, `public/avatar/fermo.webp`, nel bianco della palette con righe di scansione statiche)
 - contatti: volto già disegnato e sveglio, pulsanti che entrano con una dissolvenza; riempimento nero dei pulsanti in dissolvenza invece del cerchio
 - volto: niente battiti, pupille ferme, cambi di stato istantanei; la preferenza aggiorna questi comportamenti anche a sito aperto
 - testi che rotolano: diventano dissolvenze
 - cursore di sistema (il cursore personalizzato non c’è), grana ferma, magnetismo spento
-- preloader e pannello: solo dissolvenze di 0,2s
+- preloader: solo dissolvenze di 0,2s
 - css (`globals.css`): tutte le transizioni e animazioni css annullate, tranne le dissolvenze (`transition-opacity`, 0,2s)

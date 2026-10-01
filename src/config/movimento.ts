@@ -41,65 +41,82 @@ export const movimento = {
     inizioNomeCompatto: 92,
   },
 
-  portfolio: {
-    // lunghezza di scroll per ogni progetto dell’anello
-    perProgetto: 50,
-    // scroll in cui le card si dispongono attorno alla prima, formando l’anello (vh)
-    disposizione: 70,
-    // scroll a fine anello, prima che la sezione si sblocchi (vh)
-    coda: 30,
-    // scroll in cui l’anello si appiattisce nelle posizioni della griglia (vh)
-    versoGriglia: 200,
-    // camera diagonale, elica profonda e arretramento prima di aprire la griglia
-    spirale3d: {
-      campoVisivo: 42,
-      orbitaDa: -24,
-      orbitaA: 22,
-      elevazione: 10,
-      profondita: 0.52,
-      passo: 0.82,
-      raggioRitiro: 1.3,
-      passoRitiro: 0.52,
-      fineRitiro: 0.3,
-      fineDistensione: 0.88,
+  computer: {
+    // scroll in cui la camera scende verso il computer a terra fino allo schermo (vh)
+    avvicinamento: 100,
+    // scroll con la camera ferma davanti allo schermo acceso: qui il computer si usa (vh)
+    sosta: 120,
+    // a che punto dell’avvicinamento il computer si accende, e sotto quale si spegne tornando su
+    accendiDa: 0.9,
+    spegniSotto: 0.6,
+    // durata dell’avvio (s): prima volta e accensioni successive
+    avvio: 2.2,
+    avvioBreve: 0.7,
+    // quanto spazio occupa lo schermo nella sosta su desktop/tablet (frazione della vista)
+    altezzaSchermo: 0.5,
+    larghezzaSchermo: 0.6,
+    // il volto dietro il monitor (vedi docs/computer.md)
+    volto: {
+      // larghezza del volto rispetto al monitor visto dalla camera: sbucando è più grande del monitor
+      fattore: 1.25,
+      // nascosto si allontana dietro il monitor e, visto da qui, resta più stretto del monitor
+      fattoreNascosto: 0.86,
+      // spazio tra il retro del monitor e il volto (unità della scena; il monitor è profondo ≈ 2,3)
+      distacco: 0.5,
+      // tratto dell’avvicinamento (0–1) in cui il volto lascia il centro e va dietro il monitor
+      versoDa: 0.3,
+      versoA: 0.55,
+      // da qui alla sosta si abbassa e si nasconde
+      nascondiDa: 0.85,
+      // margine tra il bordo del monitor e le lenti, in frazione della larghezza del volto
+      margine: 0.03,
     },
-    // prospettiva dell’anello in px (più basso = più profondo)
-    prospettiva: 1400,
-    // aggancio alla card più vicina quando lo scroll si ferma (secondi)
-    aggancio: 0.6,
-    // “tieni premuto”: dopo quanto parte (s) e quante card al secondo fa girare
-    tieniPremutoDopo: 0.25,
-    tieniPremutoVelocita: 4,
-    // inclinazione massima della card frontale sotto il cursore (gradi)
-    inclinazioneHover: 6,
-    // inclinazione massima delle card in base alla velocità dello scroll (gradi)
-    inclinazioneVelocita: 5,
+    // nascondino nella sosta: il volto sbuca dai lati in cui si vedono gli occhi (latiDisponibili in percorso.ts:
+    // destra/sinistra su desktop, sopra e sopra spostato su tablet verticale, nessuno su telefono),
+    // mai dallo stesso lato due volte di fila
+    sbircia: {
+      uscita: 0.9,
+      rientro: 0.7,
+      // secondi fuori, poi secondi nascosto prima del lato successivo
+      restaMin: 4,
+      restaMax: 8,
+      nascostoMin: 1.4,
+      nascostoMax: 3,
+      // inclinazione della testa sbucando di lato (gradi)
+      rollio: 9,
+      // sbucando di lato: altezza delle lenti lungo il monitor (0 = bordo alto, 1 = bordo basso visibile)
+      altezza: 0.38,
+      // schermi stretti senza spazio ai lati: destra e sinistra diventano «sopra, spostato» (frazione del volto)
+      spostamento: 0.16,
+    },
   },
 
   chiSono: {
     pin: 150,
     versoContatti: 100,
+    // scroll (in unità del pin) in cui il logo si rompe nell’ologramma e, all’uscita, si ricompone
+    scambio: 14,
+  },
+
+  // avatar a punti del chi sono (video di Google Flow, vedi docs/volto.md)
+  avatar: {
+    // fotogrammi nell’atlante public/avatar/giro.webp (li stampa npm run prepara-avatar)
+    fotogrammi: 24,
+    // inclinazione massima del piano per su e giù (gradi)
+    inclinazioneMax: 11,
+    // quanto in fretta la testa raggiunge il cursore (più alto = più rapido)
+    smorzamento: 6,
+    // secondi senza mouse prima che si guardi intorno da solo
+    autonomoDopo: 2,
   },
 
   volto: {
     battitoMin: 3,
     battitoMax: 7,
     sonnoDopo: 8,
-    // spostamento massimo delle pupille, in frazione del raggio della lente
-    sguardoMax: 0.2,
   },
 
-  pannello: {
-    // volo della copertina dalla card alla testata del pannello
-    volo: 0.9,
-    // entrata e uscita del pannello
-    entrata: 0.7,
-    uscita: 0.45,
-    // la pagina sotto arretra e si scurisce
-    scalaPagina: 0.96,
-    velo: 0.7,
-    // su mobile: quanti pixel trascinare in giù per chiudere il foglio
-    trascinaPerChiudere: 120,
+  blocchi: {
     // pdf: durata del giro di pagina, in secondi
     giroPagina: 0.8,
   },
@@ -114,10 +131,7 @@ export const media = {
   mobile: '(max-width: 767px)',
   tablet: '(min-width: 768px) and (max-width: 1023px)',
   desktop: '(min-width: 1024px)',
-  anello: '(min-width: 768px)',
-  // chi sono bloccato mentre il testo si accende: serve anche un po’ di altezza (telefono in orizzontale = no)
-  chiSonoPin: '(min-width: 768px) and (min-height: 560px)',
-  chiSonoBasso: '(min-width: 768px) and (max-height: 559.98px)',
+  daTablet: '(min-width: 768px)',
   mouse: '(hover: hover) and (pointer: fine)',
   ridotto: '(prefers-reduced-motion: reduce)',
   normale: '(prefers-reduced-motion: no-preference)',

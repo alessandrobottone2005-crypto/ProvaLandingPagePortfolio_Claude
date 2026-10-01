@@ -5,6 +5,8 @@ import { LogoContinuo } from './components/volto/LogoContinuo'
 import { Grana } from './components/effetti/Grana'
 import { useAvvio } from './components/preloader/AvvioContext'
 import { Preloader } from './components/preloader/Preloader'
+import { accendi } from './components/computer/stato'
+import { movimento } from './config/movimento'
 import { ScrollTrigger } from './lib/gsap'
 import { aggiornaDopoCaricamento, avviaScroll, getLenis } from './lib/scroll'
 import { RotteModali } from './router'
@@ -27,21 +29,22 @@ export default function App() {
     return ferma
   }, [])
 
-  // a sito pronto: posizioni ricalcolate; con un link diretto a un progetto, la home va sul portfolio
+  // a sito pronto: posizioni ricalcolate; con un link diretto a un progetto, la home va davanti al computer acceso
   useEffect(() => {
     if (!pronto) return
     ScrollTrigger.refresh()
     if (pathname.startsWith('/progetti/')) {
-      const portfolio = document.getElementById('portfolio')
-      if (portfolio) {
+      const computer = ScrollTrigger.getById('portfolio-computer')
+      if (computer) {
+        // a metà della sosta, su tutti i dispositivi
+        const { avvicinamento, sosta } = movimento.computer
+        const y = computer.start + (avvicinamento + sosta / 2) * (innerHeight / 100)
         const lenis = getLenis()
-        // Su tutti i dispositivi il link diretto arriva alla griglia finale.
-        const anello = ScrollTrigger.getById('portfolio-anello')
-        const y = anello ? anello.end + 1 : portfolio.getBoundingClientRect().top + scrollY
         if (lenis) lenis.scrollTo(y, { immediate: true, force: true })
         else scrollTo(0, y)
-        anello?.getTween()?.progress(1)
-      }
+        computer.getTween()?.progress(1)
+        accendi(true)
+      } else document.getElementById('portfolio')?.scrollIntoView()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pronto])

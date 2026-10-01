@@ -1,0 +1,206 @@
+{
+  "fase": "A",
+  "triangoli": 14984,
+  "oggetti_ambiente": 13,
+  "collisioni_percorsi": [],
+  "triangoli_potenzialmente_nel_cilindro": 0,
+  "stazioni": {
+    "header": {
+      "posizione": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotazione_z": 0.0
+    },
+    "spirale": {
+      "posizione": [
+        36.0,
+        0.0,
+        0.0
+      ],
+      "rotazione_z": 0.0
+    },
+    "biografia": {
+      "posizione": [
+        72.0,
+        0.0,
+        0.0
+      ],
+      "rotazione_z": 0.0
+    },
+    "contatti": {
+      "posizione": [
+        108.0,
+        0.0,
+        0.0
+      ],
+      "rotazione_z": 0.0
+    }
+  },
+  "lame": [
+    {
+      "nome": "luce_01",
+      "posizione": [
+        -3.0,
+        -1.0,
+        8.649999618530273
+      ],
+      "direzione": [
+        0.23483245074748993,
+        0.23483234643936157,
+        -0.9432430863380432
+      ],
+      "larghezza": 1.3,
+      "lunghezza": 12,
+      "intensita": 0.85
+    },
+    {
+      "nome": "luce_02",
+      "posizione": [
+        -3.0,
+        12.0,
+        8.649999618530273
+      ],
+      "direzione": [
+        0.30048659443855286,
+        0.30048656463623047,
+        -0.9052157998085022
+      ],
+      "larghezza": 1.2,
+      "lunghezza": 15,
+      "intensita": 0.65
+    },
+    {
+      "nome": "luce_03",
+      "posizione": [
+        34.0,
+        -1.0,
+        30.0
+      ],
+      "direzione": [
+        0.06648220866918564,
+        0.03324117511510849,
+        -0.9972337484359741
+      ],
+      "larghezza": 2,
+      "lunghezza": 50,
+      "intensita": 1
+    },
+    {
+      "nome": "luce_04",
+      "posizione": [
+        42.0,
+        7.0,
+        30.0
+      ],
+      "direzione": [
+        0.12930910289287567,
+        -0.02155168168246746,
+        -0.9913700819015503
+      ],
+      "larghezza": 1.5,
+      "lunghezza": 47,
+      "intensita": 0.75
+    },
+    {
+      "nome": "luce_05",
+      "posizione": [
+        68.0,
+        3.0,
+        27.399999618530273
+      ],
+      "direzione": [
+        0.048351697623729706,
+        0.19340667128562927,
+        -0.9799265265464783
+      ],
+      "larghezza": 1,
+      "lunghezza": 33,
+      "intensita": 0.55
+    },
+    {
+      "nome": "luce_06",
+      "posizione": [
+        108.0,
+        22.0,
+        13.0
+      ],
+      "direzione": [
+        2.0045234805365908e-08,
+        -0.6188724040985107,
+        -0.7854915261268616
+      ],
+      "larghezza": 3,
+      "lunghezza": 22,
+      "intensita": 0.95
+    }
+  ],
+  "camera_fov": {
+    "cam_header": {
+      "verticale": 18.000000824372275,
+      "clip_end": 60.0
+    },
+    "cam_spirale": {
+      "verticale": 18.000000824372275,
+      "clip_end": 60.0
+    },
+    "cam_biografia": {
+      "verticale": 18.000000824372275,
+      "clip_end": 60.0
+    },
+    "cam_contatti": {
+      "verticale": 18.000000824372275,
+      "clip_end": 60.0
+    },
+    "cam_spirale_orbita": {
+      "verticale": 42.00000053005865,
+      "clip_end": 60.0
+    },
+    "cam_spirale_campo_lungo": {
+      "verticale": 42.00000053005865,
+      "clip_end": 60.0
+    }
+  },
+  "logo_larghezze_desktop": {
+    "header": 6.5,
+    "spirale": 2.3,
+    "biografia": 2.5,
+    "contatti": 4.8
+  },
+  "logo_larghezze_mobile": {
+    "header": 2.5,
+    "spirale": 1.2,
+    "biografia": 0.36030583580937164,
+    "contatti": 2.4
+  },
+  "biografia_mobile": {
+    "posa": "transizione alto-sinistra, 48 px centrata a (38,38)",
+    "centro": [
+      70.82150268554688,
+      0.0,
+      2.882446765899658
+    ]
+  },
+  "logo_larghezze_desktop_misurate": {
+    "header": 6.5,
+    "spirale": 2.3000030517578125,
+    "biografia": 2.5,
+    "contatti": 4.799995422363281
+  },
+  "biografia_mobile_affianca_testo": {
+    "larghezza_px": 78,
+    "centro_px": [
+      55,
+      422
+    ],
+    "larghezza_u": 0.5854969831902289
+  },
+  "materiali_ambiente": [
+    "A \u00b7 archi ombra alto destra",
+    "A \u00b7 cemento greybox",
+    "A \u00b7 cemento in ombra",
+    "A \u00b7 fondo pozzo #141414",
+    "A \u00b7 pavimento scuro"
+  ]
+}
