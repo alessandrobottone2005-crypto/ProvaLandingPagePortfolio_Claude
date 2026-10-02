@@ -8,6 +8,8 @@ import { Rifinitura } from './Rifinitura'
 import { Sala, salaAttiva } from './Sala'
 import { ComputerNellaScena } from './ComputerNellaScena'
 import { Mondo } from './Mondo'
+import { PolvereNelFascio } from './PolvereNelFascio'
+import { effettoAttivo } from './cinema'
 
 export default function ScenaRidotta() {
   return (
@@ -26,6 +28,7 @@ export default function ScenaRidotta() {
             <Sala fermo />
           </Suspense>
         )}
+        {salaAttiva && effettoAttivo('polvere') && <PolvereNelFascio fermo />}
         <Suspense fallback={null}>
           <ComputerNellaScena fermo />
         </Suspense>

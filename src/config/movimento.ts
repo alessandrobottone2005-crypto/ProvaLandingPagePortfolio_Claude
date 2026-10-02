@@ -19,13 +19,13 @@ export const movimento = {
 
   // quanto l’animazione “insegue” lo scroll (più alto = più morbido)
   scrub: {
-    desktop: 1,
-    mobile: 0.6,
+    desktop: 1.2,
+    mobile: 0.7,
   },
 
   // scroll fluido: più basso = più morbido e lento
   lenis: {
-    lerp: 0.1,
+    lerp: 0.085,
   },
 
   preloader: {

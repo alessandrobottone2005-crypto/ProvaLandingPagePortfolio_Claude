@@ -43,7 +43,7 @@ export const matriceComputer = new Matrix4().compose(
 )
 /** angoli e centro del vetro nelle coordinate dell’edificio */
 const angoliSchermo = angoliModello.map((v) => v.clone().applyMatrix4(matriceComputer))
-const centroSchermo = angoliSchermo.reduce((s, v) => s.add(v), new Vector3()).multiplyScalar(0.25)
+export const centroSchermo = angoliSchermo.reduce((s, v) => s.add(v), new Vector3()).multiplyScalar(0.25)
 const larghezzaVetro = angoliSchermo[0].distanceTo(angoliSchermo[1])
 const altezzaVetro = angoliSchermo[0].distanceTo(angoliSchermo[3])
 

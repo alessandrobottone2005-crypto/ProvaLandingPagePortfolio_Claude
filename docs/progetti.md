@@ -87,11 +87,13 @@ per ogni progetto:
 - **avvisi**: pdf sopra 15mb, video sopra 25mb, file `.mov`/`.m4v` da esportare in mp4 (h.264)
 - alla fine esegue il controllo completo e dice quanti progetti ci sono e quanti sono pubblicati; se ci sono problemi esce con errore
 
-## i progetti segnaposto
+## progetti pubblicati
 
-In `src/content/progetti/` ci sono venti progetti provvisori, `segnaposto-01` … `segnaposto-20`: titoli e testi segnaposto, copertine numerate. Si possono sostituire, rimuovere o nascondere con `pubblicato: false`. Le cartelle del computer si riempiono da sole con i progetti pubblicati, in base alle `discipline` (un progetto con più discipline compare in più cartelle): non serve modificare il codice. Il preloader include la copertina del primo progetto.
+Dal 2 ottobre 2026 i venti segnaposto non ci sono più. In `src/content/progetti/` ci sono `dai-tre-fuochi`, `lorenzo` e `serena-brancale` (branding, 2026, progetto accademico iuad), ognuno con copertina e brand book in pdf, e cinque illustrazioni (2025, progetto personale): `arabian-sunset`, `donne-selvagge`, `dont-look-medusa`, `dove-la-guerra-non-arriva` (solo copertina) e `inktober` (cinque tavole in un blocco immagini). In 3d `cuphead-mugman-art-toys` (2026, progetto accademico iuad): presentazione pdf, modello 3d e testo del concept. Le cartelle del computer si riempiono da sole con i progetti pubblicati, in base alle `discipline` (un progetto con più discipline compare in più cartelle): non serve modificare il codice. Una cartella senza progetti apre una finestra vuota. Il preloader include la copertina del primo progetto.
 
-Titolo, discipline, anno, cliente e descrizione compaiono nella finestra del progetto; il titolo è anche il nome del documento. Le copertine restano a colori anche dentro lo schermo in bianco e nero. [Computer](computer.md).
+## pdf troppo pesanti
+
+`npm run comprimi-pdf -- <entrata.pdf> <uscita.pdf> [lato lungo px, 1600] [qualità 0–1, 0.7]` (`scripts/comprimi-pdf.swift`, solo PDFKit di macOS) disegna ogni pagina come JPEG e ricompone un pdf con le stesse misure. Il testo diventa immagine: per la massima nitidezza è meglio riesportare da InDesign (immagini 150 ppi, JPEG qualità media). L’originale va in `sorgenti/progetti/<slug>/`, che git ignora (GitHub rifiuta i file sopra 100 MB).
 
 ## contenuti pubblici
 

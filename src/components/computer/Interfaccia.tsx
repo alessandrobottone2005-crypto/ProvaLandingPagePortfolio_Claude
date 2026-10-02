@@ -125,6 +125,7 @@ export default function Interfaccia({ modo }: { modo: 'percorso' | 'ridotto' }) 
         {fase === 'avvio' && <Avvio />}
       </div>
       <div aria-hidden="true" className="mac-crt" />
+      <div aria-hidden="true" className="mac-banda" />
     </div>
   )
 }

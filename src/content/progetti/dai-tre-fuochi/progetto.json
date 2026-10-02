@@ -1,0 +1,18 @@
+{
+  "titolo": "dai tre fuochi",
+  "descrizione": "dai tre fuochi è l’anima ardente dell’irpinia contemporanea. una trattoria che fonde radici sannitiche, tradizione gastronomica e spirito conviviale, trasformando la memoria del territorio in un’esperienza attuale, calorosa e coinvolgente.",
+  "discipline": [
+    "branding"
+  ],
+  "anno": 2026,
+  "cliente": "progetto accademico · iuad",
+  "ordine": 1,
+  "pubblicato": true,
+  "copertina": "copertina.webp",
+  "blocchi": [
+    {
+      "tipo": "pdf",
+      "file": "brand-book.pdf"
+    }
+  ]
+}

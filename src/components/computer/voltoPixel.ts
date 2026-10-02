@@ -23,7 +23,7 @@ export function useVoltoPixel(lato: number) {
       ctx.putImageData(d, 0, 0)
       if (vivo) setUrl(tela.toDataURL())
     }
-    img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgStatico({ colore: '#000' }))}`
+    img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgStatico({ colore: '#161614' }))}`
     return () => {
       vivo = false
     }

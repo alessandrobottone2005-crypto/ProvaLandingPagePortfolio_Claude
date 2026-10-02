@@ -10,6 +10,7 @@ import { percorso } from './percorso'
 import { sguardo } from './sguardo'
 import { useVolto } from './VoltoContext'
 import { frammento, vertice } from './ologramma.glsl'
+import { riscaldamento } from './riscaldamento'
 
 // atlante: celle 4×2, tre fotogrammi per cella (uno per canale)
 const GRIGLIA = new THREE.Vector2(4, 2)
@@ -46,6 +47,7 @@ export function Ologramma() {
   const { umore } = useVolto()
   const { size } = useThree()
   const gruppo = useRef<THREE.Group>(null)
+  useEffect(() => void riscaldamento.pronti.add('avatar'), [])
   const stato = useRef({ giro: 0, inclinazione: 0, ultimoPunto: null as { x: number; y: number } | null, fermoDa: 0 })
 
   const busto = useMemo(() => {
@@ -85,8 +87,10 @@ export function Ologramma() {
     const g = gruppo.current
     if (!g) return
     const scambio = percorso.biografia.ologramma
-    const box = document.querySelector<HTMLElement>('[data-logo-biografia]')?.getBoundingClientRect()
-    g.visible = scambio > 0.001 && !!box && !document.hidden
+    const disegna = (scambio > 0.001 || riscaldamento.attivo) && !document.hidden
+    // il layout si legge solo quando serve (e prima delle scritture del fotogramma: priorità -1.5)
+    const box = disegna ? document.querySelector<HTMLElement>('[data-logo-biografia]')?.getBoundingClientRect() : undefined
+    g.visible = disegna && !!box
     if (!g.visible || !box) return
 
     const ora = performance.now() / 1000,
@@ -137,7 +141,7 @@ export function Ologramma() {
       uComparsa: morbido(THREE.MathUtils.clamp((scambio - 0.3) / 0.6, 0, 1)),
       uTempo: ora % 1000,
     })
-  })
+  }, -1.5)
 
   return (
     <group ref={gruppo} visible={false}>

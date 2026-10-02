@@ -51,3 +51,9 @@ __pycache__/
 
 # cache locali degli strumenti di revisione
 .impeccable/
+
+# pdf originali dei progetti (decine o centinaia di MB: github rifiuta i file sopra 100 MB). restano sul disco;
+# nel sito c’è la versione compressa con npm run comprimi-pdf
+sorgenti/progetti/
+# modelli 3d prima della compressione (decine di MB): restano sul disco, nel sito c’è la versione compressa
+src/content/progetti/*/_originali/*.glb

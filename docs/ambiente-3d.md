@@ -27,13 +27,20 @@ I punti vengono da `src/components/volto/stazioniSala.json`, scritto da `prepara
 | effetto | ruolo |
 |---|---|
 | N8AO | occlusione ambientale: contatto tra computer e pavimento, angoli dei pilastri |
-| `NebbiaVolumetrica.tsx` | 32 campioni per raggio: alone leggero solo attorno al volto (sfera di 3–8 u) e pulviscolo nel fascio di sole della fessura, con grana sfalsata per pixel |
-| Bloom | bagliore leggero sulle zone più luminose (fessura, schermo) |
+| `NebbiaVolumetrica.tsx` | passaggio a risoluzione ridotta (metà, poi meno con la qualità adattiva) e ricomposizione a piena risoluzione; fino a 32 campioni per raggio con sfalsamento a rumore intercalato: alone leggero attorno al volto e pulviscolo nel fascio della fessura, bordi del fascio più netti (`cinema.nettezzaFascio`) |
+| profondità di campo | `DepthOfFieldEffect`: fuoco sul volto, poi sullo schermo del computer durante la discesa e la sosta, poi di nuovo sul volto; bokeh ridotto ai livelli bassi di qualità |
+| Bloom + alone | bagliore sulle zone più luminose e un secondo bagliore largo e tenue (halation) |
+| striscia anamorfica | `effettiCinema.ts`: striscia orizzontale appena fredda sulle luci forti, letta dalla texture dell’alone |
 | Vignette, AgX | vignetta e tone mapping; il renderer non applica AgX una seconda volta |
+| colore | `effettiCinema.ts`: bianco e nero noir (curva gamma 1,35, neri chiusi sotto 0,015, vignetta 0,68) con colore selettivo: resta solo l’arancione della luce della fessura (tonalità 24° ±26°, croma > 0,12). Schermo del computer, nome e UI restano fuori perché non sono nella scena |
+| sole arancione | `cinema.sole.colore` #ff7a24: `Sala.tsx` tinge la luce cotta dentro il fascio (stesso test geometrico del volume), il sole tinge il computer, la polvere è arancione; volume e riflessi della sala restano quasi neutri, così il volto resta in b/n |
+| aberrazione, grana | aberrazione cromatica lieve verso i bordi; grana pellicola animata dopo la tonalità. Il velo CSS `.grana` si spegne quando la scena 3d è visibile (`html[data-grana-webgl]`) |
 
-Parametri di prova in sviluppo: `?ambiente=0` (senza sala), `?effetti=0` (senza post-produzione), `?senza=ao,nebbia,bagliore,vignetta`, `?polvere=0.02` (densità del pulviscolo, predefinita 0,008).
+Nella sala, `PolvereNelFascio.tsx`: ≈ 9000 granelli finissimi (1–2 px) dentro il fascio di sole (un terzo attorno al computer), fluttuano lenti e scintillano pochi alla volta; niente dischi sfocati. Il volume usa un rumore ad alta frequenza con soglia: grana fine invece di velature. La camera respira come su uno steadicam (`CameraImmersiva.tsx`), ferma davanti allo schermo per tenere l’interfaccia allineata al vetro. Tutti i numeri sono in `cinema.ts`.
 
-Desktop e telefono usano gli stessi effetti, DPR massimo 1,5. Con movimento ridotto: stessa sala e stessi effetti, volume fermo.
+Parametri di prova in sviluppo: `?ambiente=0` (senza sala), `?effetti=0` (senza post-produzione), `?senza=ao,nebbia,bagliore,vignetta,fuoco,polvere,alone,striscia,colore,aberrazione,grana,respiro`, `?polvere=0.02` (densità del pulviscolo nel volume, predefinita 0,008), `?qualita=0..3` (livello di qualità fisso).
+
+**Qualità adattiva** (`qualita.ts`, `PerformanceMonitor` di drei): stessa scena e stessi effetti su ogni dispositivo; se i fotogrammi non stanno nei 60fps scendono in ordine la risoluzione e i passi della nebbia, la risoluzione del riflesso del pavimento e il DPR (1,5 → 1,25 → 1), e risalgono quando c’è margine. **Preriscaldamento** (`riscaldamento.ts`): appena sala, computer e avatar sono scaricati, mentre il Canvas è ancora invisibile, si compilano tutti gli shader, le texture salgono sulla GPU e si disegnano alcuni fotogrammi: il passaggio al 3d e l’arrivo dell’avatar non scattano più. La mappa d’ombra del sole si disegna una volta (sala e computer si muovono insieme alla luce), a ogni fotogramma si aggiorna solo la sua matrice. Con movimento ridotto: stessa sala e stessi effetti, volume e polvere fermi, niente respiro.
 
 ## computer
 

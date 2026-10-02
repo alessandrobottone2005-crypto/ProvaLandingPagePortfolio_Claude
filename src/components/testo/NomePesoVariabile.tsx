@@ -19,6 +19,8 @@ export function NomePesoVariabile({ testo, className, pesoMin = 300, pesoMax = 6
   const radice = useRef<HTMLSpanElement>(null)
 
   useEffect(() => {
+    // peso fisso (nome in metallo): niente effetto
+    if (pesoMin === pesoMax) return
     const mm = gsap.matchMedia()
     mm.add(media.normale, () => {
       const lettere = gsap.utils.toArray<HTMLElement>('[data-lettera]', radice.current)
@@ -55,8 +57,10 @@ export function NomePesoVariabile({ testo, className, pesoMin = 300, pesoMax = 6
       {[...testo].map((l, i) => (
         // la maschera è un po’ più alta della riga, così le lettere non vengono tagliate
         <span key={i} className="-my-[0.15em] inline-block overflow-hidden py-[0.15em] align-top">
-          <span data-lettera className={`inline-block ${classeLettera}`} style={{ fontWeight: pesoMin }}>
+          <span data-lettera data-carattere={l} className={`inline-block ${classeLettera}`} style={{ fontWeight: pesoMin }}>
             {l}
+            {/* segna la linea di base: il nome in metallo ci appoggia la sua lettera */}
+            <i data-base className="inline-block h-0 w-0" />
           </span>
         </span>
       ))}

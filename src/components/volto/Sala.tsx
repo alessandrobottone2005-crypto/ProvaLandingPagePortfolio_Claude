@@ -2,12 +2,16 @@
 // sole in tempo reale solo per ciò che si muove (computer e volto). La muove Mondo.tsx insieme al computer.
 import { MeshReflectorMaterial } from '@react-three/drei/core/MeshReflectorMaterial'
 import { useFrame, useThree } from '@react-three/fiber'
-import { use, useEffect, useMemo } from 'react'
+import { use, useEffect, useMemo, useState } from 'react'
 import * as THREE from 'three'
 import { COMPUTER } from '@/components/computer/inquadratura'
 import { DIREZIONE_SOLE, INTENSITA_LUCE } from './luceSala'
 import { caricaSala, type RisorseSala } from './modelloSala'
 import { scenaImmersiva } from './scenaImmersiva'
+import { cinema } from './cinema'
+import dati from './stazioniSala.json'
+import { qualita } from './qualita'
+import { riscaldamento } from './riscaldamento'
 
 // ?ambiente=0 spegne la sala per il confronto.
 export const salaAttiva = new URLSearchParams(location.search).get('ambiente') !== '0'
@@ -20,12 +24,45 @@ function soloRiflessi(shader: THREE.WebGLProgramParametersWithUniforms) {
   )
 }
 
+// la macchia di sole della fessura sulle superfici: luce cotta tinta d’arancione dentro il fascio (cinema.ts)
+const coloreSole = new THREE.Color(cinema.sole.colore)
+const lumSole = 0.2126 * coloreSole.r + 0.7152 * coloreSole.g + 0.0722 * coloreSole.b
+const uniformiSole = {
+  versoSala: { value: new THREE.Matrix4() },
+  tintaSole: { value: new THREE.Vector3(coloreSole.r / lumSole, coloreSole.g / lumSole, coloreSole.b / lumSole) },
+  direzioneSole: { value: DIREZIONE_SOLE.clone() },
+  soffitto: { value: dati.soffitto },
+  fessura: { value: dati.fessura },
+}
+function soleArancione(shader: THREE.WebGLProgramParametersWithUniforms) {
+  Object.assign(shader.uniforms, uniformiSole)
+  shader.vertexShader = shader.vertexShader
+    .replace('#include <common>', '#include <common>\nuniform mat4 versoSala;\nvarying vec3 vSala;')
+    .replace('#include <project_vertex>', '#include <project_vertex>\nvSala = (versoSala * modelMatrix * vec4(transformed, 1.)).xyz;')
+  shader.fragmentShader = shader.fragmentShader
+    .replace(
+      '#include <common>',
+      `#include <common>
+       uniform vec3 tintaSole; uniform vec3 direzioneSole; uniform float soffitto; uniform float fessura;
+       varying vec3 vSala;
+       float nelFascio(vec3 q) {
+         vec3 alto = q - direzioneSole * ((soffitto - q.y) / -direzioneSole.y);
+         return 1. - smoothstep(fessura * .8, fessura * 1.08, abs(alto.x));
+       }`,
+    )
+    .replace(
+      '#include <lights_fragment_end>',
+      '#include <lights_fragment_end>\n reflectedLight.indirectDiffuse *= mix(vec3(1.), tintaSole, nelFascio(vSala));',
+    )
+}
+
 /** riflesso del pavimento come luce aggiunta, non come tinta: più forte sul bagnato e di taglio (Fresnel) */
 function pavimentoBagnato(materiale: THREE.MeshStandardMaterial) {
   const originale = materiale.onBeforeCompile.bind(materiale)
   materiale.onBeforeCompile = (shader, renderer) => {
     originale(shader, renderer)
     soloRiflessi(shader)
+    soleArancione(shader)
     shader.fragmentShader = shader.fragmentShader.replace(
       'diffuseColor.rgb = diffuseColor.rgb * ((1.0 - min(1.0, mirror)) + newMerge.rgb * mixStrength);',
       `float bagnato = 1.0 - smoothstep(0.08, 0.55, reflectorRoughnessFactor);
@@ -33,7 +70,7 @@ function pavimentoBagnato(materiale: THREE.MeshStandardMaterial) {
        totalEmissiveRadiance += newMerge.rgb * mixStrength * mix(0.3, 1.0, bagnato) * mix(0.4, 1.0, fresnel);`,
     )
   }
-  materiale.customProgramCacheKey = () => 'pavimento-bagnato'
+  materiale.customProgramCacheKey = () => 'pavimento-bagnato-sole'
   materiale.needsUpdate = true
 }
 
@@ -70,8 +107,11 @@ function Stanza({ risorse, fermo }: { risorse: RisorseSala; fermo: boolean }) {
     const sorgente = pareti.material as THREE.MeshStandardMaterial
     const materialePareti = sorgente.clone()
     Object.assign(materialePareti, { lightMap: risorse.luce.sala, lightMapIntensity: INTENSITA_LUCE, metalness: 0, envMapIntensity: 0.6 })
-    materialePareti.onBeforeCompile = soloRiflessi
-    materialePareti.customProgramCacheKey = () => 'pareti-sala'
+    materialePareti.onBeforeCompile = (shader) => {
+      soloRiflessi(shader)
+      soleArancione(shader)
+    }
+    materialePareti.customProgramCacheKey = () => 'pareti-sala-sole'
     const muri = new THREE.Mesh(geometriaVera(pareti), materialePareti)
     // la luce della sala è già cotta: le ombre in tempo reale servono solo al computer (vedi il piano sotto)
     muri.receiveShadow = true
@@ -83,7 +123,7 @@ function Stanza({ risorse, fermo }: { risorse: RisorseSala; fermo: boolean }) {
 
   const sole = useMemo(() => {
     // tempo reale solo per gli oggetti che si muovono: la fessura (ombra del soffitto) delimita il fascio
-    const l = new THREE.DirectionalLight('#fff8ee', 5.5)
+    const l = new THREE.DirectionalLight(cinema.sole.colore, 5.5 / lumSole)
     l.castShadow = true
     l.shadow.mapSize.set(2048, 2048)
     l.shadow.bias = -0.0004
@@ -101,12 +141,17 @@ function Stanza({ risorse, fermo }: { risorse: RisorseSala; fermo: boolean }) {
   // ambiente per i riflessi di volto, computer e cemento: la sala stessa vista dal computer, una volta sola
   const ambiente = useMemo(() => {
     const scena = new THREE.Scene()
-    const copia = new THREE.Mesh(parti.muri.geometry, parti.materialePareti)
+    // riflessi neutri: le pareti senza la tinta arancione del sole, così volto e computer restano in b/n
+    const neutro = parti.materialePareti.clone()
+    neutro.onBeforeCompile = soloRiflessi
+    neutro.customProgramCacheKey = () => 'pareti-sala'
+    const copia = new THREE.Mesh(parti.muri.geometry, neutro)
     copia.position.copy(COMPUTER.posizione).negate().setY(-2)
     scena.add(copia)
     const pmrem = new THREE.PMREMGenerator(gl)
     const rt = pmrem.fromScene(scena, 0.02, 0.1, 200)
     pmrem.dispose()
+    neutro.dispose()
     return rt
   }, [gl, parti])
 
@@ -133,11 +178,32 @@ function Stanza({ risorse, fermo }: { risorse: RisorseSala; fermo: boolean }) {
     [parti, sole, ambiente],
   )
 
+  // il sole è fermo rispetto a sala e computer (si muovono insieme): la mappa d’ombra si disegna una volta
+  // (e quando cambiano gli oggetti), a ogni fotogramma si aggiorna solo la sua matrice
+  useEffect(() => {
+    riscaldamento.pronti.add('sala')
+    const prima = gl.shadowMap.autoUpdate
+    // eslint-disable-next-line react/immutability -- renderer di Three.js, non stato React
+    gl.shadowMap.autoUpdate = false
+    gl.shadowMap.needsUpdate = true
+    // il computer può arrivare dopo la sala: un secondo aggiornamento quando è in scena
+    const id = window.setTimeout(() => (gl.shadowMap.needsUpdate = true), 1500)
+    return () => {
+      clearTimeout(id)
+      gl.shadowMap.autoUpdate = prima
+    }
+  }, [gl])
+  const [riflesso, setRiflesso] = useState(() => (fermo ? 1024 : qualita.valori.riflesso))
+  useEffect(() => (fermo ? undefined : qualita.ascolta(() => setRiflesso(qualita.valori.riflesso))), [fermo])
+
   // i riflessi seguono l’orientamento della sala mentre il mondo ruota
   const rotazione = useMemo(() => new THREE.Matrix4(), [])
   useFrame((stato) => {
+    uniformiSole.versoSala.value.copy(scenaImmersiva.mondo).invert()
     rotazione.extractRotation(scenaImmersiva.mondo)
     stato.scene.environmentRotation.setFromRotationMatrix(rotazione)
+    sole.updateMatrixWorld()
+    sole.shadow.updateMatrices(sole)
   }, -0.85)
 
   return (
@@ -159,7 +225,7 @@ function Stanza({ risorse, fermo }: { risorse: RisorseSala; fermo: boolean }) {
           envMapIntensity={0.25}
           metalness={0}
           roughness={1}
-          resolution={fermo ? 1024 : 768}
+          resolution={riflesso}
           blur={[320, 90]}
           mixBlur={1.6}
           mixStrength={2.6}

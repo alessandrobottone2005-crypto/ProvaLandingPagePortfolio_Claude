@@ -7,7 +7,7 @@ export const sito = {
   titolo: 'alessandro bottone — designer',
   titoloAssente: 'zzz… torna qui',
   descrizione:
-    'alessandro bottone, designer di napoli: branding, illustrazione, 3d e web design.',
+    'alessandro bottone, designer di napoli: branding, illustrazione e 3d.',
 
   link: {
     instagram: 'https://www.instagram.com/ale.bottone.designer/',
@@ -36,6 +36,7 @@ export const sito = {
     logo: 'logo di alessandro bottone',
     navigazione: 'navigazione principale',
     tornaInizio: 'alessandro bottone — torna all’inizio',
+    invito: 'scorri per esplorare',
   },
 
   // etichette dei tre pulsanti dei contatti

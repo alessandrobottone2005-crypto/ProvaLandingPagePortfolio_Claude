@@ -224,14 +224,30 @@ html.cursore-personalizzato * {
   cursor: none !important;
 }
 
-/* invito a scorrere: una linea che scende e ricomincia */
-.invito-linea {
-  animation: invito 2.4s var(--ease-transizione) infinite;
-  transform-origin: top;
+/* invito a scorrere: la scritta respira, la freccia scende e ricomincia (si parte sempre da pieno, come nel preloader) */
+.invito-respiro {
+  animation: invito-respiro 3.2s ease-in-out infinite;
 }
-@keyframes invito {
-  0% { transform: scaleY(0); transform-origin: top; }
-  45% { transform: scaleY(1); transform-origin: top; }
-  55% { transform: scaleY(1); transform-origin: bottom; }
-  100% { transform: scaleY(0); transform-origin: bottom; }
+.invito-freccia {
+  animation: invito-freccia 2.4s var(--ease-transizione) infinite;
+}
+@keyframes invito-respiro {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+@keyframes invito-freccia {
+  0% { transform: translateY(0); opacity: 1; }
+  55% { transform: translateY(7px); opacity: 0; }
+  56% { transform: translateY(-5px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+/* nome in metallo pronto: le lettere dom restano solo come sagoma per le misure e le animazioni */
+[data-nome][data-nome3d] [data-lettera] {
+  color: transparent;
+}
+
+/* quando la scena 3d è visibile la grana è già nella post-produzione (cinema.ts): niente doppia grana */
+html[data-grana-webgl] .grana {
+  opacity: 0;
 }

@@ -1,0 +1,18 @@
+{
+  "titolo": "serena brancale",
+  "descrizione": "serena brancale è la voce contemporanea del mediterraneo. un’artista che fonde radici nel sud italia, pop moderno e contaminazioni soul e jazz, trasformando la tradizione in un linguaggio attuale, energico e autentico.",
+  "discipline": [
+    "branding"
+  ],
+  "anno": 2026,
+  "cliente": "progetto accademico · iuad",
+  "ordine": 3,
+  "pubblicato": true,
+  "copertina": "copertina.webp",
+  "blocchi": [
+    {
+      "tipo": "pdf",
+      "file": "brand-book.pdf"
+    }
+  ]
+}

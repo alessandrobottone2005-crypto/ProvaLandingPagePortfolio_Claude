@@ -89,10 +89,19 @@ Quando il progetto è pronto, esegui `npm run lint` e `npm run build`, poi contr
 
 ---
 
+### se preferisci passarmi i materiali
+
+Per ogni progetto prepara una cartella con:
+
+- le immagini (jpg o png grandi), i pdf, i video mp4 e gli eventuali `.glb`;
+- un file `testo.txt` con: titolo, descrizione (verrà pubblicata così com’è), anno, cliente (facoltativo), discipline (illustrazione, branding, 3d, web design: anche più di una; per web design la cartella va prima riaccesa, chiedimelo), quale immagine è la copertina e in che ordine vuoi i contenuti nella finestra.
+
+Io creo le schede (`progetto.json`), ottimizzo i file con `npm run prepara-progetti`, controllo che tutto si apra nel computer. Se un pdf è troppo pesante lo comprimo io (vedi sotto).
+
 ### consigli sui file
 
 - **contenuti**: il sito è pubblico; `pubblicato: false` nasconde il progetto ma non protegge file riservati.
 - **immagini**: jpg o png grandi vanno bene, il comando del punto 5 le ottimizza
-- **pdf**: esporta per lo schermo (non per la stampa) per restare sotto i 15mb
+- **pdf**: esporta per lo schermo (non per la stampa) per restare sotto i 15mb. se è più pesante: `npm run comprimi-pdf -- originale.pdf src/content/progetti/<nome-progetto>/brand-book.pdf` e sposta l’originale in `sorgenti/progetti/<nome-progetto>/` (resta sul computer, non va su github)
 - **video**: mp4 (h.264). se hai un .mov, esportalo in mp4
-- **modelli 3d**: `.glb`; da blender: file → esporta → gltf 2.0 (.glb)
+- **modelli 3d**: `.glb`; da blender: file → esporta → gltf 2.0 (.glb). se il modello ha centinaia di migliaia di triangoli o materiali fatti con nodi di miscela, passami il `.blend` con le risorse impacchettate: lo riduco ed esporto io senza toccare l’originale (esempio: `scripts/blender/esporta-cuphead.py`)

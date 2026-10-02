@@ -1,8 +1,20 @@
 # computer
 
-Il portfolio è un computer beige appoggiato sul pavimento della sala di cemento, nel fascio di luce della fessura. Dopo l’header la camera abbassa lo sguardo, scende fino allo schermo e il computer si accende. Sullo schermo c’è un’interfaccia che riprende il Finder del Macintosh 1984: scrivania con quattro cartelle (illustrazione, branding, 3d, web design) e, dentro, un documento per progetto.
+Il portfolio è un computer beige appoggiato sul pavimento della sala di cemento, nel fascio di luce della fessura. Dopo l’header la camera abbassa lo sguardo, scende fino allo schermo e il computer si accende. Sullo schermo c’è un’interfaccia che riprende il Finder del Macintosh 1984: scrivania con una cartella per disciplina (illustrazione, branding, 3d; web design torna con `webDesignAttivo` in `src/config/discipline.ts`) e, dentro, un documento per progetto.
 
-Regole concordate il 1 ottobre 2026: dentro lo schermo bianco e nero puri e carattere ChicagoFLF (eccezione alle regole 1 e 2 di `CLAUDE.md`, valida solo lì); copertine e immagini dei progetti sempre a colori; testi in minuscolo come nel resto del sito.
+Regole concordate il 1 ottobre 2026: dentro lo schermo bianco e nero e carattere ChicagoFLF (eccezione alle regole 1 e 2 di `CLAUDE.md`, valida solo lì); copertine e immagini dei progetti sempre a colori; testi in minuscolo come nel resto del sito. Dal 2 ottobre 2026 bianco e nero non sono più puri: sono i fosfori di un tubo vero (`--mac-bianco` #e7e1d1, `--mac-nero` #161614).
+
+## il vetro
+
+L’interfaccia resta DOM (cliccabile e accessibile), quindi non passa per la post-produzione della scena. Per non sembrare un livello incollato, `computer.css` le mette sopra un vetro (`.mac-crt`, `.mac-banda`, nessun livello riceve clic):
+
+- fosfori: colori caldi e un po’ spenti, leggera sfocatura (0,3px) e aberrazione rossa/blu di mezzo pixel sul testo;
+- tubo: angoli più arrotondati, bordi scuri con ombra interna (profondità dentro la cornice), vignetta, righe orizzontali;
+- riflessi: macchia di luce convessa in alto a sinistra, striscia della luce della sala, bordo alto che prende luce;
+- sporco: polvere, aloni e due ditate generati come SVG `feTurbulence` in data URI (nessun file), in `screen`;
+- movimento: grana a scatti, banda di refresh lenta e sfarfallio; fermi con movimento ridotto. Su telefono grana e ombre sono più leggere.
+
+Nella scena 3d il piano di luce davanti al vetro ha il colore dei fosfori ed è appena sopra la soglia del Bloom, così cornice, tastiera e pavimento ricevono l’alone dello schermo acceso.
 
 ## file
 
@@ -75,7 +87,7 @@ Verifica nel server di sviluppo con Chrome headless a 1440×900, 820×1180 e 390
 
 ## i blocchi
 
-`src/components/computer/Blocchi.tsx` mostra i blocchi in ordine, dentro la finestra del progetto. ogni tipo è un file a parte in `src/components/computer/blocchi/`, caricato con `React.lazy` solo quando serve. Dentro lo schermo i token del sito diventano bianco e nero e il cursore è la freccia pixel: le parole del cursore («sfoglia», «ruota», «play») qui non compaiono: mentre si scarica c’è un riquadro d’attesa della stessa forma (la pagina non salta). se un blocco si rompe, il resto della finestra continua a funzionare.
+`src/components/computer/Blocchi.tsx` mostra i blocchi in ordine, dentro la finestra del progetto. ogni tipo è un file a parte in `src/components/computer/blocchi/`, caricato con `React.lazy` solo quando serve. Dentro lo schermo i token del sito diventano i due colori dei fosfori e il cursore è la freccia pixel: le parole del cursore («sfoglia», «ruota», «play») qui non compaiono: mentre si scarica c’è un riquadro d’attesa della stessa forma (la pagina non salta). se un blocco si rompe, il resto della finestra continua a funzionare.
 
 ### pdf (`Pdf.tsx`)
 

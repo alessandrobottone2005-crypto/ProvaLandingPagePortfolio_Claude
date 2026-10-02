@@ -18,6 +18,11 @@ import { CAMERA, CAMPO } from '@/components/computer/inquadratura'
 import { ComputerNellaScena } from './ComputerNellaScena'
 import { Mondo } from './Mondo'
 import { Ologramma } from './Ologramma'
+import { PolvereNelFascio } from './PolvereNelFascio'
+import { effettoAttivo } from './cinema'
+import { PerformanceMonitor } from '@react-three/drei/core/PerformanceMonitor'
+import { LIVELLI, qualita } from './qualita'
+import { PARTI_DA_RISCALDARE, riscaldamento } from './riscaldamento'
 
 /** il sole della fessura serve al computer; il volto resta illuminato dai suoi fari */
 function senzaSole(m: THREE.Material) {
@@ -48,10 +53,11 @@ export default function Volto3D({ riferimento, controllo, attivo = true }: Props
     <Canvas
       shadows={edificio && 'percentage'}
       frameloop="demand"
-      dpr={[1, 1.5]}
+      dpr={riferimento ? [1, 1.5] : qualita.valori.dpr}
       // home: campo 40° (si vede la sala); laboratorio: la vista frontale di sempre
       camera={riferimento ? { fov: 18, position: [0, 0, 20], near: 1, far: 60 } : { fov: CAMPO, position: CAMERA.toArray(), near: 0.5, far: 200 }}
-      gl={{ antialias: true, alpha: true, toneMapping: THREE.AgXToneMapping }}
+      // l’anti-aliasing lo fa già il composer (msaa): niente doppio lavoro
+      gl={{ antialias: Boolean(riferimento), alpha: true, toneMapping: THREE.AgXToneMapping }}
       style={{ pointerEvents: 'none' }}
       aria-hidden="true"
     >
@@ -60,11 +66,14 @@ export default function Volto3D({ riferimento, controllo, attivo = true }: Props
       {!riferimento && (
         <Mondo>
           {edificio && <Suspense fallback={null}><Sala /></Suspense>}
+          {edificio && effettoAttivo('polvere') && <PolvereNelFascio />}
           <Suspense fallback={null}><ComputerNellaScena /></Suspense>
         </Mondo>
       )}
       <Rifinitura sala={edificio} />
       <RenderVisibile attivo={attivo} laboratorio={Boolean(riferimento)} />
+      {!riferimento && <QualitaAdattiva />}
+      {!riferimento && <Riscaldamento />}
       <VoltoAnimato riferimento={riferimento} controllo={controllo} modello={risorse.modello.scene} />
       {!riferimento && <Suspense fallback={null}><Ologramma /></Suspense>}
     </Canvas>
@@ -77,13 +86,60 @@ function RenderVisibile({ attivo, laboratorio }: { attivo: boolean; laboratorio:
   useEffect(() => {
     let visibile = false
     const tick = () => {
-      const ora = attivo && !document.hidden && (laboratorio || percorso.header.opacity > 0.001)
+      const ora = attivo && !document.hidden && (laboratorio || riscaldamento.attivo || percorso.header.opacity > 0.001)
       if (ora || ora !== visibile) invalidate()
       visibile = ora
     }
     gsap.ticker.add(tick)
     return () => gsap.ticker.remove(tick)
   }, [attivo, laboratorio, invalidate])
+  return null
+}
+
+/** la risoluzione interna segue i fotogrammi reali: scende se non regge i 60fps, risale quando c’è margine */
+function QualitaAdattiva() {
+  const setDpr = useThree((s) => s.setDpr)
+  useEffect(() => qualita.ascolta((l) => setDpr(LIVELLI[l].dpr)), [setDpr])
+  return (
+    <PerformanceMonitor
+      flipflops={4}
+      onDecline={() => qualita.imposta(qualita.livello - 1)}
+      onIncline={() => qualita.imposta(qualita.livello + 1)}
+    />
+  )
+}
+
+/** shader, texture e post-produzione pronti prima che il 3d si veda (riscaldamento.ts) */
+function Riscaldamento() {
+  const { gl, scene, camera, invalidate } = useThree()
+  useEffect(() => {
+    let fotogrammi = 0
+    const tick = () => {
+      if (riscaldamento.fatto) return gsap.ticker.remove(tick)
+      const pronti = PARTI_DA_RISCALDARE.every((p) => riscaldamento.pronti.has(p) || (p === 'sala' && !salaAttiva))
+      // se il 3d è già visibile non serve più: il lavoro l’ha fatto il primo fotogramma
+      if (percorso.header.opacity > 0.001) riscaldamento.fatto = true
+      if (!pronti || riscaldamento.fatto) return
+      if (fotogrammi === 0) {
+        riscaldamento.attivo = true
+        // anche ciò che è fuori inquadratura: programmi compilati e texture sulla gpu
+        gl.compile(scene, camera)
+        scene.traverse((o) => {
+          const materiali = (o as THREE.Mesh).material
+          for (const m of Array.isArray(materiali) ? materiali : materiali ? [materiali] : [])
+            for (const valore of Object.values(m)) if (valore instanceof THREE.Texture) gl.initTexture(valore)
+        })
+      }
+      invalidate()
+      if (++fotogrammi > 4) {
+        riscaldamento.attivo = false
+        riscaldamento.fatto = true
+        invalidate()
+      }
+    }
+    gsap.ticker.add(tick)
+    return () => gsap.ticker.remove(tick)
+  }, [gl, scene, camera, invalidate])
   return null
 }
 
@@ -178,9 +234,10 @@ function VoltoAnimato({
       host.dataset.ambiente = 'volume-teatro'
       host.dataset.apertura = String(s.aperture[0])
       host.style.opacity = String(posa.opacity)
+      if (effettoAttivo('grana')) document.documentElement.toggleAttribute('data-grana-webgl', posa.opacity > 0.5)
       host.style.zIndex = '10'
     }
-    g.visible = posa.opacity > 0.001 && !document.hidden
+    g.visible = (posa.opacity > 0.001 || (riscaldamento.attivo && !riferimento)) && !document.hidden
     if (!g.visible) return
     // pixel → scena alla profondità della posa (dietro il computer il volto si allontana, la misura in pixel resta)
     const z = posa.z ?? 0

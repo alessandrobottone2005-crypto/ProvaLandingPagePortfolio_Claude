@@ -1,6 +1,7 @@
 // la “tavola” dell’header: tutto ciò che si disegna attorno al volto nelle quattro fasi.
 // stesse coordinate del volto (vedi geometria.ts), così ogni linea cade al posto giusto.
 // è decorativa: nessun testo, solo segni.
+import { webDesignAttivo } from '@/config/discipline'
 import { ASSE, LENTE, PUPILLA, SPESSORE, VIEWBOX } from '@/components/volto/geometria'
 import { FINESTRA, ID_MATITA } from './misure'
 
@@ -95,7 +96,8 @@ export function Tavola({ className }: Props) {
         ))}
       </g>
 
-      {/* 04 web design: finestra del browser attorno al logo */}
+      {/* 04 web design: finestra del browser attorno al logo (solo se la disciplina è attiva, config/discipline.ts) */}
+      {webDesignAttivo && (
       <g data-finestra fill="none" stroke="var(--color-bianco)" strokeWidth={1}>
         <g data-contenuto-finestra>
           <path data-disegna d={`M${FINESTRA.x},${FINESTRA.y + 22} H${FINESTRA.x + FINESTRA.w}`} {...linea} />
@@ -119,6 +121,7 @@ export function Tavola({ className }: Props) {
         </g>
         <rect data-cornice x={FINESTRA.x} y={FINESTRA.y} width={FINESTRA.w} height={FINESTRA.h} rx={FINESTRA.r} {...linea} />
       </g>
+      )}
     </svg>
   )
 }

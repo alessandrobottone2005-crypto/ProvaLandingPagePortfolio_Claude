@@ -1,0 +1,26 @@
+{
+  "titolo": "cuphead e mugman · art toys",
+  "descrizione": "le statuette in 3d catturano la fisicità elastica e teatrale dei personaggi: pose a metà corsa, sorrisi esagerati, dita puntate come in un vecchio cartone animato.",
+  "discipline": [
+    "3d"
+  ],
+  "anno": 2026,
+  "cliente": "progetto accademico · iuad",
+  "ordine": 1,
+  "pubblicato": true,
+  "copertina": "copertina.webp",
+  "blocchi": [
+    {
+      "tipo": "pdf",
+      "file": "presentazione.pdf"
+    },
+    {
+      "tipo": "modello3d",
+      "file": "modello.glb"
+    },
+    {
+      "tipo": "testo",
+      "testo": "l’ispirazione\n\ncuphead nasce dai cartoon “rubber hose” degli anni ’30 — ispirato allo stile dei fleischer studios e dei primi classici disney — fuso con un level design ispirato ai casinò dell’isola dell’inchiostro.\n\nil piedistallo\n\nogni statuetta poggia su una fiche da poker — rossa per cuphead, blu per mugman — un dettaglio che richiama il casinò di king dice e rende il piedistallo parte della narrazione.\n\nla palette\n\nbianco latte, nero inchiostro e un solo colore identificativo per personaggio: la stessa leggibilità pulita dell’animazione vintage."
+    }
+  ]
+}

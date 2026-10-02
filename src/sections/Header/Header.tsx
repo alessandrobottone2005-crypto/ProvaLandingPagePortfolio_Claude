@@ -2,10 +2,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useAvvio } from '@/components/preloader/AvvioContext'
+import { InvitoScorrere } from '@/components/preloader/InvitoScorrere'
+import { NomeMetallo } from '@/components/nome/NomeMetallo'
 import { NomePesoVariabile } from '@/components/testo/NomePesoVariabile'
 import { TestoCheRotola } from '@/components/testo/TestoCheRotola'
 import { Volto } from '@/components/volto/Volto'
 import { larghezzaLogoCentro, percorso } from '@/components/volto/percorso'
+import { disciplineVisibili, webDesignAttivo } from '@/config/discipline'
 import { media, movimento, volto as misure } from '@/config/movimento'
 import { sito } from '@/config/sito'
 import { gsap, ScrollTrigger, useGSAP } from '@/lib/gsap'
@@ -13,7 +16,13 @@ import { getLenis } from '@/lib/scroll'
 import { FINESTRA, ID_MATITA } from './misure'
 import { Tavola } from './Tavola'
 
-const FASI = ['illustrazione', 'branding', '3d', 'web']
+// etichette delle fasi (web design solo se attivo in config/discipline.ts) e il loro inizio nella timeline 0–100
+const FASI = disciplineVisibili.map((d) => (d === 'web design' ? 'web' : d))
+const INIZI = FASI.map((_, i) => i * 25)
+// senza la fase web la timeline salta i suoi 17 punti (75→92): il finale arriva subito dopo il 3d, stesso ritmo
+const SALTO = webDesignAttivo ? 0 : movimento.header.inizioNomeCompatto - 75
+const FINE = 100 - SALTO
+const INIZIO_FINALE = movimento.header.inizioNomeCompatto - SALTO
 
 export function Header() {
   const { pronto, voltoHeader } = useAvvio()
@@ -133,13 +142,17 @@ export function Header() {
             trigger: palco.current,
             pin: true,
             start: 'top top',
-            end: `+=${mobile ? movimento.header.pinMobile : movimento.header.pinDesktop}%`,
+            // pin proporzionale alla timeline: ogni fase dura lo stesso scroll anche senza la fase web
+            end: `+=${((mobile ? movimento.header.pinMobile : movimento.header.pinDesktop) * FINE) / 100}%`,
             scrub: mobile ? movimento.scrub.mobile : movimento.scrub.desktop,
             invalidateOnRefresh: true,
-            onUpdate: (st) => setFase(st.progress < 0.012 ? -1 : Math.min(3, Math.floor(st.progress * 4))),
+            onUpdate: (st) => {
+              const t = st.progress * FINE
+              setFase(t < 1.2 ? -1 : INIZI.findLastIndex((inizio) => t >= inizio))
+            },
           },
         })
-        tl.addLabel('illustrazione', 0).addLabel('branding', 25).addLabel('3d', 50).addLabel('web', 75)
+        FASI.forEach((f, i) => tl.addLabel(f, INIZI[i]))
         tl.to(q('[data-invito]'), { opacity: 0, duration: 2 }, 0)
         tl.fromTo(q('[data-interfaccia]'), { opacity: 0 }, { opacity: 1, duration: 2, immediateRender: false }, 0.5)
         tl.to(spostamento, { attr: { scale: 6 }, duration: 12, onUpdate: aggiornaFiltro }, 3)
@@ -157,24 +170,30 @@ export function Header() {
         tl.to(c, { inclinazione: 1, duration: 4 }, 58)
         tl.to(c, { rotazione: -35, duration: 12, ease: 'power1.inOut' }, 60)
         tl.to(c, { luce: 1, duration: 16 }, 58)
-        tl.to(c, { rotazione: -12, scala: 0.52, duration: 8, ease: 'power1.inOut' }, 75)
-        tl.to(q('[data-tavola]'), { scale: 0.52, duration: 8, ease: 'power1.inOut' }, 75)
-        tl.to(q('[data-cornice]'), { drawSVG: '100%', duration: 5 }, 78)
-        tl.to(
-          q('[data-finestra] [data-contenuto-finestra] [data-disegna]'),
-          { drawSVG: '100%', duration: 3, stagger: 0.4 },
-          80,
-        )
-        const pulsante = { x: FINESTRA.x + FINESTRA.w - 52, y: FINESTRA.y + FINESTRA.h - 27 }
-        tl.fromTo(
-          q('[data-puntatore]'),
-          { opacity: 0, x: pulsante.x - 70, y: pulsante.y - 50 },
-          { opacity: 1, x: pulsante.x, y: pulsante.y, duration: 4, ease: 'power2.out', immediateRender: false },
-          84,
-        )
-        tl.to(q('[data-puntatore]'), { scale: 0.8, duration: 0.6, yoyo: true, repeat: 1, transformOrigin: '0 0' }, 88.5)
-        tl.to(q('[data-pulsante]'), { fillOpacity: 1, duration: 0.6, yoyo: true, repeat: 1 }, 88.5)
-        tl.to(q('[data-tavola]'), { opacity: 0, duration: 5 }, 92)
+        if (webDesignAttivo) {
+          // 04 web design: il volto arretra dentro una finestra del browser disegnata, il puntatore clicca il pulsante
+          tl.to(c, { rotazione: -12, scala: 0.52, duration: 8, ease: 'power1.inOut' }, 75)
+          tl.to(q('[data-tavola]'), { scale: 0.52, duration: 8, ease: 'power1.inOut' }, 75)
+          tl.to(q('[data-cornice]'), { drawSVG: '100%', duration: 5 }, 78)
+          tl.to(
+            q('[data-finestra] [data-contenuto-finestra] [data-disegna]'),
+            { drawSVG: '100%', duration: 3, stagger: 0.4 },
+            80,
+          )
+          const pulsante = { x: FINESTRA.x + FINESTRA.w - 52, y: FINESTRA.y + FINESTRA.h - 27 }
+          tl.fromTo(
+            q('[data-puntatore]'),
+            { opacity: 0, x: pulsante.x - 70, y: pulsante.y - 50 },
+            { opacity: 1, x: pulsante.x, y: pulsante.y, duration: 4, ease: 'power2.out', immediateRender: false },
+            84,
+          )
+          tl.to(q('[data-puntatore]'), { scale: 0.8, duration: 0.6, yoyo: true, repeat: 1, transformOrigin: '0 0' }, 88.5)
+          tl.to(q('[data-pulsante]'), { fillOpacity: 1, duration: 0.6, yoyo: true, repeat: 1 }, 88.5)
+        } else {
+          // senza la fase web il volto torna frontale insieme al finale
+          tl.to(c, { rotazione: -12, duration: 8, ease: 'power1.inOut' }, INIZIO_FINALE)
+        }
+        tl.to(q('[data-tavola]'), { opacity: 0, duration: 5 }, INIZIO_FINALE)
         tl.to(
           c,
           {
@@ -182,16 +201,16 @@ export function Header() {
             duration: 8,
             ease: 'power2.inOut',
           },
-          92,
+          INIZIO_FINALE,
         )
         // Le stesse parole si raccolgono nell’angolo; il portal resta fuori dai contenitori con pin.
         tl.to(
           parole,
           { ...metaNome, duration: 100 - movimento.header.inizioNomeCompatto, ease: 'power2.inOut' },
-          movimento.header.inizioNomeCompatto,
+          INIZIO_FINALE,
         )
-        tl.set(ritornoInizio.current, { autoAlpha: 1 }, 100)
-        tl.to(q('[data-interfaccia]'), { opacity: 0, duration: 2 }, 98)
+        tl.set(ritornoInizio.current, { autoAlpha: 1 }, FINE)
+        tl.to(q('[data-interfaccia]'), { opacity: 0, duration: 2 }, FINE - 2)
         return () => clearInterval(tremolio)
       })
       return () => mm.revert()
@@ -211,12 +230,13 @@ export function Header() {
             className="pointer-events-none fixed inset-0 z-40 flex h-svh flex-col justify-between px-4 pt-6 pb-8 text-[clamp(2.5rem,min(10vw,14svh),9rem)] leading-[.85] tracking-[-.04em] md:px-8 md:pt-8"
           >
             <span data-parola-nome className="self-center md:self-start">
-              <NomePesoVariabile testo={sito.nome} className="block" />
+              <NomePesoVariabile testo={sito.nome} className="block" pesoMin={900} pesoMax={900} />
             </span>
             <span data-parola-nome className="self-center md:self-end">
-              <NomePesoVariabile testo={sito.cognome} className="block" />
+              <NomePesoVariabile testo={sito.cognome} className="block" pesoMin={900} pesoMax={900} />
             </span>
           </div>
+          {!ridotto && <NomeMetallo radice={nome} />}
           <nav aria-label={sito.etichette.navigazione} className="pointer-events-none fixed top-5 right-3 z-40 md:top-7 md:right-7">
             <a
               ref={ritornoInizio}
@@ -261,15 +281,7 @@ export function Header() {
         >
           <TestoCheRotola testo={fase >= 0 ? FASI[fase] : ''} />
         </div>
-        {!ridotto && (
-          <div
-            data-invito
-            aria-hidden="true"
-            className="pointer-events-none absolute bottom-0 left-1/2 z-30 h-14 w-px -translate-x-1/2 overflow-hidden"
-          >
-            <span className="invito-linea absolute inset-0 bg-bianco" />
-          </div>
-        )}
+        <InvitoScorrere respira={pronto && !ridotto} />
       </div>
     </section>
   )

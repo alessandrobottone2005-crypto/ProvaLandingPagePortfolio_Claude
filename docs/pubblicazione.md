@@ -2,9 +2,9 @@
 
 ## repository e ambiente
 
-- [Repository GitHub](https://github.com/alessandrobottone2005-crypto/ProvaLandingPagePortfolio_Claude).
-- Progetto Vercel: `provalandingpageportfolio-claude`, team ABDesign (`abd-esign1`), Vite e Node 24.
-- [Dominio di produzione](https://provalandingpageportfolio-claude.vercel.app).
+- [Repository GitHub](https://github.com/alessandrobottone2005-crypto/alessandrobottone) (rinominato il 2 ottobre 2026 da `ProvaLandingPagePortfolio_Claude`; i vecchi link reindirizzano).
+- Progetto Vercel: `alessandrobottone` (rinominato da `provalandingpageportfolio-claude`), team ABDesign (`abd-esign1`), Vite e Node 24.
+- [Dominio di produzione](https://alessandrobottone.vercel.app); il vecchio [provalandingpageportfolio-claude.vercel.app](https://provalandingpageportfolio-claude.vercel.app) resta attivo. Le righe sotto conservano gli indirizzi storici com’erano.
 - Branch di lavoro: `main`. Il 1 ottobre 2026 vi è stato fuso `prova/computer-retro` (computer retrò, sala di cemento, avatar a punti, volto dietro il computer).
 - Branch storico: `codex/manutenzione-portfolio-3d`, da cui è stata pubblicata la versione del 29 settembre 2026.
 

@@ -6,9 +6,11 @@ cosa si muove, dove sta il codice e quali numeri si possono regolare. tutti i te
 
 file: `src/sections/Header/Header.tsx`, `Tavola.tsx`, `src/components/volto/LogoContinuo.tsx`, `Volto3D.tsx`, `percorso.ts`.
 
-- header bloccato per 400vh desktop/tablet, 300vh telefono. una timeline in unità 0–100: illustrazione 0, branding 25, 3d 50, web 75.
+- header bloccato per ≈ 332vh desktop/tablet, ≈ 249vh telefono. una timeline in unità 0–100: illustrazione 0, branding 25, 3d 50, finale 75–83. web design è spento (`webDesignAttivo` in `src/config/discipline.ts`): rimettendo `true` torna la fase web a 75, il finale si sposta a 92–100 e il pin torna 400/300vh, senza altre modifiche.
 - volto interamente visibile, largo `min(86vw, 104svh)`. nome e cognome restano sui bordi fino al 92% dell’header, poi si riducono in due righe fisse in alto a destra, cliccabili per tornare all’inizio; etichette grandi, senza numeri, nessun trattino di avanzamento.
-- illustrazione: filtro matita e schizzi; branding: griglia di costruzione e campioni, piccolo arretramento del volto; 3d: SVG e modello animabile si sovrappongono e si dissolvono, poi rotazione fino a -35°; web: finestra disegnata e puntatore, il volto arretra e raggiunge la misura con cui il portfolio lo riceve al centro. la finestra svanisce, il volto resta.
+- nome in metallo (dal 2 ottobre 2026): `src/components/nome/Nome3D.tsx` estrude ogni lettera in outfit black con il materiale del logo e la posa sulla lettera dom corrispondente, che resta trasparente come sagoma (stesse animazioni gsap di prima: entrata, raccolta in alto a destra, versione ridotta). le lettere vicine al cursore si girano verso di lui, avanzano un poco e prendono la luce; su touch restano ferme. canvas leggero a parte, z-40, senza post-produzione, disegnato solo quando qualcosa si muove. movimento ridotto o errore: la scritta dom torna visibile.
+- «scorri per esplorare» (`src/components/preloader/InvitoScorrere.tsx`): nel preloader le lettere salgono una dopo l’altra insieme al disegno del volto (`invito.ts`), la freccia compare al risveglio; nell’header la stessa scritta, nella stessa posizione, respira e la freccia scende in loop. sparisce nei primi istanti di scroll e torna risalendo. su telefono sta sopra il cognome. movimento ridotto: ferma.
+- illustrazione: filtro matita e schizzi; branding: griglia di costruzione e campioni, piccolo arretramento del volto; 3d: SVG e modello animabile si sovrappongono e si dissolvono, poi rotazione fino a -35°; finale: il volto torna quasi frontale e raggiunge la misura con cui il portfolio lo riceve al centro. con web design attivo, prima del finale: finestra del browser disegnata e puntatore, il volto arretra dentro la finestra; la finestra svanisce, il volto resta.
 - il Canvas globale continua attraverso tutte le sezioni. `percorso.ts` legge gli ancoraggi DOM e i numeri delle timeline: nessun rimontaggio tra header, portfolio, biografia e contatti. tutto si riavvolge tornando su.
 
 ## portfolio: il computer
@@ -64,7 +66,7 @@ la forma si ricalcola anche senza muovere il mouse: dopo uno scroll (anche dentr
 |---|---|---|
 | `src/components/testo/RotolaAlPassaggio.tsx` | testo di link e pulsanti che “rotola”: le lettere salgono e una copia arriva dal basso. si attiva da solo con passaggio del mouse o focus da tastiera sul link/pulsante che lo contiene (su touch al tocco), oppure con la prop `attivo` | pulsanti dei contatti |
 | `src/components/testo/TestoCheRotola.tsx` | quando il testo cambia, le lettere vecchie salgono e le nuove arrivano dal basso | etichette dell’header |
-| `src/components/testo/NomePesoVariabile.tsx` | le lettere vicine al cursore diventano più pesanti (asse `wght` di outfit da 300 a 600, in base alla distanza); su touch nel punto toccato | nome dell’header  |
+| `src/components/testo/NomePesoVariabile.tsx` | le lettere vicine al cursore diventano più pesanti (asse `wght` di outfit, in base alla distanza); su touch nel punto toccato. con peso fisso (min = max) l’effetto è spento | nome dell’header (oggi fisso a 900, sagoma del nome in metallo) |
 | `src/components/interazioni/Magnetico.tsx` | involucro attratto dal cursore (max 12px, `movimento.magnetismo.pulsanti`; 4–6px per i controlli piccoli). solo con il mouse | pulsanti dei contatti e dei blocchi |
 | `src/components/effetti/Grana.tsx` + `.grana` in `globals.css` | rumore leggerissimo (opacità 4%) su tutto il sito; animato solo con mouse e senza movimento ridotto, fermo su touch | ovunque |
 

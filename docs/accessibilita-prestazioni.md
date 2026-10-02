@@ -36,7 +36,8 @@ Un errore del logo o del Canvas viene gestito da `ScenaProtetta`: volto SVG di r
 
 - Modello V2 circa 872 kB con Meshopt, texture WebP incorporate e cache condivisa; nessuna HDRI di studio scaricata dalla home.
 - Canvas unico su `demand`, aggiornato solo con scena visibile e scheda attiva; le espressioni continuano quando posizione/scala sono ferme. I modelli nelle finestre si fermano fuori vista.
-- Stessi effetti e limite DPR 1,5 su desktop e mobile; volume a 32 campioni per raggio. Non esiste un ramo mobile che elimina l’ambiente.
+- Stessi effetti su desktop e mobile, con qualità adattiva: se i fotogrammi non reggono scendono la risoluzione interna della nebbia, del riflesso e il DPR (massimo 1,5). Non esiste un ramo mobile che elimina l’ambiente o un effetto ([ambiente 3d](ambiente-3d.md#rifinitura-post-produzione)).
+- Shader e texture preparati prima che il 3d si veda (preriscaldamento); mappa d’ombra disegnata una volta; il layout della pagina si legge solo quando serve (avatar, nome in metallo); il vetro del computer non ha filtri CSS mentre la camera scende.
 - Materiali locali, luci e render target liberati allo smontaggio. Le risorse delle GLB condivise restano in cache.
 - Immagini WebP fino a 2400px, copertine piccole da 900px per le icone. I file rimangono separati dal codice (`assetsInlineLimit: 0`).
 - Zod esegue controlli in sviluppo/build, non viene scaricato dal sito di produzione.
@@ -47,3 +48,19 @@ Un errore del logo o del Canvas viene gestito da `ScenaProtetta`: volto SVG di r
 Build e lint verificano codice e file dei progetti; la verifica browser deve coprire scroll avanti/indietro, accensione e spegnimento, cambio viewport, cartelle, finestre e link diretto, navbar, contatti, movimento ridotto e caricamento 3d fallito. Gli ultimi controlli sono descritti in [computer](computer.md#verifica--1-ottobre-2026).
 
 Le misure Lighthouse del 26 settembre 2026 (prestazioni 81, accessibilità 96, buone pratiche 100, SEO 100) precedono il logo e l’ambiente V2: sono storiche e non descrivono la build corrente. L’obiettivo di 60fps non è una garanzia su ogni dispositivo. Ripetere misure sulla versione pubblicata e su telefoni fisici; un viewport mobile emulato verifica layout e interazioni, non le prestazioni del telefono.
+
+## misura della fluidità — 2 ottobre 2026
+
+`npm run misura-fluidita -- <url> [telefono]` (`scripts/misura-fluidita.mjs`) apre Google Chrome senza finestra con la GPU vera del Mac, scorre la pagina a velocità costante e riporta per tratto fps medi, 1% peggiore, fotogrammi oltre 33 ms e il più lungo. «telefono» = viewport 390×844 con CPU 4× più lenta: indica i problemi di CPU, non le prestazioni grafiche di un telefono vero.
+
+Build di produzione, MacBook Pro M5 (alimentazione collegata), prima e dopo la fase di fluidità:
+
+| tratto | prima (desktop) | dopo (desktop) | prima (telefono emulato) | dopo (telefono emulato) |
+|---|---|---|---|---|
+| header 2d | 60 fps, max 17 ms | 60 fps, max 17 ms | 60 fps, max 17 ms | 60 fps, max 17 ms |
+| header 3d | 57 fps, **scatto 83 ms** | 60 fps, max 17 ms | 56 fps, **scatto 83 ms** | 60 fps, max 17 ms |
+| discesa | 59 fps, max 50 ms | 60 fps, max 17 ms | 60 fps, max 33 ms | 60 fps, max 17 ms |
+| chi sono | 60 fps, max 50 ms | 60 fps, max 17 ms | 56 fps, **scatto 183 ms** | 60 fps, max 17 ms |
+| contatti | 60 fps | 60 fps | 60 fps | 60 fps |
+
+Gli effetti «cinema» sono stati aggiunti dopo queste misure; la misura successiva è stata fatta a batteria (18%), quando macOS limita Chrome a 30fps anche senza effetti (`?effetti=0`), quindi non è confrontabile: va ripetuta con l’alimentazione collegata. Sui telefoni veri resta da misurare: la qualità adattiva interviene da sola se i 60fps non reggono.

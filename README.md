@@ -8,7 +8,7 @@ Portfolio one-page in italiano, raccontato dallo scroll. Il volto parte come seg
 - Portfolio dentro un computer retrò appoggiato a terra in una sala di cemento realistica (luce cotta in Blender, pavimento bagnato che riflette, polvere nel fascio di sole): la camera scende fino allo schermo, il computer si accende e si usa. L’interfaccia riprende il Finder del Macintosh 1984 (bianco e nero, ChicagoFLF): quattro cartelle per disciplina, un documento per progetto, finestre con copertina a colori, informazioni e blocchi. Il volto metallico sta dietro il monitor, gioca a nascondino e reagisce a cartelle e progetti.
 - Biografia invariata, rivelata parola per parola; a sinistra il logo si trasforma in un avatar a punti che segue il cursore; contatti con logo grande, Instagram, Behance, email e copyright.
 
-La stessa esperienza 3d è presente su mobile. Su telefono l’interfaccia occupa tutta la vista. Con movimento ridotto: SVG statici, scroll nativo e computer già acceso in una scena ferma. In caso di errore WebGL restano il volto SVG e l’interfaccia del computer. I venti progetti attuali sono segnaposto.
+La stessa esperienza 3d è presente su mobile. Su telefono l’interfaccia occupa tutta la vista. Con movimento ridotto: SVG statici, scroll nativo e computer già acceso in una scena ferma. In caso di errore WebGL restano il volto SVG e l’interfaccia del computer. Progetti pubblicati: dai tre fuochi, lorenzo e serena brancale (branding); arabian sunset, donne selvagge, don’t look medusa, dove la guerra non arriva e inktober (illustrazione); cuphead e mugman · art toys (3d).
 
 ## avvio
 
@@ -59,7 +59,7 @@ Scrivere i testi in minuscolo con apostrofi tipografici (’). Gli originali cre
 
 ## pubblicazione
 
-Repository: [ProvaLandingPagePortfolio_Claude](https://github.com/alessandrobottone2005-crypto/ProvaLandingPagePortfolio_Claude). Progetto Vercel: `provalandingpageportfolio-claude`, ambiente Node 24/Vite. Dominio: [provalandingpageportfolio-claude.vercel.app](https://provalandingpageportfolio-claude.vercel.app).
+Repository: [alessandrobottone](https://github.com/alessandrobottone2005-crypto/alessandrobottone) (prima `ProvaLandingPagePortfolio_Claude`, GitHub reindirizza il vecchio indirizzo). Progetto Vercel: `alessandrobottone`, ambiente Node 24/Vite. Dominio: [alessandrobottone.vercel.app](https://alessandrobottone.vercel.app); il vecchio `provalandingpageportfolio-claude.vercel.app` resta attivo.
 
 Dal 1 ottobre 2026 il lavoro sta su `main` (dove è stato fuso `prova/computer-retro`); `codex/manutenzione-portfolio-3d` è il branch storico del 29 settembre. Lo stato del deploy, la versione e i controlli online si trovano in [pubblicazione](docs/pubblicazione.md). I crediti del computer e della sala sono ancora segnaposto: pubblicati così per scelta di alessandro, da completare in `src/config/sito.ts`. Il push di un branch e il deploy in produzione sono operazioni distinte. La configurazione mantiene il refresh delle rotte `/progetti/<slug>`.
 

@@ -7,6 +7,8 @@ import { avviaCaricamento } from '@/lib/caricamento'
 import { gsap, useGSAP } from '@/lib/gsap'
 import { fermaScroll, riprendiScroll } from '@/lib/scroll'
 import { useAvvio } from './AvvioContext'
+import { InvitoScorrere } from './InvitoScorrere'
+import { scriviInvito } from './invito'
 
 const CHIAVE_SESSIONE = 'ab-visitato'
 
@@ -53,7 +55,10 @@ export function Preloader() {
       const scrivi = (p: number) => {
         if (contatore.current) contatore.current.textContent = String(Math.round(p * 100)).padStart(3, '0')
         volto.current?.disegna(p)
+        // «scorri per esplorare» si scrive insieme al volto
+        scriviInvito(radice.current, p)
       }
+      gsap.set(radice.current!.querySelector('[data-invito-freccia]'), { opacity: 0 })
       scrivi(0)
 
       const fine = () => {
@@ -76,6 +81,8 @@ export function Preloader() {
           .call(() => volto.current?.battito(), [], 0.5)
           // il contatore esce verso il basso
           .to(contatore.current, { yPercent: 110, duration: 0.6, ease: movimento.ease.transizione }, 0.3)
+          // al risveglio compare la freccia
+          .to(radice.current!.querySelector('[data-invito-freccia]'), { opacity: 1, duration: 0.5 }, 0.2)
         // il volto vola al suo posto nell’header
         tl.add(() => {
           const da = involucro.current?.getBoundingClientRect()
@@ -122,6 +129,7 @@ export function Preloader() {
       <div ref={involucro} className="will-change-transform">
         <Volto ref={volto} stato={stato} dimensione={misure.preloader} interattivo={false} />
       </div>
+      <InvitoScorrere />
       <p className="absolute right-4 bottom-4 overflow-hidden text-etichetta md:right-8 md:bottom-8" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
         <span ref={contatore} className="block text-[clamp(2.5rem,6vw,5rem)] leading-none font-extralight cifre-tabellari">
           000

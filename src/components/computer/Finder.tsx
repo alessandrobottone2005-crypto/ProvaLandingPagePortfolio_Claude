@@ -2,6 +2,7 @@
 // La finestra del progetto segue l’indirizzo /progetti/:slug: indietro la chiude, un link diretto la apre.
 import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent, type MouseEvent, type PointerEvent, type ReactNode } from 'react'
 import { useLocation, useMatch, useNavigate } from 'react-router'
+import { disciplineVisibili } from '@/config/discipline'
 import { sito } from '@/config/sito'
 import { useVolto } from '@/components/volto/VoltoContext'
 import { progetti, trovaProgetto, type Progetto } from '@/lib/progetti'
@@ -11,8 +12,8 @@ import { Blocchi } from './Blocchi'
 import { Finestra, type Rettangolo } from './Finestra'
 import { IconaCartella, IconaDocumento } from './icone'
 
-// stesso ordine delle discipline nell’header
-const CARTELLE: Disciplina[] = ['illustrazione', 'branding', '3d', 'web design']
+// stesso ordine delle discipline nell’header; web design si riaccende in config/discipline.ts
+const CARTELLE: Disciplina[] = disciplineVisibili
 const ALTEZZA_BARRA = 24
 
 type IdFinestra = `cartella:${Disciplina}` | 'informazioni' | 'progetto'

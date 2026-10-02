@@ -1,0 +1,18 @@
+{
+  "titolo": "lorenzo",
+  "descrizione": "un’estetica tra forza e sensibilità. lorenzo è un giovane designer e art director di 22 anni, guidato da una profonda sensibilità artistica e da una costante ricerca di autenticità. le sue passioni — musica, moda, arte e design — si fondono in un linguaggio visivo personale, audace e raffinato. cresciuto in un ambiente ricco di creatività e influenze femminili, ha sviluppato uno stile che unisce forza e delicatezza, costruendo immaginari in cui estetica e identità convivono in perfetto equilibrio.",
+  "discipline": [
+    "branding"
+  ],
+  "anno": 2026,
+  "cliente": "progetto accademico · iuad",
+  "ordine": 2,
+  "pubblicato": true,
+  "copertina": "copertina.webp",
+  "blocchi": [
+    {
+      "tipo": "pdf",
+      "file": "brand-book.pdf"
+    }
+  ]
+}

@@ -31,6 +31,8 @@ export function avviaCaricamento() {
       const { caricaLogo } = await import('@/components/volto/modelloLogo')
       await caricaLogo((p) => (c.avanzamento = p))
     })
+    // il nome in metallo: codice e contorni delle lettere
+    aggiungi(1, () => Promise.all([import('@/components/nome/Nome3D'), import('@/components/nome/fontNome').then((m) => m.caricaFontNome())]))
   }
   const primo = progetti[0]
   if (primo) aggiungi(1, () => caricaImmagine(primo.copertinaCard ?? primo.copertina))
