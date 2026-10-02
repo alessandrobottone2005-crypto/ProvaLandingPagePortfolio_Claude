@@ -31,7 +31,7 @@ Zod non è nel runtime di produzione; shadcn è uno strumento di sviluppo, i com
 ├─ docs/                     documentazione
 ├─ scripts/                  authoring, validazione, immagini e icone
 ├─ sorgenti/                 originali creativi; esclusi dal sito
-│  ├─ Logo.svg, Logo.glb     logo originale fornito
+│  ├─ logo/                  Logo.svg e Logo.glb originali forniti
 │  ├─ logo-3d/               scene Blender, texture, export, script e anteprime
 │  │  └─ legacy/             vecchio volto.glb conservato
 │  ├─ sala/                  Ambiente.glb, scena realistica, cottura ed esportazione

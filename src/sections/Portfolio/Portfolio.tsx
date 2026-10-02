@@ -86,11 +86,18 @@ function ComputerNelPercorso() {
       let ancora: number | null = null
       let inResize = false
       let scadenza = 0
-      const segna = () => {
+      // ruotando, il browser può spostare lo scroll prima ancora dell’evento resize: vale la posizione
+      // dell’ultimo fotogramma prima del cambio, registrata sul ticker
+      let ultimaY = scrollY
+      const registra = () => {
+        if (!inResize) ultimaY = scrollY
+      }
+      gsap.ticker.add(registra)
+      const segna = (y = scrollY) => {
         const st = tl.scrollTrigger
         ancora = null
         if (!st || st.end <= st.start) return
-        const p = (scrollY - st.start) / (st.end - st.start)
+        const p = (y - st.start) / (st.end - st.start)
         if (p >= C.avvicinamento / (C.avvicinamento + C.sosta) && p <= 1) ancora = p
       }
       const alResize = () => {
@@ -102,7 +109,7 @@ function ComputerNelPercorso() {
         }, 1500)
         if (inResize) return
         inResize = true
-        segna()
+        segna(ultimaY)
       }
       const primaDelRefresh = () => {
         if (!inResize) segna()
@@ -128,6 +135,7 @@ function ComputerNelPercorso() {
       ScrollTrigger.addEventListener('refresh', dopoIlRefresh)
       return () => {
         clearTimeout(scadenza)
+        gsap.ticker.remove(registra)
         removeEventListener('resize', alResize)
         ScrollTrigger.removeEventListener('refreshInit', primaDelRefresh)
         ScrollTrigger.removeEventListener('refresh', dopoIlRefresh)

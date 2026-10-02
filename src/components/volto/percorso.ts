@@ -8,7 +8,7 @@ import type { Punto } from './sguardo'
 export type Lato = 'sopra' | 'destra' | 'sinistra'
 
 export const percorso = {
-  header: { opacity: 0, rotazione: 0, scala: 1, luce: 0, inclinazione: 0 },
+  header: { opacity: 0, rotazione: 0, scala: 1, inclinazione: 0 },
   // vicino: 0 = fine dell’header, 1 = camera ferma davanti allo schermo.
   // sbircia: nascondino nella sosta (uscita 0 = nascosto dietro il monitor, 1 = sbucato dal lato)
   computer: { vicino: 0, sbircia: { lato: 'destra' as Lato, uscita: 0 } },

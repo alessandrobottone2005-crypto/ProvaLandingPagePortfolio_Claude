@@ -4,7 +4,7 @@ il logo è un pittogramma del volto di alessandro: due lenti, una linea orizzont
 
 ## la geometria (`src/components/volto/geometria.ts`)
 
-il file originale (`sorgenti/Logo.svg`) ha le forme espanse (riempimenti), che non si possono disegnare né animare. per questo il volto è stato ricostruito **a tratti**: ogni parte è una linea con il suo spessore, nelle stesse coordinate dell’originale (247.41 × 176.88, con un po’ di spazio sotto per il sorriso: viewbox 247.41 × 180).
+il file originale (`sorgenti/logo/Logo.svg`) ha le forme espanse (riempimenti), che non si possono disegnare né animare. per questo il volto è stato ricostruito **a tratti**: ogni parte è una linea con il suo spessore, nelle stesse coordinate dell’originale (247.41 × 176.88, con un po’ di spazio sotto per il sorriso: viewbox 247.41 × 180).
 
 | parte | come è fatta |
 |---|---|

@@ -8,6 +8,7 @@ import { Preloader } from './components/preloader/Preloader'
 import { accendi } from './components/computer/stato'
 import { movimento } from './config/movimento'
 import { ScrollTrigger } from './lib/gsap'
+import { trovaProgetto } from './lib/progetti'
 import { aggiornaDopoCaricamento, avviaScroll, getLenis } from './lib/scroll'
 import { RotteModali } from './router'
 import { ChiSono } from './sections/ChiSono/ChiSono'
@@ -33,7 +34,7 @@ export default function App() {
   useEffect(() => {
     if (!pronto) return
     ScrollTrigger.refresh()
-    if (pathname.startsWith('/progetti/')) {
+    if (pathname.startsWith('/progetti/') && trovaProgetto(pathname.split('/')[2])) {
       const computer = ScrollTrigger.getById('portfolio-computer')
       if (computer) {
         // a metà della sosta, su tutti i dispositivi

@@ -30,7 +30,7 @@ export default function Laboratorio() {
   const [dimensione, setDimensione] = useState(40)
   const [guardaBersaglio, setGuardaBersaglio] = useState(false)
   const riquadro = useRef<HTMLDivElement>(null)
-  const controllo = useRef<Controllo3D>({ rotazione: 0, scala: 1, luce: 0.3, inclinazione: 0 })
+  const controllo = useRef<Controllo3D>({ rotazione: 0, scala: 1 })
   const [vista3d, setVista3d] = useState<'no' | 'sovrapposto' | 'solo'>('no')
   const [rotazione, setRotazione] = useState(0)
   useEffect(() => {

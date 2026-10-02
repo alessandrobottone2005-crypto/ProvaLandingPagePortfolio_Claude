@@ -1,6 +1,6 @@
 // Computer.glb poggiato sul pavimento della sala, nel fascio di luce della fessura. Il vetro si illumina all’accensione;
 // l’interfaccia vera è DOM posato sopra lo schermo (components/computer/Interfaccia.tsx).
-import { useFrame } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
 import { riscaldamento } from './riscaldamento'
 import { use, useEffect, useMemo } from 'react'
 import * as THREE from 'three'
@@ -23,6 +23,12 @@ export function ComputerNellaScena({ fermo = false }: { fermo?: boolean }) {
     })
     return copia
   }, [originale])
+  // la mappa d’ombra del sole si disegna una volta sola (Sala.tsx): se il computer arriva dopo, va ridisegnata
+  const gl = useThree((s) => s.gl)
+  useEffect(() => {
+    // eslint-disable-next-line react/immutability -- renderer di Three.js, non stato React
+    if (scena) gl.shadowMap.needsUpdate = true
+  }, [gl, scena])
   const vetro = useMemo(() => {
     const geometria = new THREE.PlaneGeometry(larghezza, altezza)
     // Bagliore del tubo: bianco caldo dei fosfori, appena sopra la soglia del Bloom così la cornice ne riceve l’alone.

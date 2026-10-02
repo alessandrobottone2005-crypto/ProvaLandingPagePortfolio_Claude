@@ -115,7 +115,7 @@ export function Header() {
         // La preferenza può cambiare prima del nuovo render React.
         if (!spostamento || !rumore) return
         const c = percorso.header
-        gsap.set(c, { opacity: 0, rotazione: 0, scala: 1, luce: 0, inclinazione: 0 })
+        gsap.set(c, { opacity: 0, rotazione: 0, scala: 1, inclinazione: 0 })
         gsap.set(
           q(
             '[data-schizzi] [data-disegna], [data-griglia] [data-disegna], [data-finestra] [data-disegna], [data-cornice]',
@@ -169,7 +169,6 @@ export function Header() {
         tl.to(q('[data-volto-svg]'), { opacity: 0, duration: 4 }, 56)
         tl.to(c, { inclinazione: 1, duration: 4 }, 58)
         tl.to(c, { rotazione: -35, duration: 12, ease: 'power1.inOut' }, 60)
-        tl.to(c, { luce: 1, duration: 16 }, 58)
         if (webDesignAttivo) {
           // 04 web design: il volto arretra dentro una finestra del browser disegnata, il puntatore clicca il pulsante
           tl.to(c, { rotazione: -12, scala: 0.52, duration: 8, ease: 'power1.inOut' }, 75)

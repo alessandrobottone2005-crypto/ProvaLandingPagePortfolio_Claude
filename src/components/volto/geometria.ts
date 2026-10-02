@@ -1,4 +1,4 @@
-// geometria del volto, ricostruita a tratti (stroke) dal logo originale sorgenti/Logo.svg.
+// geometria del volto, ricostruita a tratti (stroke) dal logo originale sorgenti/logo/Logo.svg.
 // il file originale ha le forme espanse (riempimenti): qui ogni parte è una linea centrale
 // con il suo spessore, così si può disegnare (drawsvg), animare e trasformare.
 // coordinate nello stesso sistema dell’originale (247.41 × 176.88), con un po’ di spazio sotto per il sorriso.

@@ -25,8 +25,17 @@ export function Finestra({ titolo, rettangolo, davanti, livello, piena, scala, o
   const ref = useRef<HTMLElement>(null)
 
   // aprendo la finestra il focus entra nella finestra
+  // con un link diretto l’interfaccia può essere ancora nascosta (modello del computer in arrivo):
+  // si riprova per qualche secondo, finché nessun altro elemento ha preso il focus
   useEffect(() => {
-    ref.current?.focus({ preventScroll: true })
+    let id = 0
+    const prova = (volte: number) => {
+      const el = ref.current
+      el?.focus({ preventScroll: true })
+      if (el && document.activeElement === document.body && volte > 0) id = requestAnimationFrame(() => prova(volte - 1))
+    }
+    prova(300)
+    return () => cancelAnimationFrame(id)
   }, [])
 
   const trascina = (e: PointerEvent<HTMLDivElement>) => {

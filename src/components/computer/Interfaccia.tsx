@@ -40,14 +40,25 @@ export default function Interfaccia({ modo }: { modo: 'percorso' | 'ridotto' }) 
       const box = contenitore()?.getBoundingClientRect()
       const w = box?.width ?? document.documentElement.clientWidth
       const h = box?.height ?? innerHeight
-      const tel = modo === 'percorso' && telefono(w)
+      // su telefono la camera supera la cornice: anche nella scena ferma l’interfaccia occupa la vista
+      const tel = telefono(w)
       const m = tel ? { larghezza: w, altezza: h, telefono: true } : { ...misuraSosta(w, h), telefono: false }
       misuraRef.current = m
       setMisura(m)
     }
+    // ruotando, durante l’evento resize il browser può dare ancora la vecchia altezza: si rimisura al fotogramma dopo
+    let id = 0
+    const ridimensiona = () => {
+      misura()
+      cancelAnimationFrame(id)
+      id = requestAnimationFrame(misura)
+    }
     misura()
-    addEventListener('resize', misura)
-    return () => removeEventListener('resize', misura)
+    addEventListener('resize', ridimensiona)
+    return () => {
+      cancelAnimationFrame(id)
+      removeEventListener('resize', ridimensiona)
+    }
   }, [modo])
 
   const aggiorna = useCallback(() => {

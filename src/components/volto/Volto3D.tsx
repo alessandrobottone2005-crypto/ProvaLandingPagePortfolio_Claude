@@ -39,7 +39,7 @@ function morph(mesh: THREE.Mesh, nome: string, valore: number) {
   if (indice !== undefined && mesh.morphTargetInfluences) mesh.morphTargetInfluences[indice] = valore
 }
 
-export type Controllo3D = { rotazione: number; scala: number; luce: number; inclinazione: number }
+export type Controllo3D = { rotazione: number; scala: number }
 type Props = {
   riferimento?: RefObject<Element | null>
   controllo?: RefObject<Controllo3D>
@@ -230,8 +230,6 @@ function VoltoAnimato({
     if (host) {
       host.dataset.fase = posa.fase
       host.dataset.umore = umore
-      host.dataset.modello = 'metallo-blender-v2'
-      host.dataset.ambiente = 'volume-teatro'
       host.dataset.apertura = String(s.aperture[0])
       host.style.opacity = String(posa.opacity)
       if (effettoAttivo('grana')) document.documentElement.toggleAttribute('data-grana-webgl', posa.opacity > 0.5)

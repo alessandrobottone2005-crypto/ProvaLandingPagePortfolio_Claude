@@ -11,11 +11,13 @@ export const LIVELLI = {
   0: { dpr: 1, nebbia: 0.25, passi: 16, riflesso: 256 },
 } as const satisfies Record<Livello, { dpr: number; nebbia: number; passi: number; riflesso: number }>
 
-const fisso = new URLSearchParams(location.search).get('qualita')
+// un valore non numerico (?qualita=alta) viene ignorato: altrimenti il livello sarebbe NaN e la scena senza valori
+const richiesto = Number(new URLSearchParams(location.search).get('qualita') ?? NaN)
+const fisso = Number.isFinite(richiesto) ? Math.max(0, Math.min(3, Math.round(richiesto))) : null
 const ascoltatori = new Set<(l: Livello) => void>()
 
 export const qualita = {
-  livello: (fisso !== null ? Math.max(0, Math.min(3, Number(fisso))) : 3) as Livello,
+  livello: (fisso ?? 3) as Livello,
   bloccata: fisso !== null,
   imposta(l: number) {
     if (qualita.bloccata) return
