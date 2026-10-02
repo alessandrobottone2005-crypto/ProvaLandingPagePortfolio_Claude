@@ -5,8 +5,23 @@
 - [Repository GitHub](https://github.com/alessandrobottone2005-crypto/alessandrobottone) (rinominato il 2 ottobre 2026 da `ProvaLandingPagePortfolio_Claude`; i vecchi link reindirizzano).
 - Progetto Vercel: `alessandrobottone` (rinominato da `provalandingpageportfolio-claude`), team ABDesign (`abd-esign1`), Vite e Node 24.
 - [Dominio di produzione](https://alessandrobottone.vercel.app); il vecchio [provalandingpageportfolio-claude.vercel.app](https://provalandingpageportfolio-claude.vercel.app) resta attivo. Le righe sotto conservano gli indirizzi storici com’erano.
-- Branch di lavoro: `main`. Il 1 ottobre 2026 vi è stato fuso `prova/computer-retro` (computer retrò, sala di cemento, avatar a punti, volto dietro il computer).
+- Branch di lavoro: `main`. Il 1 ottobre 2026 vi è stato fuso `prova/computer-retro` (computer retrò, sala di cemento, avatar a punti, volto dietro il computer); il 2 ottobre 2026 `prova/nome-3d-schermo` (nome in metallo 3d, schermo realistico, scena noir, primi progetti veri).
 - Branch storico: `codex/manutenzione-portfolio-3d`, da cui è stata pubblicata la versione del 29 settembre 2026.
+
+## pubblicazione del 2 ottobre 2026
+
+Richiesta da alessandro in chat il 2 ottobre 2026: aggiornare il repository GitHub e il sito su Vercel. Come il 1 ottobre, **i crediti CC BY del computer e della sala restano segnaposto** (la build mostra i due avvisi; da completare in `src/config/sito.ts`, `computer.crediti`).
+
+| voce | stato |
+|---|---|
+| merge in `main` e push GitHub | fast-forward di `prova/nome-3d-schermo` in `main`, push riuscito (`975aa0f..87d70a5`); pubblicato anche il branch `prova/nome-3d-schermo` |
+| commit pubblicato | `87d70a5` (debugging, pulizia del codice e riordino dei sorgenti), che include `d2e6943` (nome in metallo 3d, schermo realistico, scena noir e primi progetti veri) |
+| controlli prima del push | `npm run lint` senza segnalazioni, `npm run build` riuscita; preview locale in Chrome headless 1440×900 e 390×844 senza errori né risorse mancanti |
+| deploy production (stato, data e ora) | `READY`, 2 ottobre 2026 alle 13:35 (ora italiana), avviato dall’integrazione Git di Vercel al push su `main` |
+| URL immutabile della versione | https://alessandrobottone-rk3cskh8o-abd-esign1.vercel.app |
+| alias pubblico | https://alessandrobottone.vercel.app |
+| deployment e durata della build | `dpl_6B8gayBQHgHWLFnRidQmqTPdoBJx`, build 30s |
+| verifica online | `/`, le nove rotte `/progetti/<slug>` e uno slug inesistente in 200; GLB di volto, computer, sala e cuphead, luci cotte, avatar, i quattro pdf, contorni del nome, `og.png` e `robots.txt` in 200; `og:url`/`og:image` sul nuovo dominio. Chrome headless desktop 1440×900 e telefono 390×844: link diretto apre le finestre di lorenzo, cuphead (con modello 3d) e inktober nel computer, slug inesistente torna a `/`, scroll fino al copyright, nessun errore in console né risorse mancanti. Non verificati: dispositivi fisici, Safari/Firefox, Lighthouse |
 
 ## pubblicazione del 1 ottobre 2026
 
